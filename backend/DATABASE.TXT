@@ -1,0 +1,7 @@
+VERSÃO 17.0
+
+HOST: localhost
+SUPERSUPER ACCESS
+USER: postgres 
+PASSWORD: OWIsterwaiGH
+PORT: 5432
