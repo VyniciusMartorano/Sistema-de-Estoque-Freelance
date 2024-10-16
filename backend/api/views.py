@@ -18,7 +18,7 @@ from . import models as m
 
 
 class UserViewSet(viewsets.ViewSet):
-    queryset = User.objects.all()
+    queryset = m.User.objects.all()
     serializer_class = s.UserSerializer
     permission_classes = [AllowAny]
 
@@ -39,6 +39,11 @@ class UserViewSet(viewsets.ViewSet):
         return Response(data='', status=status.HTTP_200_OK)
 
     
+
+
+class ClienteViewSet(viewsets.ViewSet):
+    queryset = m.Cliente.objects.using('default').all()
+    serializer_class = s.ClienteSerializer
 
 
 
