@@ -1,21 +1,15 @@
-import { CORE_URLS } from '@/api/constants/domain/core'
 import { coreApi } from '@/api/core'
-import { User } from '@/models/User'
 import { Formaters } from '@/utils'
-
 
 export class AuthService {
   static async getUserRegistered(username) {
-    const response = await coreApi.get(
-      CORE_URLS.USER_REGISTERED_BY_REGISTRY.replace('$matricula', username)
-    )
-
+    const response = await coreApi.get('user/' + username)
     return response.data
   }
 
-  static async getUserPermissions(token){
+  static async getUserPermissions(token) {
     const permissions = (
-      await coreApi.get(CORE_URLS.GET_USER_PERMISSIONS, {
+      await coreApi.get('permissions/', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -26,45 +20,28 @@ export class AuthService {
   }
 
   static async getMenus() {
-    const menus = (await coreApi.get(CORE_URLS.GET_MENUS)).data
-
-    return menus
+    return (await coreApi.get('menuitem/')).data
   }
 
-
-
-  static async changeUserPassword({
-    cpf,
-    username,
-    password,
-    userId,
-  }) {
+  static async changeUserPassword({ cpf, username, password, userId }) {
     const payload = { cpf: Formaters.formatCPF(cpf), username, password }
 
-    await coreApi.post(CORE_URLS.UPDATE_PASSWORD, payload).then(() => {
+    await coreApi.post('user/update_password/', payload).then(() => {
       this.verifyUserSAJE(payload.username, String(userId))
     })
   }
 
-  static async signIn({
-    username,
-    password,
-  }) {
-    const response = await coreApi.post<SignInResponseData>(CORE_URLS.LOGIN, {
+  static async signIn({ username, password }) {
+    const response = await coreApi.post('login/', {
       username,
       password,
     })
     return response.data
   }
 
-  static async signUp({
-    username,
-    password,
-    firstName,
-    lastName,
-  }){
+  static async signUp({ username, password, firstName, lastName }) {
     const user = (
-      await coreApi.post(CORE_URLS.REGISTER_USER, {
+      await coreApi.post('user/', {
         username,
         password,
         first_name: firstName,
@@ -75,28 +52,15 @@ export class AuthService {
     return user
   }
 
-  static async getEmployeeByRegistry(username) {
-    const employee = (
-      await coreApi.get(
-        CORE_URLS.GET_EMPLOYEE_BY_REGISTRY.replace('$matricula', username)
-      )
-    ).data
-
-    return employee
-  }
-
   static async getRegistryByCpf(cpf) {
-    const registryByCpf = (
-      await coreApi.get(
-        CORE_URLS.GET_REGISTRY_BY_CPF.replace('$cpf', Formaters.formatCPF(cpf))
-      )
-    ).data.matricula
+    const registryByCpf = (await coreApi.get('user/get_user_by_cpf' + cpf)).data
+      .matricula
 
     return registryByCpf
   }
 
   static async getUserData(token) {
-    const user = (await coreApi.get<User>(CORE_URLS.GET_USER)).data
+    const user = (await coreApi.get('user/')).data
 
     const permissions = await AuthService.getUserPermissions(token)
     const menus = await AuthService.getMenus()

@@ -6,7 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import { addLocale, PrimeReactProvider } from 'primereact/api'
 import ReactDOM from 'react-dom/client'
 
-import { App } from './app'
+import { App } from './router'
 
 addLocale('pt', {
   accept: 'Sim',

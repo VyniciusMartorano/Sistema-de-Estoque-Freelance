@@ -3,17 +3,15 @@ import { createContext, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'sonner'
 
-import { CORE_URLS } from '@/api/constants/domain/core'
-import { coreApi } from '@/api/core'
-import { User } from '@/models/User'
+import { coreApi } from '@/api/apibase'
 import { AuthService } from '@/services/auth'
-
+import { Formaters } from '@/utils'
 
 export const AuthContext = createContext({})
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState<User>(undefined)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [user, setUser] = useState(undefined)
+  const [isLoading, setIsLoading] = useState(false)
 
   const [cookies, setCookie, removeCookie] = useCookies([
     'auth.token',
@@ -101,10 +99,11 @@ export function AuthProvider({ children }) {
         await signIn({ username, password })
       }
 
-      const registryByCpf = await AuthService.getRegistryByCpf(cpf)
+      const registryByCpf = await AuthService.getRegistryByCpf(
+        Formaters.formatCPF(cpf)
+      )
 
       if (registryByCpf === username) {
-
         await signIn({ username, password })
       }
     } catch (error) {

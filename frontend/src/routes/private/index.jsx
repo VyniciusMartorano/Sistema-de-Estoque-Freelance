@@ -1,10 +1,9 @@
+import { SGC_ROUTES } from '../navigation-routes'
+
 import { AppLayout } from '@/pages/_layouts'
 import { HomeScreen } from '@/pages/app/home'
-import {
-  CategoriaScreen,
-  EmbalagemScreen,
-} from '@/pages/app/qualidade/cadastros'
-import { SGC_ROUTES } from '@/routes/navigation-routes'
+import { CadastroAlmoxarifado } from '../../pages/app/cadastros/almoxarifado/CadastroAlmoxarifado'
+import { ConsultaAlmoxarifado } from '../../pages/app/cadastros/almoxarifado/ConsultaAlmoxarifado'
 
 
 
@@ -17,12 +16,12 @@ export const privateRoutes = {
       element: <HomeScreen />,
     },
     {
-      path: SGC_ROUTES.,
-      element: <CategoriaScreen />,
+      path: SGC_ROUTES.CADASTROS.ALMOXARIFADO,
+      element: <CadastroAlmoxarifado />,
     },
     {
-      path: SGC_ROUTES.QUALIDADE.CADASTROS.EMBALAGEM,
-      element: <EmbalagemScreen />,
+      path: SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO,
+      element: <ConsultaAlmoxarifado />,
     }
   ],
 }

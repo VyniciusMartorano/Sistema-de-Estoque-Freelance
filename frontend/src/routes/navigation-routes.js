@@ -1,6 +1,6 @@
 
 
-export const SGC_ROUTES = {
+ const SGC_ROUTES = {
   APP: {
     HOME: '/homepage',
   },
@@ -14,3 +14,4 @@ export const SGC_ROUTES = {
   },
 
 }
+export { SGC_ROUTES }

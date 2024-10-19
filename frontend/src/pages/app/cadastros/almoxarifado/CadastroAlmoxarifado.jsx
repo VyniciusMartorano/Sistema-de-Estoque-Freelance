@@ -23,7 +23,6 @@ const almoxForm = z.object({
   tipo: z.number().optional(),
 })
 
-type AlmoxType = z.infer<typeof almoxForm>
 
 export function CadastroAlmoxarifado() {
   const { almoxarifadoId } = useContext(AlmoxarifadoContext)
@@ -55,7 +54,7 @@ export function CadastroAlmoxarifado() {
     )
   }, [])
 
-  const payloadIsValid = (payload: AlmoxType): boolean => {
+  const payloadIsValid = (payload) => {
     if (!payload.descricao || payload.descricao.length < 1) return false
     if (!payload.tipo) return false
 

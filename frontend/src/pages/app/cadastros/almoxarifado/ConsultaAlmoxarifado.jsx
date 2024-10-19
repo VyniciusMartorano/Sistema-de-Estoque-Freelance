@@ -1,9 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from 'primereact/button'
-// import { Column } from 'primereact/column'
 import { Divider } from 'primereact/divider'
-// import { TreeNode } from 'primereact/treenode'
-// import { TreeTable } from 'primereact/treetable'
 import { useContext, useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { IoPencil } from 'react-icons/io5'
@@ -23,25 +20,10 @@ import {
   useDeleteAlmoxarifado,
 } from '@/hooks/querys/cadastro/useApiCadastrosAlmox'
 import { useSGCNavigate } from '@/hooks/useNavigate'
-import { SGC_ROUTES } from '@/routes/navigation-routes'
 
-const almoxFiltersForm = z.object({
-  descricao: z.string().optional(),
-  tipo: z.number().optional(),
-})
-
-interface intAlmoxarifadoDT {
-  id: number
-  descricao: string
-  tipo: number
-}
-
-type AlmoxFiltersType = z.infer<typeof almoxFiltersForm>
+import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 
 export function ConsultaAlmoxarifado() {
-  const { handleSubmit, watch, register, control } = useForm<AlmoxFiltersType>({
-    resolver: zodResolver(almoxFiltersForm),
-  })
   const { setAlmoxarifadoId } = useContext(AlmoxarifadoContext)
   const { navigate } = useSGCNavigate()
   // const [expandedRows, setExpandedRows] = useState<unknown[]>([])
@@ -50,12 +32,10 @@ export function ConsultaAlmoxarifado() {
     setAlmoxarifadoId(null)
   }, [])
 
-  const handleNavigateToEdit = (almoxarifadoId: number | null) => {
+  const handleNavigateToEdit = (almoxarifadoId) => {
     setAlmoxarifadoId(almoxarifadoId)
     navigate(SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO)
   }
-
-  const { mutateAsync: apiDeleteAlmoxarifado } = useDeleteAlmoxarifado()
 
   const {
     data: results,
@@ -66,20 +46,15 @@ export function ConsultaAlmoxarifado() {
   })
 
   const search = () => {
-    const descricao = watch('descricao')
-    const tipo = watch('tipo')
-
     mutateAsync({ descricao, tipo })
   }
 
-  const deleteAlmoxarifado = (almoxarifadoId: number) => {
+  const deleteAlmoxarifado = (almoxarifadoId) => {
     apiDeleteAlmoxarifado(almoxarifadoId).then(
       () => {
         toast.success('Operação realizada com sucesso!')
         if (results) {
-          results.data = results?.data.filter(
-            (i: intAlmoxarifadoDT) => i.id !== almoxarifadoId
-          )
+          results.data = results?.data.filter((i) => i.id !== almoxarifadoId)
         }
       },
       (error) => toast.error(error)
@@ -113,24 +88,20 @@ export function ConsultaAlmoxarifado() {
                 className=" mr-2 w-1/5"
                 label="Descrição"
               />
-              <Controller
-                name="tipo"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    label="Tipo"
-                    className="mr-2 w-1/5"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e)}
-                    options={[
-                      { value: 1, label: 'Interno' },
-                      { value: 2, label: 'Externo' },
-                    ]}
-                    optionLabel="label"
-                    optionValue="value"
-                  />
-                )}
+
+              <Select
+                label="Tipo"
+                className="mr-2 w-1/5"
+                value={field.value}
+                onChange={(e) => field.onChange(e)}
+                options={[
+                  { value: 1, label: 'Interno' },
+                  { value: 2, label: 'Externo' },
+                ]}
+                optionLabel="label"
+                optionValue="value"
               />
+
               <IconButton
                 disabled={isPending}
                 icon="pi pi-search simas-blue-icons-primary"
@@ -174,7 +145,7 @@ export function ConsultaAlmoxarifado() {
                   field: 'tipo',
                   header: 'Tipo',
                   className: 'w-2/12 p-1',
-                  body: (data: intAlmoxarifadoDT) => {
+                  body: (data) => {
                     return (
                       <Tag
                         label={data.tipo === 1 ? 'Interno' : 'Externo'}
@@ -188,7 +159,7 @@ export function ConsultaAlmoxarifado() {
                 {
                   field: '',
                   header: '',
-                  body: (item: intAlmoxarifadoDT) => {
+                  body: (item) => {
                     return (
                       <div className={`flex h-6 justify-end gap-1 text-white`}>
                         <IconButton
