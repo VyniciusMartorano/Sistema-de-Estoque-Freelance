@@ -15,3 +15,49 @@ CREATE TABLE Clientes (
     gestor_id INTEGER,
     FOREIGN KEY (gestor_id) REFERENCES auth_user(id) ON DELETE SET NULL
 );
+
+
+-- Criação da tabela Produtos
+CREATE TABLE Produtos (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    descricao TEXT,
+    valor_minimo_venda DECIMAL(10, 2) NOT NULL,
+    valor_maximo_venda DECIMAL(10, 2) NOT NULL,
+    foto BYTEA
+);
+
+-- Criação da tabela Vendas
+CREATE TABLE Vendas (
+    id SERIAL PRIMARY KEY,
+    data_venda TIMESTAMP NOT NULL DEFAULT NOW(),
+    cliente_id INTEGER NOT NULL,
+    CONSTRAINT fk_cliente
+        FOREIGN KEY (cliente_id) 
+        REFERENCES clientes(id) 
+        ON DELETE CASCADE
+);
+
+-- Criação da tabela VendasItens
+CREATE TABLE VendasItens (
+    id SERIAL PRIMARY KEY,
+    venda_id INTEGER NOT NULL,
+    produto_id INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+    preco_unitario DECIMAL(10, 2) NOT NULL,
+    CONSTRAINT fk_venda
+        FOREIGN KEY (venda_id)
+        REFERENCES Vendas(id) 
+        ON DELETE CASCADE,
+    CONSTRAINT fk_produto
+        FOREIGN KEY (produto_id)
+        REFERENCES Produtos(id)
+        ON DELETE CASCADE
+);
+
+
+
+
+
+
+

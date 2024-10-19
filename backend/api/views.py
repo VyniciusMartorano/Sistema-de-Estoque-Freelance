@@ -46,4 +46,19 @@ class ClienteViewSet(viewsets.ViewSet):
     serializer_class = s.ClienteSerializer
 
 
+class ProdutoViewSet(viewsets.ViewSet):
+    queryset = m.Produto.objects.using('default').all()
+    serializer_class = s.ProdutoSerializer
+
+
+class VendaViewSet(viewsets.ViewSet):
+    queryset = m.Venda.objects.using('default').all()
+    serializer_class = s.VendaSerializer
+
+
+class VendaItemViewSet(viewsets.ViewSet):
+    queryset = m.VendaItem.objects.using('default').all()
+    serializer_class = s.VendaItemSerializer
+
+
 

@@ -33,3 +33,40 @@ class Cliente(models.Model):
     class Meta:
         managed = False
         db_table = 'clientes'
+
+
+
+class Produto(models.Model):
+    nome = models.CharField(max_length=255)
+    descricao = models.TextField(blank=True, null=True)
+    valor_minimo_venda = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_maximo_venda = models.DecimalField(max_digits=10, decimal_places=2)
+    foto = models.ImageField(upload_to='produtos/', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'produtos'
+
+
+class Venda(models.Model):
+    data_venda = models.DateTimeField(auto_now_add=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+    class Meta:
+        managed = False
+        db_table = 'vendas'
+
+
+class VendaItem(models.Model):
+    venda = models.ForeignKey(Venda, related_name='itens', on_delete=models.CASCADE)
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    quantidade = models.IntegerField()
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+    class Meta:
+        managed = False
+        db_table = 'vendasitens'
+

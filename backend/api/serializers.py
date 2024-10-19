@@ -10,8 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = m.User
         fields = '*'
 
- 
-
 
     def create(self, validated_data):
         user = m.User.objects.create(username=validated_data['username'])
@@ -29,6 +27,27 @@ class ClienteSerializer(serializers.ModelSerializer):
         model = m.Cliente
         fields = '*'
 
+
+
+class ProdutoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.Produto
+        fields = '*'
+
+
+class VendaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.Venda
+        fields = '*'
+
+
+class VendaItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.VendaItem
+        fields = '*'
 
 
 
