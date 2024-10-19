@@ -1,0 +1,10 @@
+
+
+.link-nav-custom:hover {
+    color: rgb(0,0,0, 0.87);
+}
+
+.icon-home-custom {
+    font-size: 0.95rem !important;
+    color: rgb(0,0,0, 0.80);
+}

@@ -1,0 +1,88 @@
+@layer tailwind-base, primereact, tailwind-utilities;
+
+/* IMPORTANT: In "styled" mode you must add the PrimeReact Theme here. Do NOT include in "unstyled" mode */
+@import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
+
+div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
+  height: 2rem !important;
+}
+
+.p-dropdown-item {
+  font-size: 0.75rem !important;
+  width: 20rem !important;
+  overflow: inherit !important;
+}
+
+.p-dropdown.p-inputwrapper.p-dropdown-clearable.p-inputwrapper-filled {
+  text-overflow: ellipsis !important;
+  display: flex !important;
+  gap: 1.75rem !important;
+}
+
+.p-dropdown-label.p-inputtext {
+  display: flex !important;
+  align-items: center !important;
+  width: 10rem !important;
+}
+
+.p-sidebar .p-sidebar-header {
+  padding: 0.5rem !important;
+  background-color: #60a5fa;
+}
+
+.p-column-title {
+  font-size: 0.75rem !important;
+}
+
+.p-card-content {
+  padding: 0 !important;
+}
+
+.bg-auth-gradient-radial {
+  background: radial-gradient(circle, rgba(255, 250, 250, 1) 0%, rgba(120, 120, 120, 1) 100%);
+}
+
+.p-panelmenu-header-content, .p-panelmenu .p-panelmenu-content {
+  border: none !important;
+}
+
+.p-panelmenu-header-link, .p-menuitem-content .p-menuitem-link {
+  padding: 0.5rem !important;
+}
+
+.removePadding .p-menuitem-content .p-menuitem-link {
+  padding-left: 2rem !important;
+}
+
+.removePadding .p-toggleable-content .p-panelmenu-content ul.p-panelmenu-root-list li.p-menuitem div.p-toggleable-content {
+  padding-left: 1.5rem !important;
+}
+
+.pi {
+  font-size: 1.1rem !important;
+}
+
+.hideLabelItems .p-menuitem-text, .hideLabelItems .p-panelmenu-header-link .p-submenu-icon, .hideLabelItems .p-menuitem .p-menuitem-content .p-menuitem-link .p-submenu-icon {
+  display: none !important;
+}
+
+.hideLabelItems .p-menuitem-text, .hideLabelItems .p-panelmenu-header-link,
+.hideLabelItems .p-menuitem .p-menuitem-content .p-menuitem-link
+{
+  justify-content: center !important;
+}
+
+.p-datepicker-title {
+  margin: 0 !important;
+  display: flex;
+  gap: 1rem;
+}

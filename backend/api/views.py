@@ -61,4 +61,15 @@ class VendaItemViewSet(viewsets.ViewSet):
     serializer_class = s.VendaItemSerializer
 
 
+class EstoqueExtratoViewSet(viewsets.ViewSet):
+    queryset = m.EstoqueExtrato.objects.using('default').all()
+    serializer_class = s.EstoqueExtratoSerializer
+
+
+
+class SaldoEstoqueViewSet(viewsets.ViewSet):
+    queryset = m.SaldoEstoque.objects.using('default').all()
+    serializer_class = s.SaldoEstoqueSerializer
+
+
 

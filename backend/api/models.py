@@ -42,6 +42,8 @@ class Produto(models.Model):
     valor_minimo_venda = models.DecimalField(max_digits=10, decimal_places=2)
     valor_maximo_venda = models.DecimalField(max_digits=10, decimal_places=2)
     foto = models.ImageField(upload_to='produtos/', blank=True, null=True)
+    trava_preco_adm = models.BooleanField(default=False)
+    preco_fixo_adm = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -69,4 +71,42 @@ class VendaItem(models.Model):
     class Meta:
         managed = False
         db_table = 'vendasitens'
+
+
+
+class EstoqueExtrato(models.Model):
+    ENTRADA = 'entrada'
+    SAIDA = 'saida'
+    TIPO_CHOICES = [
+        (ENTRADA, 'Entrada'),
+        (SAIDA, 'Saída'),
+    ]
+    
+    CI = 1
+    VENDA = 2
+    TIPO_MOV_CHOICES = [
+        (CI, 'CI'),
+        (VENDA, 'Venda'),
+    ]
+
+    data = models.DateTimeField(auto_now_add=True)
+    produto = models.ForeignKey('Produto', on_delete=models.CASCADE)
+    tipomov = models.IntegerField(choices=TIPO_MOV_CHOICES)
+    iddoc = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'estoqueextrato'
+
+
+class SaldoEstoque(models.Model):
+    produto = models.ForeignKey('Produto', on_delete=models.CASCADE)
+    gestor = models.ForeignKey(User, on_delete=models.CASCADE)
+    saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    class Meta:
+        managed = False
+        db_table = 'saldoestoque'
+
+
 

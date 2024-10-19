@@ -51,3 +51,19 @@ class VendaItemSerializer(serializers.ModelSerializer):
 
 
 
+class EstoqueExtratoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.EstoqueExtrato
+        fields = '*'
+
+
+
+class SaldoEstoqueSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.SaldoEstoque
+        fields = '*'
+
+
+

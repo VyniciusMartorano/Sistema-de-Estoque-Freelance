@@ -61,3 +61,32 @@ CREATE TABLE VendasItens (
 
 
 
+
+CREATE TABLE EstoqueExtrato (
+    id SERIAL PRIMARY KEY,
+    data TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    produto_id INT NOT NULL,
+    tipo INT CHECK (tipo IN (1, 2)),  -- 1 = Entrada, 2 = Saída
+    tipomov INT CHECK (tipomov IN (1, 2)),  -- 1 = CI, 2 = VENDA
+    iddoc INT NOT NULL,
+    FOREIGN KEY (produto_id) REFERENCES Produtos(id)
+);
+
+CREATE TABLE SaldoEstoque (
+    id SERIAL PRIMARY KEY,
+    produto_id INT NOT NULL,
+    gestor_id INT NOT NULL,
+    saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    FOREIGN KEY (produto_id) REFERENCES Produtos(id),
+    FOREIGN KEY (gestor_id) REFERENCES auth_user(id)
+);
+
+
+-- Adiciona a coluna trava_preco_adm
+ALTER TABLE produtos
+ADD COLUMN trava_preco_adm BOOLEAN DEFAULT FALSE;
+
+-- Adiciona a coluna preco_fixo_adm
+ALTER TABLE produtos
+ADD COLUMN preco_fixo_adm NUMERIC(10, 2);
+
