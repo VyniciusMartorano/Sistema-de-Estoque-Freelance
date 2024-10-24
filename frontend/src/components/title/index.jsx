@@ -1,3 +1,3 @@
 export function Title({ title }) {
-  return <span className="font-bold text-simas-gray-primary">{title}</span>
+  return <span className="font-bold text-sgc-gray-primary">{title}</span>
 }

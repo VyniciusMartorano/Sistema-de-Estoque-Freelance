@@ -38,7 +38,7 @@ export function SignUpForm() {
 
   return (
     <div>
-      <div className="flex flex-col gap-6 bg-white">
+      <div className="flex flex-col gap-4 bg-white">
         <div className="flex flex-col gap-2">
           <InputMask
             label="CPF"
@@ -89,7 +89,7 @@ export function SignUpForm() {
         />
       </div>
 
-      <div className="my-4 rounded-lg bg-simas-gray-light p-4">
+      <div className="bg-sgc-gray-light my-4 rounded-lg p-4">
         <p className="text-center italic">
           Ao confirmar, o usuário concorda que o sigilo das informações
           cadastradas são exclusivamente de sua responsabilidade.
@@ -100,15 +100,15 @@ export function SignUpForm() {
         <Button
           label="Confirmar"
           type="submit"
-          className="mx-auto block w-full rounded-none border-none bg-simas-blue-background-light outline-0"
+          className="bg-sgc-blue-background-light mx-auto block w-full rounded-none border-none outline-0"
         />
 
-        <div className="my-4 h-[1px] w-full bg-simas-gray-label"></div>
+        <div className="bg-sgc-gray-label my-4 h-[1px] w-full"></div>
 
         <Button
           label="Voltar para login"
           type="button"
-          className="p-d-block p-mx-auto p-button-outlined w-full rounded-none outline-simas-blue-background-light"
+          className="p-d-block p-mx-auto p-button-outlined outline-sgc-blue-background-light w-full rounded-none"
           onClick={handleGoBack}
         />
       </div>

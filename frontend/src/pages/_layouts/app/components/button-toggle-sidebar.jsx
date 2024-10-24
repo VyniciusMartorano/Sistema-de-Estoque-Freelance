@@ -8,7 +8,7 @@ export function ButtonToggleSidebar({ handleOpenSidebar }) {
         outline: 'none',
       }}
     >
-      <i className="pi pi-bars cursor-pointer text-white hover:text-simas-gray-light"></i>
+      <i className="pi pi-bars cursor-pointer text-white hover:text-sgc-gray-light"></i>
     </div>
   )
 }

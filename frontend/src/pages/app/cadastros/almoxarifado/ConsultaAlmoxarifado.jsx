@@ -74,7 +74,7 @@ export function ConsultaAlmoxarifado() {
 
             <IconButton
               // disabled={isPending}
-              icon="pi pi-search simas-blue-icons-primary"
+              icon="pi pi-search sgc-blue-icons-primary"
               className="mt-6"
             />
           </div>
@@ -83,7 +83,7 @@ export function ConsultaAlmoxarifado() {
               <Button
                 size="small"
                 label="Novo"
-                className="mb-4 flex  items-center justify-center gap-2 rounded-md border-none bg-simas-green-primary p-2 py-1"
+                className="mb-4 flex  items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1"
                 onClick={() => {
                   navigate(SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO)
                 }}
@@ -134,7 +134,7 @@ export function ConsultaAlmoxarifado() {
                           tooltip="Editar"
                           onClick={() => handleNavigateToEdit(item.id)}
                           iconComponent={<IoPencil size={18} />}
-                          className="bg-simas-blue-primary p-1"
+                          className="bg-sgc-blue-primary p-1"
                         />
                         <DeletePopup
                           feedbackMessage="Deseja realmente apagar o almoxarifado "

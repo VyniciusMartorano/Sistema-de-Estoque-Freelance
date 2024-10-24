@@ -8,7 +8,7 @@ export const COLORS_TAG = {
 export function Tag({ label, color }) {
   return (
     <span
-      className={`flex h-6 items-center justify-center rounded-md p-1 font-bold bg-simas-${color}-primary text-white`}
+      className={`flex h-6 items-center justify-center rounded-md p-1 font-bold bg-sgc-${color}-primary text-white`}
     >
       {label}
     </span>

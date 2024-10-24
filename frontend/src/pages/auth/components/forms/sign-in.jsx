@@ -58,15 +58,15 @@ export function SignInForm() {
         <Button
           label="Acessar"
           type="submit"
-          className="mx-auto block w-full rounded-none border-none bg-simas-blue-background-light outline-0"
+          className="bg-sgc-blue-background-light mx-auto block w-full rounded-none border-none outline-0"
         />
 
-        <div className="my-4 h-[1px] w-full bg-simas-gray-label"></div>
+        <div className="bg-sgc-gray-label my-4 h-[1px] w-full"></div>
 
         <Button
           label="Cadastrar Usuário"
           type="button"
-          className="p-d-block p-mx-auto p-button-outlined w-full rounded-none outline-simas-blue-background-light"
+          className="p-d-block p-mx-auto p-button-outlined outline-sgc-blue-background-light w-full rounded-none"
           onClick={() => navigate(SGC_ROUTES.AUTH.SIGNUP)}
         />
       </div>

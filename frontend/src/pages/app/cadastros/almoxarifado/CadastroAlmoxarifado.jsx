@@ -97,14 +97,14 @@ export function CadastroAlmoxarifado() {
           <div className="mt-20 flex w-full flex-row justify-start gap-2">
             <ButtonSGC
               label="Cancelar"
-              bgColor="simas-red-primary"
+              bgColor="sgc-red-primary"
               type="button"
               onClick={() => navigate('/')}
             />
             <ButtonSGC
               // disabled={isPending || inPromiseSave}
               label="Salvar"
-              bgColor="simas-green-primary"
+              bgColor="sgc-green-primary"
               type="submit"
             />
           </div>

@@ -3,7 +3,7 @@ import { Sidebar } from 'primereact/sidebar'
 import { useContext, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import logo from '@/assets/logo.png'
+import logo from '@/assets/logo.jpg'
 import { AuthContext } from '@/context/AuthContext'
 import { useSGCNavigate } from '@/useNavigate'
 // import { NavigationRoute } from '@/routes/navigation-routes'
@@ -44,7 +44,7 @@ export function AppLayout() {
   return (
     <div className="relative h-screen ">
       <div
-        className={`fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 bg-simas-blue-background-light pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
+        className={`bg-sgc-blue-background-light fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
       >
         <ButtonToggleSidebar handleOpenSidebar={handleOpenSidebar} />
         <div className="flex flex-row">
