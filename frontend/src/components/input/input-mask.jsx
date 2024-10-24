@@ -1,8 +1,7 @@
 import { InputMask as InputMaskPR } from 'primereact/inputmask'
 import React, { forwardRef } from 'react'
 
-
-const InputMask = forwardRef<HTMLInputElement>(
+const InputMask = forwardRef(
   (
     {
       iconClassName,

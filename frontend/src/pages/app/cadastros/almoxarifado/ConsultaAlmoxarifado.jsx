@@ -1,25 +1,18 @@
-import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from 'primereact/button'
 import { Divider } from 'primereact/divider'
 import { useContext, useEffect } from 'react'
-import { Controller, useForm } from 'react-hook-form'
 import { IoPencil } from 'react-icons/io5'
-import { toast } from 'sonner'
-import { z } from 'zod'
 
+// import { toast } from 'sonner'
 import { IconButton } from '@/components/buttons'
 import { DeletePopup } from '@/components/dialogs/delete-popup'
-import { Select } from '@/components/input'
-import { Input } from '@/components/input/input'
+// import { Select } from '@/components/input'
+// import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
 import { COLORS_TAG, Tag } from '@/components/tag/Tag'
 import { AlmoxarifadoContext } from '@/context/AlmoxarifadoContext'
-import {
-  useApiCadastrosSearchAlmox,
-  useDeleteAlmoxarifado,
-} from '@/hooks/querys/cadastro/useApiCadastrosAlmox'
-import { useSGCNavigate } from '@/hooks/useNavigate'
+import { useSGCNavigate } from '@/useNavigate'
 
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 
@@ -37,38 +30,16 @@ export function ConsultaAlmoxarifado() {
     navigate(SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO)
   }
 
-  const {
-    data: results,
-    mutateAsync,
-    isPending,
-  } = useApiCadastrosSearchAlmox(() => {
-    toast.error('Ocorreu um erro ao buscar os almoxarifados!')
-  })
+  // const {
+  //   data: results,
+  //   mutateAsync,
+  //   isPending,
+  // } = useApiCadastrosSearchAlmox(() => {
+  //   toast.error('Ocorreu um erro ao buscar os almoxarifados!')
+  // })
 
-  const search = () => {
-    mutateAsync({ descricao, tipo })
-  }
-
-  const deleteAlmoxarifado = (almoxarifadoId) => {
-    apiDeleteAlmoxarifado(almoxarifadoId).then(
-      () => {
-        toast.success('Operação realizada com sucesso!')
-        if (results) {
-          results.data = results?.data.filter((i) => i.id !== almoxarifadoId)
-        }
-      },
-      (error) => toast.error(error)
-    )
-  }
-
-  // const rowExpansionTemplate = (nodes: TreeNode[]) => {
-  //   return (
-  //     <TreeTable value={nodes} tableStyle={{ minWidth: '50rem' }}>
-  //       <Column field="name" header="Name" expander></Column>
-  //       <Column field="size" header="Size"></Column>
-  //       <Column field="type" header="Type"></Column>
-  //     </TreeTable>
-  //   )
+  // const search = () => {
+  //   mutateAsync({ descricao, tipo })
   // }
 
   return (
@@ -80,16 +51,15 @@ export function ConsultaAlmoxarifado() {
         ]}
       >
         <div>
-          <form onSubmit={handleSubmit(search)}>
-            <div className="p-inputtext-sm my-6 flex">
-              <Input
+          <div className="p-inputtext-sm my-6 flex">
+            {/* <Input
                 {...register('descricao')}
                 type="text"
                 className=" mr-2 w-1/5"
                 label="Descrição"
-              />
+              /> */}
 
-              <Select
+            {/* <Select
                 label="Tipo"
                 className="mr-2 w-1/5"
                 value={field.value}
@@ -100,37 +70,34 @@ export function ConsultaAlmoxarifado() {
                 ]}
                 optionLabel="label"
                 optionValue="value"
-              />
+              /> */}
 
-              <IconButton
-                disabled={isPending}
-                icon="pi pi-search simas-blue-icons-primary"
-                className="mt-6"
-              />
-            </div>
-          </form>
+            <IconButton
+              // disabled={isPending}
+              icon="pi pi-search simas-blue-icons-primary"
+              className="mt-6"
+            />
+          </div>
           <div>
-            <form>
-              <div>
-                <Button
-                  size="small"
-                  label="Novo"
-                  className="mb-4 flex  items-center justify-center gap-2 rounded-md border-none bg-simas-green-primary p-2 py-1"
-                  onClick={() => {
-                    navigate(SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO)
-                  }}
-                >
-                  <i className="pi pi-plus"></i>
-                </Button>
-              </div>
-            </form>
+            <div>
+              <Button
+                size="small"
+                label="Novo"
+                className="mb-4 flex  items-center justify-center gap-2 rounded-md border-none bg-simas-green-primary p-2 py-1"
+                onClick={() => {
+                  navigate(SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO)
+                }}
+              >
+                <i className="pi pi-plus"></i>
+              </Button>
+            </div>
           </div>
           <Divider className="my-2" />
 
           <div>
             <Table
-              isLoading={isPending}
-              value={results?.data}
+              // isLoading={isPending}
+              // value={results?.data}
               paginator={true}
               allowExpansion
               // expandedRows={expandedRows}
@@ -172,7 +139,7 @@ export function ConsultaAlmoxarifado() {
                         <DeletePopup
                           feedbackMessage="Deseja realmente apagar o almoxarifado "
                           itemLabel={item.descricao}
-                          onAccept={() => deleteAlmoxarifado(item.id)}
+                          // onAccept={() => deleteAlmoxarifado(item.id)}
                         />
                       </div>
                     )

@@ -1,4 +1,3 @@
-import { MenuItem } from 'primereact/menuitem'
 import { TieredMenu } from 'primereact/tieredmenu'
 import { useContext, useRef } from 'react'
 
@@ -6,13 +5,8 @@ import defaultUserAvatarFemale from '@/assets/default_user_female.png'
 import defaultUserAvatarMale from '@/assets/default_user_male2.png'
 import { AuthContext } from '@/context/AuthContext'
 
-interface AvatarProps {
-  isMale: boolean
-  userName: string
-}
-
-export function SGCAvatar({ isMale, userName }: AvatarProps) {
-  const menu = useRef<TieredMenu>(null)
+export function SGCAvatar({ isMale, userName }) {
+  const menu = useRef < TieredMenu > null
 
   const { signOut } = useContext(AuthContext)
 
@@ -20,7 +14,7 @@ export function SGCAvatar({ isMale, userName }: AvatarProps) {
     signOut()
   }
 
-  const items: MenuItem[] = [
+  const items = [
     {
       label: 'Sair',
       icon: 'pi pi-power-off',

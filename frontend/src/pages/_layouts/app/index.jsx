@@ -1,4 +1,3 @@
-import { MenuItem } from 'primereact/menuitem'
 import { PanelMenu } from 'primereact/panelmenu'
 import { Sidebar } from 'primereact/sidebar'
 import { useContext, useState } from 'react'
@@ -6,11 +5,16 @@ import { Navigate, Outlet } from 'react-router-dom'
 
 import logo from '@/assets/logo.png'
 import { AuthContext } from '@/context/AuthContext'
-import { useSGCNavigate } from '@/hooks/useNavigate'
-import { NavigationRoute } from '@/routes/navigation-routes'
+import { useSGCNavigate } from '@/useNavigate'
+// import { NavigationRoute } from '@/routes/navigation-routes'
 import { Helpers } from '@/utils/helpers'
 
-import { ButtonToggleSidebar, HeaderIconsContainer, HeaderSidebar, SGCAvatar } from './components'
+import {
+  ButtonToggleSidebar,
+  HeaderIconsContainer,
+  HeaderSidebar,
+  SGCAvatar,
+} from './components'
 
 export function AppLayout() {
   const [visible, setVisible] = useState(true)
@@ -34,7 +38,7 @@ export function AppLayout() {
   }
 
   if (menus) {
-    Helpers.addNavigateToMenuItens(menus, (url) => navigate(url as unknown as NavigationRoute))
+    Helpers.addNavigateToMenuItens(menus, (url) => navigate(url))
   }
 
   return (
@@ -75,11 +79,11 @@ export function AppLayout() {
               // Correção temporária: removendo o prefixo 'fas fa-' dos ícones do font-awesome
               el.icon = el.icon.replace('fas fa-', '')
               if (el.items) {
-                el.items = el.items.map((item: MenuItem) => {
+                el.items = el.items.map((item) => {
                   item.icon = item.icon.replace('fas fa-', '')
 
                   if (item.items) {
-                    item.items = item.items.map((subItem: MenuItem) => {
+                    item.items = item.items.map((subItem) => {
                       subItem.icon = subItem.icon.replace('fas fa-', '')
                       return subItem
                     })
@@ -94,7 +98,9 @@ export function AppLayout() {
         </div>
       </Sidebar>
 
-      <div className={`${visible ? 'pl-[296px]' : 'pl-[116px]'} p-4 pt-16 ${isLoading ? 'blur-xl' : ''}`}>
+      <div
+        className={`${visible ? 'pl-[296px]' : 'pl-[116px]'} p-4 pt-16 ${isLoading ? 'blur-xl' : ''}`}
+      >
         <Outlet />
       </div>
     </div>

@@ -1,7 +1,14 @@
-import { Button, ButtonProps } from 'primereact/button'
+import { Button } from 'primereact/button'
 
-
-export function ButtonSGC({ icon, label = '', className = '', bgColor, ref, children, ...rest }) {
+export function ButtonSGC({
+  icon,
+  label = '',
+  className = '',
+  bgColor,
+  ref,
+  children,
+  ...rest
+}) {
   return (
     <Button
       ref={ref}

@@ -1,4 +1,4 @@
-import { Checkbox, CheckboxProps } from 'primereact/checkbox'
+import { Checkbox } from 'primereact/checkbox'
 
 export function InputCheckbox({ label, ...rest }) {
   return (

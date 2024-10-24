@@ -1,7 +1,7 @@
 import { Dropdown } from 'primereact/dropdown'
 import React from 'react'
 
-const Select = React.forwardRef<Dropdown>(
+const Select = React.forwardRef(
   ({ iconClassName, label, className, ...rest }, ref) => {
     return (
       <div className={`p-field pt-6 ${className}`}>

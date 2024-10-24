@@ -1,8 +1,7 @@
-import { InputText, InputTextProps } from 'primereact/inputtext'
+import { InputText } from 'primereact/inputtext'
 import React from 'react'
 
-
-const Input = React.forwardRef<HTMLInputElement>(
+const Input = React.forwardRef(
   (
     {
       iconClassName,

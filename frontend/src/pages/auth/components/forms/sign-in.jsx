@@ -2,28 +2,20 @@ import { Button } from 'primereact/button'
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import { Input } from '@/components/input'
 import { AuthContext } from '@/context/AuthContext'
-import { useSGCNavigate } from '@/hooks/useNavigate'
 import { SGC_ROUTES } from '@/routes/navigation-routes'
-
-const signInForm = z.object({
-  username: z.string(),
-  password: z.string(),
-})
-
-type SignInForm = z.infer<typeof signInForm>
+import { useSGCNavigate } from '@/useNavigate'
 
 export function SignInForm() {
-  const { register, handleSubmit } = useForm<SignInForm>()
+  const { register, handleSubmit } = useForm()
 
   const { signIn } = useContext(AuthContext)
 
   const { navigate } = useSGCNavigate()
 
-  const handleSignIn = (data: SignInForm) => {
+  const handleSignIn = (data) => {
     toast.promise(
       signIn({ username: data.username, password: data.password }),
       {

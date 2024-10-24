@@ -19,4 +19,4 @@ export class Api {
   }
 }
 
-export const newApi = new Api(basesUrl.core)
+export const apiBase = new Api(basesUrl.core)

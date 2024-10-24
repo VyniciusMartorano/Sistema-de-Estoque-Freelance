@@ -1,6 +1,4 @@
-
-
- const SGC_ROUTES = {
+const SGC_ROUTES = {
   APP: {
     HOME: '/homepage',
   },
@@ -12,6 +10,5 @@
     ALMOXARIFADO: '/cadastros/almoxarifado',
     CADASTRO_ALMOXARIFADO: '/cadastros/almoxarifado/cadastro',
   },
-
 }
 export { SGC_ROUTES }

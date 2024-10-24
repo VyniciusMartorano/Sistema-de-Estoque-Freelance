@@ -1,11 +1,9 @@
-import { SGC_ROUTES } from '../navigation-routes'
-
 import { AppLayout } from '@/pages/_layouts'
 import { HomeScreen } from '@/pages/app/home'
+
 import { CadastroAlmoxarifado } from '../../pages/app/cadastros/almoxarifado/CadastroAlmoxarifado'
 import { ConsultaAlmoxarifado } from '../../pages/app/cadastros/almoxarifado/ConsultaAlmoxarifado'
-
-
+import { SGC_ROUTES } from '../navigation-routes'
 
 export const privateRoutes = {
   path: '/',
@@ -22,6 +20,6 @@ export const privateRoutes = {
     {
       path: SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO,
       element: <ConsultaAlmoxarifado />,
-    }
+    },
   ],
 }

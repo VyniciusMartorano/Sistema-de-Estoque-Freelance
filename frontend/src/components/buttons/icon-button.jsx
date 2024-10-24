@@ -1,6 +1,4 @@
-import { Button, ButtonProps } from 'primereact/button'
-
-
+import { Button } from 'primereact/button'
 
 export function IconButton({
   icon,

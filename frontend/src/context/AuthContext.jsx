@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import { toast } from 'sonner'
 
-import { coreApi } from '@/api/apibase'
+import { apiBase } from '@/api/apibase'
 import { AuthService } from '@/services/auth'
 import { Formaters } from '@/utils'
 
@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      coreApi.interceptors.response.use(
+      apiBase.interceptors.response.use(
         (response) => {
           return response
         },
@@ -40,19 +40,19 @@ export function AuthProvider({ children }) {
             return Promise.reject(error)
           }
 
-          if (error.config.url === CORE_URLS.REFRESH_TOKEN) {
+          if (error.config.url === '/refresh') {
             signOut()
 
             return Promise.reject(error)
           }
 
-          return coreApi
-            .post(CORE_URLS.REFRESH_TOKEN, {
+          return apiBase
+            .post('/refresh', {
               refresh: refreshToken,
             })
             .then((response) => {
               error.response.config.headers.Authorization = `Bearer ${response.data.access}`
-              coreApi.defaults.headers.Authorization = `Bearer ${response.data.access}`
+              apiBase.defaults.headers.Authorization = `Bearer ${response.data.access}`
 
               setCookie('auth.token', response.data.access, {
                 path: '/',
@@ -62,14 +62,14 @@ export function AuthProvider({ children }) {
                 path: '/',
               })
 
-              return coreApi(error.response.config)
+              return apiBase(error.response.config)
             })
             .catch(() => signOut())
         }
       )
 
       if (!user?.username) {
-        coreApi.defaults.headers.Authorization = `Bearer ${token}`
+        apiBase.defaults.headers.Authorization = `Bearer ${token}`
         setIsLoading(true)
         toast.promise(
           AuthService.getUserData(token)
@@ -120,7 +120,7 @@ export function AuthProvider({ children }) {
 
       const { access, refresh } = response
 
-      coreApi.defaults.headers.Authorization = `Bearer ${access}`
+      apiBase.defaults.headers.Authorization = `Bearer ${access}`
       const user = await AuthService.getUserData(access)
       if (user.username) {
         setUser(user)
@@ -142,7 +142,7 @@ export function AuthProvider({ children }) {
     removeCookie('auth.token', { path: '/' })
     removeCookie('auth.refreshToken', { path: '/' })
     setUser(undefined)
-    coreApi.defaults.headers.Authorization = ''
+    apiBase.defaults.headers.Authorization = ''
   }
 
   function validateUserPermission(permission) {

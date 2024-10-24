@@ -1,12 +1,4 @@
-import { HTMLProps } from 'react'
-
-interface ButtonToggleSidebarProps extends HTMLProps<HTMLButtonElement> {
-  handleOpenSidebar: () => void
-}
-
-export function ButtonToggleSidebar({
-  handleOpenSidebar,
-}: ButtonToggleSidebarProps) {
+export function ButtonToggleSidebar({ handleOpenSidebar }) {
   return (
     <div
       onClick={handleOpenSidebar}

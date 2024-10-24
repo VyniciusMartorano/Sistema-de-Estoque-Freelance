@@ -1,4 +1,4 @@
-function CircleIcon({ iconName }: { iconName: string }) {
+function CircleIcon({ iconName }) {
   return (
     <div className="p-4 ">
       <i className={`pi pi-${iconName} text-white`}></i>
