@@ -13,7 +13,7 @@ export function ButtonSGC({
     <Button
       ref={ref}
       size="small"
-      className={`flex h-8 gap-1 border-none p-1 hover:brightness-90 ${bgColor ? 'bg-' + bgColor : ''} ${className}`}
+      className={`flex h-3 gap-1 border-none p-1 hover:brightness-90 ${bgColor ? 'bg-' + bgColor : ''} ${className}`}
       label={label}
       icon={icon}
       {...rest}

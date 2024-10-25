@@ -5,9 +5,11 @@ import { toast } from 'sonner'
 
 import { apiBase } from '@/api/apibase'
 import { AuthService } from '@/services/auth'
-import { Formaters } from '@/utils'
+
+import Service from './service'
 
 export const AuthContext = createContext({})
+const service = new Service()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined)
@@ -86,26 +88,17 @@ export function AuthProvider({ children }) {
 
   async function signUp({ cpf, username, password }) {
     try {
-      const userRegistered = await AuthService.getUserRegistered(username)
+      const userRegistered = await service.getUserRegistered(username)
 
       if (userRegistered) {
-        await AuthService.changeUserPassword({
+        await service.changeUserPassword({
           username,
           cpf,
           password,
           userId: userRegistered.id,
         })
-
-        await signIn({ username, password })
       }
-
-      const registryByCpf = await AuthService.getRegistryByCpf(
-        Formaters.formatCPF(cpf)
-      )
-
-      if (registryByCpf === username) {
-        await signIn({ username, password })
-      }
+      await signIn({ username, password })
     } catch (error) {
       throw new AxiosError(error)
     }
@@ -113,7 +106,7 @@ export function AuthProvider({ children }) {
 
   async function signIn({ username, password }) {
     try {
-      const response = await AuthService.signIn({
+      const response = await service.signIn({
         username,
         password,
       })
@@ -121,7 +114,7 @@ export function AuthProvider({ children }) {
       const { access, refresh } = response
 
       apiBase.defaults.headers.Authorization = `Bearer ${access}`
-      const user = await AuthService.getUserData(access)
+      const user = await service.getUserData(access)
       if (user.username) {
         setUser(user)
       }

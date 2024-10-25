@@ -1,15 +1,13 @@
 import axios from 'axios'
 
-import { env } from '@/env'
-
 const basesUrl = {
-  core: env.VITE_CORE_URL,
+  core: import.meta.env.VITE_CORE_URL,
 }
 
 export class Api {
   constructor(baseURL, config) {
     this.axios = axios.create({
-      baseURL: basesUrl[baseURL],
+      baseURL,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
