@@ -1,27 +1,24 @@
 import sys, random, os, smtplib
-from email.message import  EmailMessage
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from rest_framework import viewsets
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny
 from rest_framework import status
-from datetime import datetime, timedelta
-from rest_framework_simplejwt.tokens import RefreshToken
 from . import serializers as s
 from . import models as m
 
 
 
 
-class UserViewSet(viewsets.ViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = m.User.objects.all()
     serializer_class = s.UserSerializer
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
 
+    def list(self, request):
+        print(request.user)
+        return Response(s.UserSerializer(request.user).data)
 
 
     @action(detail=False, methods=['post'])
@@ -41,33 +38,33 @@ class UserViewSet(viewsets.ViewSet):
     
 
 
-class ClienteViewSet(viewsets.ViewSet):
+class ClienteViewSet(viewsets.ModelViewSet):
     queryset = m.Cliente.objects.using('default').all()
     serializer_class = s.ClienteSerializer
 
 
-class ProdutoViewSet(viewsets.ViewSet):
+class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = m.Produto.objects.using('default').all()
     serializer_class = s.ProdutoSerializer
 
 
-class VendaViewSet(viewsets.ViewSet):
+class VendaViewSet(viewsets.ModelViewSet):
     queryset = m.Venda.objects.using('default').all()
     serializer_class = s.VendaSerializer
 
 
-class VendaItemViewSet(viewsets.ViewSet):
+class VendaItemViewSet(viewsets.ModelViewSet):
     queryset = m.VendaItem.objects.using('default').all()
     serializer_class = s.VendaItemSerializer
 
 
-class EstoqueExtratoViewSet(viewsets.ViewSet):
+class EstoqueExtratoViewSet(viewsets.ModelViewSet):
     queryset = m.EstoqueExtrato.objects.using('default').all()
     serializer_class = s.EstoqueExtratoSerializer
 
 
 
-class SaldoEstoqueViewSet(viewsets.ViewSet):
+class SaldoEstoqueViewSet(viewsets.ModelViewSet):
     queryset = m.SaldoEstoque.objects.using('default').all()
     serializer_class = s.SaldoEstoqueSerializer
 

@@ -1,8 +1,9 @@
 from . import views as v
 from rest_framework import routers
-
+from django.urls import path, include
 
 router = routers.DefaultRouter()
+
 router.register('user', v.UserViewSet)
 router.register('cliente', v.ClienteViewSet)
 router.register('produto', v.ProdutoViewSet)

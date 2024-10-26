@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.User
-        fields = '*'
+        fields = ('username', 'first_name', 'last_name', 'is_gerente', 'is_vendedor')
 
 
     def create(self, validated_data):
@@ -25,7 +25,7 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.Cliente
-        fields = '*'
+        fields = '__all__'
 
 
 
@@ -33,21 +33,21 @@ class ProdutoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.Produto
-        fields = '*'
+        fields = '__all__'
 
 
 class VendaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.Venda
-        fields = '*'
+        fields = '__all__'
 
 
 class VendaItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.VendaItem
-        fields = '*'
+        fields = '__all__'
 
 
 
@@ -55,7 +55,7 @@ class EstoqueExtratoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.EstoqueExtrato
-        fields = '*'
+        fields = '__all__'
 
 
 
@@ -63,7 +63,7 @@ class SaldoEstoqueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.SaldoEstoque
-        fields = '*'
+        fields = '__all__'
 
 
 

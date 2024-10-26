@@ -111,13 +111,11 @@ export function AuthProvider({ children }) {
         password,
       })
 
-      const { access, refresh } = response
+      const { access, refresh } = response.data
 
-      apiBase.defaults.headers.Authorization = `Bearer ${access}`
-      const user = await service.getUserData(access)
-      if (user.username) {
-        setUser(user)
-      }
+      console.log(apiBase)
+      apiBase.axios.defaults.headers.Authorization = `Bearer ${access}`
+      service.getUser(access).then(({ data }) => setUser(data))
 
       setCookie('auth.token', access, {
         path: '/',

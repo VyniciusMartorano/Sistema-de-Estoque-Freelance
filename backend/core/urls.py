@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('core/api/', include('api.urls')),
-    path('core/api/token/', TokenObtainPairView.as_view()),
-    path('core/api/token/refresh/', TokenRefreshView.as_view()),
-    path('core/api/token/verify/', TokenVerifyView.as_view())
+    path('core/token/', TokenObtainPairView.as_view()),
+    path('core/token/refresh/', TokenRefreshView.as_view()),
+    path('core/token/verify/', TokenVerifyView.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

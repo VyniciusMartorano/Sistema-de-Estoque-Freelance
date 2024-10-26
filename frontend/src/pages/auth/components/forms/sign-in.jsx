@@ -23,25 +23,8 @@ export function SignInForm() {
         loading: 'Validando acesso...',
         error: (e) => {
           console.log(e)
-          if (e.response) {
-            if (e.response.status === 401) {
-              // Lógica para o erro 401 Unauthorized
-              console.log(
-                'Erro 401: Não autorizado. Redirecionando para login...'
-              )
-              // Exemplo: redirecionar para a página de login
-              window.location.href = '/login'
-            } else {
-              // Lógica para outros status de erro
-              console.log(`Erro ${e.response.status}:`, e.response.data)
-            }
-          } else if (e.request) {
-            // O pedido foi feito, mas não houve resposta
-            console.log('Nenhuma resposta recebida:', e.request)
-          } else {
-            // Algum outro erro ocorreu ao configurar a requisição
-            console.log('Erro ao configurar a requisição:', e.message)
-          }
+          if (e.message.status === 401) return 'Usuario ou senha não coincidem'
+          else return 'Ocorreu um erro ao fazer login'
         },
         success: 'Usuário autenticado com sucesso!',
       }
