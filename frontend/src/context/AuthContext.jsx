@@ -12,6 +12,7 @@ const service = new Service()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined)
+  const [menus, setMenus] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
   const [cookies, setCookie, removeCookie] = useCookies([
@@ -108,7 +109,8 @@ export function AuthProvider({ children }) {
       const { access, refresh } = response.data
 
       apiBase.axios.defaults.headers.Authorization = `Bearer ${access}`
-      service.getUser(access).then(({ data }) => setUser(data))
+      await service.getUser(access).then(({ data }) => setUser(data))
+      await service.getMenus(access).then(({ data }) => setMenus(data))
 
       setCookie('auth.token', access, {
         path: '/',
@@ -147,6 +149,7 @@ export function AuthProvider({ children }) {
         isAuthenticated,
         isLoading,
         user,
+        menus,
       }}
     >
       {children}

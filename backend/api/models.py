@@ -2,6 +2,31 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import Permission
+
+
+
+class MenuItem(models.Model):
+    label = models.CharField(max_length=50)
+    icon = models.CharField(max_length=50, blank=True, null=True)
+    father = models.ForeignKey('MenuItem', on_delete=models.SET_NULL, null=True, blank=True)
+    permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
+    to_url = models.CharField(max_length=100, null=True, blank=True)
+    sistema = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['label']
+
+    def __str__(self):
+        if not self.father:
+            return self.label
+        return f'{self.father} > {self.label}'
+
+    def children(self):
+        return MenuItem.objects.filter(father=self)
+
+
+
 
 
 class User(AbstractUser):

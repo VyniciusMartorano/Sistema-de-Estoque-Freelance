@@ -20,12 +20,10 @@ export function AppLayout() {
 
   const isMale = true
 
-  const { isAuthenticated, user } = useContext(AuthContext)
+  const { isAuthenticated, user, menus } = useContext(AuthContext)
   const isLoading = false
-  const menus = user?.menus
 
   const { navigate } = useSGCNavigate()
-
   const userLogged = `${user?.first_name ?? ''} ${user?.last_name ?? ''}`
 
   if (!isAuthenticated) {

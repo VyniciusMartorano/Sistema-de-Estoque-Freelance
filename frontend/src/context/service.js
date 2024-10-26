@@ -5,6 +5,10 @@ class Service {
     return apiBase.axios.get(`/user/`)
   }
 
+  getMenus() {
+    return apiBase.axios.get(`/menuitem/`)
+  }
+
   getUserRegistered(username) {
     return apiBase.axios.get(`/get_user/${username}`)
   }

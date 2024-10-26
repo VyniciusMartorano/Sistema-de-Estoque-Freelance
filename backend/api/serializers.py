@@ -19,6 +19,16 @@ class UserSerializer(serializers.ModelSerializer):
         
         return user
 
+class MenuItemSerializer(serializers.Serializer):
+    label = serializers.CharField(max_length=50)
+    icon = serializers.CharField(max_length=50)
+    to = serializers.CharField(max_length=25, required=False)
+    father = serializers.IntegerField()
+    items = serializers.ListField(
+        child=serializers.DictField(),
+        required=False
+    )
+
 
 
 class ClienteSerializer(serializers.ModelSerializer):
