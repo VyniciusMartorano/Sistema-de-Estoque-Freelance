@@ -4,7 +4,6 @@ import { useCookies } from 'react-cookie'
 import { toast } from 'sonner'
 
 import { apiBase } from '@/api/apibase'
-import { AuthService } from '@/services/auth'
 
 import Service from './service'
 
@@ -26,10 +25,8 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      apiBase.interceptors.response.use(
-        (response) => {
-          return response
-        },
+      apiBase.axios.interceptors.response.use(
+        (response) => response,
         async (error) => {
           if (
             error.response?.status !== 401 ||
@@ -71,15 +68,12 @@ export function AuthProvider({ children }) {
       )
 
       if (!user?.username) {
-        apiBase.defaults.headers.Authorization = `Bearer ${token}`
+        apiBase.axios.defaults.headers.Authorization = `Bearer ${token}`
         setIsLoading(true)
         toast.promise(
-          AuthService.getUserData(token)
-            .then((user) => {
-              if (user.username) {
-                setUser(user)
-              }
-            })
+          service
+            .getUser(token)
+            .then(({ data }) => setUser(data))
             .finally(() => setIsLoading(false))
         )
       }
@@ -113,7 +107,6 @@ export function AuthProvider({ children }) {
 
       const { access, refresh } = response.data
 
-      console.log(apiBase)
       apiBase.axios.defaults.headers.Authorization = `Bearer ${access}`
       service.getUser(access).then(({ data }) => setUser(data))
 

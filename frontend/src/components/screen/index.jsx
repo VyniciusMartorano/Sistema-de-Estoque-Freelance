@@ -3,7 +3,6 @@ import './index.css'
 import { BreadCrumb } from 'primereact/breadcrumb'
 import { Link } from 'react-router-dom'
 
-
 export function Screen({ itens, children }) {
   const model = itens.map((item, index) => ({
     label: item.label,

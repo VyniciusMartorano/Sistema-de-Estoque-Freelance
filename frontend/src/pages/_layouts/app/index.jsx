@@ -6,7 +6,6 @@ import { Navigate, Outlet } from 'react-router-dom'
 import logo from '@/assets/logo.jpg'
 import { AuthContext } from '@/context/AuthContext'
 import { useSGCNavigate } from '@/useNavigate'
-// import { NavigationRoute } from '@/routes/navigation-routes'
 import { Helpers } from '@/utils/helpers'
 
 import {
@@ -27,7 +26,7 @@ export function AppLayout() {
 
   const { navigate } = useSGCNavigate()
 
-  const userLogged = `${user?.username ?? ''} - ${user?.first_name ?? ''} ${user?.last_name ?? ''}`
+  const userLogged = `${user?.first_name ?? ''} ${user?.last_name ?? ''}`
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />
@@ -44,7 +43,7 @@ export function AppLayout() {
   return (
     <div className="relative h-screen ">
       <div
-        className={`bg-sgc-blue-background-light fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
+        className={`fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 bg-sgc-blue-background-light pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
       >
         <ButtonToggleSidebar handleOpenSidebar={handleOpenSidebar} />
         <div className="flex flex-row">

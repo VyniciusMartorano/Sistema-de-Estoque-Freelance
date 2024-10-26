@@ -6,7 +6,7 @@ import defaultUserAvatarMale from '@/assets/default_user_male2.png'
 import { AuthContext } from '@/context/AuthContext'
 
 export function SGCAvatar({ isMale, userName }) {
-  const menu = useRef < TieredMenu > null
+  const menu = useRef(null)
 
   const { signOut } = useContext(AuthContext)
 
