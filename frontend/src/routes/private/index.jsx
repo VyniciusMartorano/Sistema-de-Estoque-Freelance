@@ -1,8 +1,7 @@
 import { AppLayout } from '@/pages/_layouts'
 import { HomeScreen } from '@/pages/app/home'
 
-import { CadastroAlmoxarifado } from '../../pages/app/cadastros/almoxarifado/CadastroAlmoxarifado'
-import { ConsultaAlmoxarifado } from '../../pages/app/cadastros/almoxarifado/ConsultaAlmoxarifado'
+import { ConsultaCliente } from '../../pages/app/cadastros/cliente/ConsultaCliente'
 import { SGC_ROUTES } from '../navigation-routes'
 
 export const privateRoutes = {
@@ -14,12 +13,12 @@ export const privateRoutes = {
       element: <HomeScreen />,
     },
     {
-      path: SGC_ROUTES.CADASTROS.ALMOXARIFADO,
-      element: <CadastroAlmoxarifado />,
+      path: SGC_ROUTES.CADASTROS.CLIENTE,
+      element: <ConsultaCliente />,
     },
-    {
-      path: SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO,
-      element: <ConsultaAlmoxarifado />,
-    },
+    // {
+    //   path: SGC_ROUTES.CADASTROS.CADASTRO_CLIENTE,
+    //   element: <CadastroCliente />,
+    // },
   ],
 }

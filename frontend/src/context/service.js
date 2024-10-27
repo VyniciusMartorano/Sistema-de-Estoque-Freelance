@@ -9,6 +9,10 @@ class Service {
     return apiBase.axios.get(`/menuitem/`)
   }
 
+  async getPermissions() {
+    return await apiBase.axios.get('permissions/')
+  }
+
   getUserRegistered(username) {
     return apiBase.axios.get(`/get_user/${username}`)
   }

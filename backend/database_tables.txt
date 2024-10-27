@@ -88,15 +88,13 @@ ALTER TABLE produtos
 ADD COLUMN preco_fixo_adm NUMERIC(10, 2);
 
 
-
 CREATE TABLE core_menuitem (
     id SERIAL PRIMARY KEY,
     label VARCHAR(50) NOT NULL,
     icon VARCHAR(50),
     to_url VARCHAR(100),
     father_id INTEGER,
-    permission_id INTEGER NOT NULL,
-    sistema INTEGER
+    permission_id INTEGER NOT NULL
 );
 
 -- Índices para melhorar a busca nos campos father_id e permission_id
@@ -111,7 +109,5 @@ ALTER TABLE core_menuitem
 ALTER TABLE core_menuitem
     ADD CONSTRAINT core_menuitem_permission_id_fk
     FOREIGN KEY (permission_id) REFERENCES auth_permission(id);
-
-
 
 ADM VAI COLOCAR TAXA EM PORCENTAGEM DE LUCRO EM CIMA DO PRODUTO CADASTRADO E REPASSAR O VALOR PARA O GESTOR QUE VAI COLOCAR SEU LUCRO EM CIMA E REPASSAR PRO VENDEDOR

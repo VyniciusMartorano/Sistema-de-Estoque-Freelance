@@ -8,7 +8,7 @@ export class AuthService {
     return response.data
   }
 
-  static async getUserPermissions(token) {
+  async getPermissions(token) {
     const permissions = (
       await apiBase.axios.get('permissions/', {
         headers: {
@@ -24,12 +24,10 @@ export class AuthService {
     return (await apiBase.axios.get('menuitem/')).data
   }
 
-  static async changeUserPassword({ cpf, username, password, userId }) {
+  static async changeUserPassword({ cpf, username, password }) {
     const payload = { cpf: Formaters.formatCPF(cpf), username, password }
 
-    await apiBase.axios.post('user/update_password/', payload).then(() => {
-      this.verifyUserSAJE(payload.username, String(userId))
-    })
+    await apiBase.axios.post('user/update_password/', payload)
   }
 
   static async signIn({ username, password }) {

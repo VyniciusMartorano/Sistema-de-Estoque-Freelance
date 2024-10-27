@@ -13,6 +13,7 @@ const service = new Service()
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined)
   const [menus, setMenus] = useState([])
+  const [permissions, setPermissions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
 
   const [cookies, setCookie, removeCookie] = useCookies([
@@ -46,8 +47,8 @@ export function AuthProvider({ children }) {
             return Promise.reject(error)
           }
 
-          return apiBase
-            .post('/refresh', {
+          return apiBase.axios
+            .post('/token/refresh', {
               refresh: refreshToken,
             })
             .then((response) => {
@@ -73,10 +74,12 @@ export function AuthProvider({ children }) {
         setIsLoading(true)
         toast.promise(
           service
-            .getUser(token)
+            .getUser()
             .then(({ data }) => setUser(data))
             .finally(() => setIsLoading(false))
         )
+        service.getMenus().then(({ data }) => setMenus(data))
+        service.getPermissions().then(({ data }) => setPermissions(data))
       }
     }
   }, [token])
@@ -131,12 +134,8 @@ export function AuthProvider({ children }) {
     apiBase.defaults.headers.Authorization = ''
   }
 
-  function validateUserPermission(permission) {
-    const userPermissions = user?.user_permissions
-    if (!userPermissions) {
-      return false
-    }
-    return userPermissions.includes(permission)
+  function userHavePermission(permission) {
+    return permissions.includes(permission)
   }
 
   return (
@@ -145,7 +144,7 @@ export function AuthProvider({ children }) {
         signIn,
         signOut,
         signUp,
-        validateUserPermission,
+        userHavePermission,
         isAuthenticated,
         isLoading,
         user,

@@ -12,10 +12,11 @@ class MenuItem(models.Model):
     father = models.ForeignKey('MenuItem', on_delete=models.SET_NULL, null=True, blank=True)
     permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
     to_url = models.CharField(max_length=100, null=True, blank=True)
-    sistema = models.IntegerField(null=True, blank=True)
 
     class Meta:
-        ordering = ['label']
+        db_table = 'core_menuitem'
+        managed = False
+        ordering = ['label'] 
 
     def __str__(self):
         if not self.father:

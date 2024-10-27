@@ -42,9 +42,9 @@ class MenuItemViewSet(viewsets.ViewSet):
     def list(self, request):
         all_permissions = [
             Permission.objects.get(content_type__app_label=perm_name.split('.')[0], codename=perm_name.split('.')[1])
-            for perm_name in request.user.get_all_permissions() if perm_name.startswith('core.modulo')]
-
-        sistema = request.query_params.get('sistema', None)
+            for perm_name in request.user.get_all_permissions() if perm_name.startswith('api.menu')
+        ]
+        print(request.user.get_all_permissions())
 
         menuitems = [
             {
@@ -54,12 +54,12 @@ class MenuItemViewSet(viewsets.ViewSet):
                 'to': item_1.to_url,
                 'father': None,
             }
-            for item_1 in m.MenuItem.objects.filter(father__isnull=True, sistema=sistema).order_by('label') if
+            for item_1 in m.MenuItem.objects.filter(father__isnull=True).order_by('label') if
             item_1.permission in all_permissions]
 
         for item_1 in menuitems:
             menuitem_1 = m.MenuItem.objects.get(pk=item_1['id'], father_id=item_1['father'])
-            filhos_01 = menuitem_1.children().filter(sistema=sistema)
+            filhos_01 = menuitem_1.children()
 
             if len(filhos_01):
                 item_1['items'] = [
@@ -74,7 +74,7 @@ class MenuItemViewSet(viewsets.ViewSet):
 
                 for item_2 in item_1['items']:
                     menuitem_2 = m.MenuItem.objects.get(pk=item_2['id'], father__id=item_2['father'])
-                    filhos_02 = menuitem_2.children().filter(sistema=sistema)
+                    filhos_02 = menuitem_2.children()
                     
                     if len(filhos_02):
                         item_2['items'] = [
