@@ -1,3 +1,4 @@
+import { Menubar } from 'primereact/menubar'
 import { PanelMenu } from 'primereact/panelmenu'
 import { Sidebar } from 'primereact/sidebar'
 import { useContext, useState } from 'react'
@@ -39,7 +40,7 @@ export function AppLayout() {
   }
 
   return (
-    <div className="relative h-screen ">
+    <div className="relative h-screen  ">
       <div
         className={`fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 bg-sgc-blue-background-light pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
       >
@@ -56,8 +57,10 @@ export function AppLayout() {
           <img alt="Logo Simas" className="w-52 animate-bounce" src={logo} />
         </div>
       )}
+      <Menubar id="menu-mobile" model={menus}></Menubar>
 
       <Sidebar
+        id="menu-desktop"
         visible
         dismissable={false}
         onHide={() => setVisible((prev) => !prev)}

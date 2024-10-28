@@ -1,7 +1,8 @@
 @layer tailwind-base, primereact, tailwind-utilities;
 
 /* IMPORTANT: In "styled" mode you must add the PrimeReact Theme here. Do NOT include in "unstyled" mode */
-@import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
+@import "primereact/resources/themes/lara-light-blue/theme.css"
+  layer(primereact);
 
 @layer tailwind-base {
   @tailwind base;
@@ -48,14 +49,20 @@ div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
 }
 
 .bg-auth-gradient-radial {
-  background: radial-gradient(circle, rgba(255, 250, 250, 1) 0%, rgba(120, 120, 120, 1) 100%);
+  background: radial-gradient(
+    circle,
+    rgba(255, 250, 250, 1) 0%,
+    rgba(120, 120, 120, 1) 100%
+  );
 }
 
-.p-panelmenu-header-content, .p-panelmenu .p-panelmenu-content {
+.p-panelmenu-header-content,
+.p-panelmenu .p-panelmenu-content {
   border: none !important;
 }
 
-.p-panelmenu-header-link, .p-menuitem-content .p-menuitem-link {
+.p-panelmenu-header-link,
+.p-menuitem-content .p-menuitem-link {
   padding: 0.5rem !important;
 }
 
@@ -63,7 +70,12 @@ div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
   padding-left: 2rem !important;
 }
 
-.removePadding .p-toggleable-content .p-panelmenu-content ul.p-panelmenu-root-list li.p-menuitem div.p-toggleable-content {
+.removePadding
+  .p-toggleable-content
+  .p-panelmenu-content
+  ul.p-panelmenu-root-list
+  li.p-menuitem
+  div.p-toggleable-content {
   padding-left: 1.5rem !important;
 }
 
@@ -71,13 +83,19 @@ div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
   font-size: 1.1rem !important;
 }
 
-.hideLabelItems .p-menuitem-text, .hideLabelItems .p-panelmenu-header-link .p-submenu-icon, .hideLabelItems .p-menuitem .p-menuitem-content .p-menuitem-link .p-submenu-icon {
+.hideLabelItems .p-menuitem-text,
+.hideLabelItems .p-panelmenu-header-link .p-submenu-icon,
+.hideLabelItems
+  .p-menuitem
+  .p-menuitem-content
+  .p-menuitem-link
+  .p-submenu-icon {
   display: none !important;
 }
 
-.hideLabelItems .p-menuitem-text, .hideLabelItems .p-panelmenu-header-link,
-.hideLabelItems .p-menuitem .p-menuitem-content .p-menuitem-link
-{
+.hideLabelItems .p-menuitem-text,
+.hideLabelItems .p-panelmenu-header-link,
+.hideLabelItems .p-menuitem .p-menuitem-content .p-menuitem-link {
   justify-content: center !important;
 }
 
@@ -85,4 +103,9 @@ div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
   margin: 0 !important;
   display: flex;
   gap: 1rem;
+}
+@media (max-width: 640px) {
+  #menu-desktop {
+    display: none;
+  }
 }

@@ -32,7 +32,11 @@ class UserViewSet(viewsets.ModelViewSet):
         user.save()
         return Response(data='', status=status.HTTP_200_OK)
 
-    
+
+class PermissionViewSet(viewsets.ViewSet):
+    def list(self, request):
+        return Response(request.user.get_all_permissions())
+
 
 
 class MenuItemViewSet(viewsets.ViewSet):

@@ -5,6 +5,7 @@ from django.urls import path, include
 router = routers.DefaultRouter()
 
 router.register('user', v.UserViewSet)
+router.register('permissions', v.PermissionViewSet, basename='permissions')
 router.register('menuitem', v.MenuItemViewSet)
 router.register('cliente', v.ClienteViewSet)
 router.register('produto', v.ProdutoViewSet)
