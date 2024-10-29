@@ -105,7 +105,10 @@ div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
   gap: 1rem;
 }
 @media (max-width: 640px) {
-  #menu-desktop {
+  .menu-desktop {
     display: none;
+  }
+  .menu-mobile {
+    display: block !important;
   }
 }
