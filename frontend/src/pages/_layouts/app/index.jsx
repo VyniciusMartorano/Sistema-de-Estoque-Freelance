@@ -121,6 +121,9 @@ export function AppLayout() {
           className="surface-0 shadow-2 rounded-none bg-sgc-blue-background-light p-3"
         />
       </div>
+      <div className="p-2">
+        <Outlet />
+      </div>
     </div>
   )
 }
