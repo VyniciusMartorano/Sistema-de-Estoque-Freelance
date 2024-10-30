@@ -49,9 +49,14 @@ export function AppLayout() {
 
   return (
     <div>
+      {isLoading && (
+        <div className="absolute z-[9999999] flex h-screen w-screen items-center justify-center bg-black bg-opacity-50 ">
+          <img alt="Logo Simas" className="w-52 animate-bounce" src={logo} />
+        </div>
+      )}
       <div className="menu-desktop relative  h-screen">
         <div
-          className={`fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 bg-sgc-blue-background-light pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
+          className={`menu-desktop fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 bg-sgc-blue-background-light pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
         >
           <ButtonToggleSidebar handleOpenSidebar={handleOpenSidebar} />
           <div className="menu-desktop flex flex-row">
@@ -60,12 +65,6 @@ export function AppLayout() {
             <SGCAvatar isMale={isMale} userName={userLogged} />
           </div>
         </div>
-
-        {isLoading && (
-          <div className="absolute z-[9999999] flex h-screen w-screen items-center justify-center bg-black bg-opacity-50 ">
-            <img alt="Logo Simas" className="w-52 animate-bounce" src={logo} />
-          </div>
-        )}
 
         <Sidebar
           visible
@@ -106,7 +105,7 @@ export function AppLayout() {
         </Sidebar>
 
         <div
-          className={`${visible ? 'pl-[296px]' : 'pl-[116px]'} p-4 pt-16 ${isLoading ? 'blur-xl' : ''}`}
+          className={`${visible ? 'pl-[296px]' : 'pl-[116px]'} p-4 pt-16 ${isLoading ? 'blur-xl' : ''} menu-desktop`}
         >
           <Outlet />
         </div>

@@ -41,8 +41,8 @@ export function ConsultaCliente() {
           { label: 'Clientes', link: SGC_ROUTES.CADASTROS.CLIENTE },
         ]}
       >
-        <div className="p-inputtext-sm my-6 flex">
-          <div className="mr-1 w-1/5">
+        <div className="p-inputtext-sm my-6 flex flex-grow-0 flex-wrap">
+          <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
             <Input
               value={filters.nome}
               onChange={(e) => handleFilterChange(e, 'nome')}
@@ -51,7 +51,7 @@ export function ConsultaCliente() {
               label="Nome"
             />
           </div>
-          <div className="mr-1 w-1/5">
+          <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
             <Select
               label="Gestor"
               className="mr-2 w-full"
@@ -66,7 +66,7 @@ export function ConsultaCliente() {
             />
           </div>
 
-          <div className="w-1/24">
+          <div className="md:w-1/24 w-full sm:mt-2 sm:w-full md:mt-2 lg:mt-0 lg:w-1/6 xl:w-1/6 2xl:w-1/6">
             <IconButton
               icon="pi pi-search sgc-blue-icons-primary"
               className="p-button p-button-primary w-full"

@@ -4,7 +4,7 @@ import React from 'react'
 const Select = React.forwardRef(
   ({ iconClassName, label, className, ...rest }, ref) => {
     return (
-      <div className={`p-field ${className}`}>
+      <div className={`p-field ${className} mt-2 sm:mt-0`}>
         <div className="p-inputgroup">
           {iconClassName && (
             <span className="p-inputgroup-addon">
