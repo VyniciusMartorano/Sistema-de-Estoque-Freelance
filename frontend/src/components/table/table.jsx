@@ -3,11 +3,9 @@ import { DataTable } from 'primereact/datatable'
 
 const ITEMS_PER_PAGE = 15
 
-
-
 const Empty = ({ emptyMsg }) => (
   <div className="text-center">
-    <span className="font-bold uppercase">
+    <span className="text-sm font-bold uppercase">
       {emptyMsg ?? 'Nenhum registro encontrado'}
     </span>
   </div>

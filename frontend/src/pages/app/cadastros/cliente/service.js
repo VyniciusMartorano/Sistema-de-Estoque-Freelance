@@ -1,8 +1,8 @@
 import { apiBase } from '@/api/apibase'
 
 class Service {
-  getUser() {
-    return apiBase.axios.get(`/user/`)
+  getGestores() {
+    return apiBase.axios.get(`/user/get_gestores/`)
   }
 }
 export default Service

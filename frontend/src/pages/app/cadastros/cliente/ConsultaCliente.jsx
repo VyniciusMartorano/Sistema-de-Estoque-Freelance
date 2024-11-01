@@ -1,6 +1,6 @@
 import { Button } from 'primereact/button'
 import { Divider } from 'primereact/divider'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { IoPencil } from 'react-icons/io5'
 
 import { IconButton } from '@/components/buttons'
@@ -9,16 +9,22 @@ import { Select } from '@/components/input'
 import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
-import { COLORS_TAG, Tag } from '@/components/tag/Tag'
 import { AlmoxarifadoContext } from '@/context/AlmoxarifadoContext'
 import { useSGCNavigate } from '@/useNavigate'
 
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
+import Service from './service'
 
 export function ConsultaCliente() {
   const { setAlmoxarifadoId } = useContext(AlmoxarifadoContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({ nome: '', gestor_id: null })
+  const [gestores, setGestores] = useState([])
+  const service = new Service()
+
+  useEffect(() => {
+    service.getGestores().then(({ data }) => setGestores(data))
+  }, [])
 
   const handleNavigateToEdit = (almoxarifadoId) => {
     setAlmoxarifadoId(almoxarifadoId)
@@ -57,16 +63,13 @@ export function ConsultaCliente() {
               className="mr-2 w-full"
               value={filters.gestor_id}
               onChange={(e) => handleFilterChange(e, 'gestor_id')}
-              options={[
-                { value: 1, label: 'Interno' },
-                { value: 2, label: 'Externo' },
-              ]}
-              optionLabel="label"
+              options={gestores}
+              optionLabel="first_name"
               optionValue="value"
             />
           </div>
 
-          <div className="md:w-1/24 w-full sm:mt-2 sm:w-full md:mt-2 lg:mt-0 lg:w-1/6 xl:w-1/6 2xl:w-1/6">
+          <div className="md:w-1/24 mt-2 w-full sm:mt-2 sm:w-full md:mt-2 lg:mt-0 lg:w-1/6 xl:w-1/6 2xl:w-1/6">
             <IconButton
               icon="pi pi-search sgc-blue-icons-primary"
               className="p-button p-button-primary w-full"
@@ -99,20 +102,14 @@ export function ConsultaCliente() {
           onRowToggle={(e) => console.log(e.data)}
           columns={[
             {
-              field: 'descricao',
-              header: 'Descrição',
+              field: 'nome',
+              header: 'Nome',
               className: '1/12 p-1',
             },
             {
-              field: 'tipo',
-              header: 'Tipo',
+              field: 'gestor_nome',
+              header: 'Gestor',
               className: 'w-2/12 p-1',
-              body: (data) => (
-                <Tag
-                  label={data.tipo === 1 ? 'Interno' : 'Externo'}
-                  color={data.tipo === 1 ? COLORS_TAG.GREEN : COLORS_TAG.BLUE}
-                />
-              ),
             },
             {
               field: '',

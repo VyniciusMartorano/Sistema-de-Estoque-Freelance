@@ -24,6 +24,9 @@ export function AuthProvider({ children }) {
   const token = cookies['auth.token']
   const refreshToken = cookies['auth.refreshToken']
   const isAuthenticated = !!token
+  if (token) {
+    apiBase.axios.defaults.headers.Authorization = `Bearer ${token}`
+  }
 
   useEffect(() => {
     if (token) {
@@ -131,7 +134,7 @@ export function AuthProvider({ children }) {
     removeCookie('auth.token', { path: '/' })
     removeCookie('auth.refreshToken', { path: '/' })
     setUser(undefined)
-    apiBase.defaults.headers.Authorization = ''
+    apiBase.axios.defaults.headers.Authorization = ''
   }
 
   function userHavePermission(permission) {

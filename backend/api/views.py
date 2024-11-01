@@ -14,8 +14,14 @@ class UserViewSet(viewsets.ModelViewSet):
     # permission_classes = [AllowAny]
 
     def list(self, request):
-        print(request.user)
         return Response(s.UserSerializer(request.user).data)
+    
+    @action(detail=False, methods=['GET'])
+    def get_gestores(self, *args, **kwargs):
+        qs = m.User.objects.filter(is_gerente=1)
+        serializer = s.UserSerializer(qs, many=True).data
+        return Response(data=serializer, status=status.HTTP_200_OK)
+
 
 
     @action(detail=False, methods=['post'])
