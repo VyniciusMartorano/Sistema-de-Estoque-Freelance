@@ -2,6 +2,7 @@ import { Button } from 'primereact/button'
 import { Divider } from 'primereact/divider'
 import { useContext, useEffect, useState } from 'react'
 import { IoPencil } from 'react-icons/io5'
+import { toast } from 'sonner'
 
 import { IconButton } from '@/components/buttons'
 import { DeletePopup } from '@/components/dialogs/delete-popup'
@@ -20,6 +21,7 @@ export function ConsultaCliente() {
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({ nome: '', gestor_id: null })
   const [gestores, setGestores] = useState([])
+  const [clientes, setClientes] = useState([])
   const service = new Service()
 
   useEffect(() => {
@@ -37,6 +39,14 @@ export function ConsultaCliente() {
       ...prevFilters,
       [field]: value,
     }))
+  }
+
+  const search = () => {
+    service.search(filters).then(
+      ({ data }) => setClientes(data),
+      (error) =>
+        toast.error(`Ocorreu um erro ao consultar os clientes. Erro: ${error}`)
+    )
   }
 
   return (
@@ -65,19 +75,19 @@ export function ConsultaCliente() {
               onChange={(e) => handleFilterChange(e, 'gestor_id')}
               options={gestores}
               optionLabel="first_name"
-              optionValue="value"
+              optionValue="id"
             />
           </div>
 
           <div className="md:w-1/24 mt-2 w-full sm:mt-2 sm:w-full md:mt-2 lg:mt-0 lg:w-1/6 xl:w-1/6 2xl:w-1/6">
             <IconButton
+              onClick={search}
               icon="pi pi-search sgc-blue-icons-primary"
               className="p-button p-button-primary w-full"
             />
           </div>
         </div>
 
-        {/* Botão "Novo" */}
         <div className="grid">
           <div className="col">
             <Button
@@ -95,11 +105,9 @@ export function ConsultaCliente() {
 
         <Divider className="my-2" />
 
-        {/* Tabela */}
         <Table
           paginator={true}
-          allowExpansion
-          onRowToggle={(e) => console.log(e.data)}
+          value={clientes}
           columns={[
             {
               field: 'nome',

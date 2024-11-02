@@ -5,7 +5,7 @@ from rest_framework import status
 from . import serializers as s
 from . import models as m
 from django.contrib.auth.models import Permission
-
+from . import filters as f 
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -106,6 +106,26 @@ class MenuItemViewSet(viewsets.ViewSet):
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = m.Cliente.objects.using('default').all()
     serializer_class = s.ClienteSerializer
+    filterset_class = f.ClienteFilter
+
+    @action(detail=False, methods=['post'])
+    def search(self, *args, **kwargs):
+        req = self.request.data
+        nome = req['nome'] if 'nome' in req else None
+        gestor_id = req['gestor_id'] if 'gestor_id' in req else None
+
+        queryset = m.Cliente.objects.all()
+
+        if nome:
+            queryset = queryset.filter(nome__istartswith=nome)
+        
+        if gestor_id:
+            queryset = queryset.filter(gestor_id=gestor_id)
+
+        serializer = s.ClienteSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+    
 
 
 class ProdutoViewSet(viewsets.ModelViewSet):

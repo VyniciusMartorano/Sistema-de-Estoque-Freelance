@@ -48,13 +48,7 @@ class Cliente(models.Model):
 
     def __str__(self):
         return self.nome
-    
-    def clean(self):
-        super().clean()
-        if not self.is_gerente and not self.is_vendedor:
-            raise ValidationError('Pelo menos um dos campos "is_gerente" ou "is_vendedor" deve ser preenchido.')
 
-    
 
     class Meta:
         managed = False
