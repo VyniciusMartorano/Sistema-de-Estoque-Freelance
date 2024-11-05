@@ -17,7 +17,7 @@ const InputMask = forwardRef(
     ref
   ) => {
     return (
-      <div className={`p-inputgroup pt-6 ${containerStyle}`}>
+      <div className={`p-inputgroup mt-5 ${containerStyle}`}>
         {iconClassName && (
           <span className="p-inputgroup-addon h-8">
             <i className={iconClassName}></i>

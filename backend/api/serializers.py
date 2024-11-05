@@ -35,7 +35,7 @@ class ClienteSerializer(serializers.ModelSerializer):
     gestor_nome = serializers.SerializerMethodField()
 
     def get_gestor_nome(self, obj: m.Cliente):
-        return obj.gestor.first_name
+        return obj.gestor.first_name if obj.gestor else ''
 
     class Meta:
         model = m.Cliente

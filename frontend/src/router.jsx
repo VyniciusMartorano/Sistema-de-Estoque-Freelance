@@ -2,8 +2,8 @@ import { CookiesProvider } from 'react-cookie'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Toaster } from 'sonner'
 
-import { AlmoxarifadoProvider } from './context/AlmoxarifadoContext'
 import { AuthProvider } from './context/AuthContext'
+import { ClienteProvider } from './context/ClienteContext'
 import { privateRoutes } from './routes/private'
 import { publicRoutes } from './routes/public'
 
@@ -15,9 +15,9 @@ export function App() {
       <Toaster position="top-right" richColors closeButton />
       <CookiesProvider defaultSetOptions={{ path: '/' }}>
         <AuthProvider>
-          <AlmoxarifadoProvider>
+          <ClienteProvider>
             <RouterProvider router={router}></RouterProvider>
-          </AlmoxarifadoProvider>
+          </ClienteProvider>
         </AuthProvider>
       </CookiesProvider>
     </>

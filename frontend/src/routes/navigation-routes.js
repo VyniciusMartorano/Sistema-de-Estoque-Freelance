@@ -8,7 +8,7 @@ const SGC_ROUTES = {
   },
   CADASTROS: {
     CLIENTE: '/cadastros/clientes',
-    CADASTRO_CLIENTE: '/cadastros/clientes',
+    CADASTRO_CLIENTE: '/cadastros/clientes/cadastro',
   },
 }
 export { SGC_ROUTES }

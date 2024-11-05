@@ -10,27 +10,28 @@ import { Select } from '@/components/input'
 import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
-import { AlmoxarifadoContext } from '@/context/AlmoxarifadoContext'
+import { ClienteContext } from '@/context/ClienteContext'
 import { useSGCNavigate } from '@/useNavigate'
 
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 import Service from './service'
 
 export function ConsultaCliente() {
-  const { setAlmoxarifadoId } = useContext(AlmoxarifadoContext)
+  const { setClienteId } = useContext(ClienteContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({ nome: '', gestor_id: null })
   const [gestores, setGestores] = useState([])
   const [clientes, setClientes] = useState([])
+  const [inPromise, setInPromise] = useState(false)
   const service = new Service()
 
   useEffect(() => {
     service.getGestores().then(({ data }) => setGestores(data))
   }, [])
 
-  const handleNavigateToEdit = (almoxarifadoId) => {
-    setAlmoxarifadoId(almoxarifadoId)
-    navigate(SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO)
+  const handleNavigateToEdit = (clienteId) => {
+    setClienteId(clienteId)
+    navigate(SGC_ROUTES.CADASTROS.CADASTRO_CLIENTE)
   }
 
   const handleFilterChange = (e, field) => {
@@ -42,11 +43,31 @@ export function ConsultaCliente() {
   }
 
   const search = () => {
-    service.search(filters).then(
-      ({ data }) => setClientes(data),
-      (error) =>
-        toast.error(`Ocorreu um erro ao consultar os clientes. Erro: ${error}`)
-    )
+    setInPromise(true)
+    service
+      .search(filters)
+      .then(
+        ({ data }) => setClientes(data),
+        (error) =>
+          toast.error(
+            `Ocorreu um erro ao consultar os clientes. Erro: ${error}`
+          )
+      )
+      .finally(() => setInPromise(false))
+  }
+  const deleteCliente = (clienteId) => {
+    setInPromise(true)
+    service
+      .deleteCliente(clienteId)
+      .then(
+        () => {
+          setClientes(clientes.filter((i) => i.id !== clienteId))
+          toast.success('O cliente foi deletado com sucesso!')
+        },
+        (error) =>
+          toast.error(`Ocorreu um erro ao deletar o cliente. Erro: ${error}`)
+      )
+      .finally(() => setInPromise(false))
   }
 
   return (
@@ -94,9 +115,7 @@ export function ConsultaCliente() {
               size="small"
               label="Novo"
               className="mb-4 flex items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1"
-              onClick={() =>
-                navigate(SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO)
-              }
+              onClick={() => navigate(SGC_ROUTES.CADASTROS.CADASTRO_CLIENTE)}
             >
               <i className="pi pi-plus"></i>
             </Button>
@@ -108,6 +127,7 @@ export function ConsultaCliente() {
         <Table
           paginator={true}
           value={clientes}
+          isLoading={inPromise}
           columns={[
             {
               field: 'nome',
@@ -132,8 +152,9 @@ export function ConsultaCliente() {
                     className="bg-sgc-blue-primary p-1"
                   />
                   <DeletePopup
-                    feedbackMessage="Deseja realmente apagar o almoxarifado"
-                    itemLabel={item.descricao}
+                    feedbackMessage="Deseja realmente apagar o cliente"
+                    itemLabel={item.nome}
+                    onAccept={() => deleteCliente(item.id)}
                   />
                 </div>
               ),

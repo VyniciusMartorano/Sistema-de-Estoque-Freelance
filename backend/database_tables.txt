@@ -10,7 +10,7 @@ CREATE TABLE Clientes (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     endereco VARCHAR(255),
-    telefone INTEGER,
+    telefone VARCHAR(20),
     email VARCHAR(255) UNIQUE,
     gestor_id INTEGER,
     FOREIGN KEY (gestor_id) REFERENCES auth_user(id) ON DELETE SET NULL
