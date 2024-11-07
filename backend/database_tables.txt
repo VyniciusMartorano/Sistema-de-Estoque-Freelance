@@ -22,10 +22,26 @@ CREATE TABLE Produtos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descricao TEXT,
-    valor_minimo_venda DECIMAL(10, 2) NOT NULL,
-    valor_maximo_venda DECIMAL(10, 2) NOT NULL,
-    foto BYTEA
+    preco_compra DECIMAL(10, 2),
+    foto varchar(255)
 );
+
+
+CREATE TABLE ProdutosPrecos (
+    id SERIAL PRIMARY KEY,
+    produto_id INTEGER NOT NULL,
+    adm_id INTEGER NOT NULL,
+    gestor_id INTEGER NOT NULL,
+    vendedor_id INTEGER NOT NULL,
+    percentual_adm DECIMAL(10, 2),
+    percentual_gestor DECIMAL(10, 2),
+    percentual_vendedor DECIMAL(10, 2),
+    FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE,
+    FOREIGN KEY (adm_id) REFERENCES auth_user(id) ON DELETE SET NULL,
+    FOREIGN KEY (gestor_id) REFERENCES auth_user(id) ON DELETE SET NULL,
+    FOREIGN KEY (vendedor_id) REFERENCES auth_user(id) ON DELETE SET NULL
+);
+
 
 -- Criação da tabela Vendas
 CREATE TABLE Vendas (
