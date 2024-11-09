@@ -59,11 +59,9 @@ class Cliente(models.Model):
 class Produto(models.Model):
     nome = models.CharField(max_length=255)
     descricao = models.TextField(blank=True, null=True)
-    valor_minimo_venda = models.DecimalField(max_digits=10, decimal_places=2)
-    valor_maximo_venda = models.DecimalField(max_digits=10, decimal_places=2)
+    descricao = models.TextField(blank=True, null=True)
+    preco_compra = models.FloatField(blank=True, null=True)
     foto = models.ImageField(upload_to='produtos/', blank=True, null=True)
-    trava_preco_adm = models.BooleanField(default=False)
-    preco_fixo_adm = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
