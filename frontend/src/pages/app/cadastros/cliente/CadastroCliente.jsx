@@ -16,7 +16,7 @@ import isEmpty from '../../../../utils/isEmpty'
 import Service from './service'
 
 export function CadastroCliente() {
-  const { clienteId, setClienteId } = useContext(ClienteContext)
+  const { clienteId } = useContext(ClienteContext)
   // const msgFieldNotFilled = 'Não preenchido!'
   // const [isSubmitted, setIsSubmitted] = useState(false)
   const { navigate } = useSGCNavigate()
@@ -32,10 +32,6 @@ export function CadastroCliente() {
   const [gestores, setGestores] = useState([])
   const [inPromiseSave, setInPromiseSave] = useState(false)
 
-  useEffect(() => {
-    service.getGestores().then(({ data }) => setGestores(data))
-  }, [])
-
   const handleFieldChange = (e, field) => {
     const value = e.target ? e.target.value : e.value
     setCliente((prevFilters) => ({
@@ -45,6 +41,8 @@ export function CadastroCliente() {
   }
 
   useEffect(() => {
+    service.getGestores().then(({ data }) => setGestores(data))
+
     if (!clienteId) return
 
     service.getClienteById(clienteId).then(
@@ -84,7 +82,6 @@ export function CadastroCliente() {
     <div>
       <Screen
         itens={[
-          { label: 'Cadastros', link: '/' },
           { label: 'Clientes', link: SGC_ROUTES.CADASTROS.ALMOXARIFADO },
           {
             label: 'Cadastro',
@@ -147,19 +144,18 @@ export function CadastroCliente() {
 
           <div className="mt-5 flex w-full flex-row justify-start gap-2">
             <ButtonSGC
-              label="Cancelar"
-              bgColor="sgc-red-primary"
+              label="Voltar"
+              bgColor="sgc-blue-primary"
+              icon="pi pi-arrow-left"
               type="button"
               className="h-7"
-              onClick={() => {
-                setClienteId(null)
-                navigate(SGC_ROUTES.CADASTROS.CLIENTE)
-              }}
+              onClick={() => navigate(SGC_ROUTES.CADASTROS.CLIENTE)}
             />
             <ButtonSGC
               disabled={inPromiseSave}
               label="Salvar"
               className="h-7"
+              icon="pi pi-check"
               onClick={saveOrUpdate}
               bgColor="sgc-green-primary"
               type="submit"

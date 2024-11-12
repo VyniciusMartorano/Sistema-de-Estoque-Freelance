@@ -6,6 +6,7 @@ from . import serializers as s
 from . import models as m
 from django.contrib.auth.models import Permission
 from . import filters as f 
+from django.db.models import Q
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -131,6 +132,47 @@ class ClienteViewSet(viewsets.ModelViewSet):
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = m.Produto.objects.using('default').all()
     serializer_class = s.ProdutoSerializer
+
+
+    @action(detail=False, methods=['get'])
+    def search(self, *args, **kwargs):
+        query = self.request.GET.get("query", "")
+
+        queryset = m.Produto.objects.filter(
+            Q(nome__icontains=query) |
+            Q(descricao__icontains=query) 
+        )
+
+        serializer = s.ProdutoDTOSerializer(queryset, many=True)
+        return Response(serializer.data)
+    
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        qs_venda = m.VendaItem.objects.filter(
+            produto_id=instance.pk
+        )
+        qs_estoque = m.SaldoEstoque.objects.filter(
+            produto_id=instance.pk
+        )
+        qs_estoque_mov = m.EstoqueExtrato.objects.filter(
+            produto_id=instance.pk
+        )
+        
+        if (qs_estoque.count() + qs_estoque_mov.count() + qs_venda.count()) > 0:
+            return Response(
+                data='Não é possivel apagar um produto que ja tem [vendas, estoque] registrados(as).',
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        self.perform_destroy(instance)
+        
+        return Response(
+            {"detail": "Produto deletado com sucesso."},
+            status=status.HTTP_204_NO_CONTENT
+        )
+
 
 
 class VendaViewSet(viewsets.ModelViewSet):

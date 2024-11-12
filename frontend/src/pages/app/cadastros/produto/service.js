@@ -1,12 +1,8 @@
 import { apiBase } from '@/api/apibase'
 
 class Service {
-  getGestores() {
-    return apiBase.axios.get(`/user/get_gestores/`)
-  }
-
-  search(payload) {
-    return apiBase.axios.post(`/cliente/search/`, { ...payload })
+  search(query) {
+    return apiBase.axios.get(`/produto/search/?query=${query}`)
   }
 
   saveOrUpdate(payload) {
@@ -17,12 +13,12 @@ class Service {
     )
   }
 
-  deleteCliente(clienteId) {
-    return apiBase.axios.delete(`/cliente/${clienteId}/`)
+  deleteProduto(produtoId) {
+    return apiBase.axios.delete(`/produto/${produtoId}/`)
   }
 
-  getClienteById(clienteId) {
-    return apiBase.axios.get(`/cliente/${clienteId}/`)
+  getProdutoById(produtoId) {
+    return apiBase.axios.get(`/produto/${produtoId}/`)
   }
 }
 export default Service

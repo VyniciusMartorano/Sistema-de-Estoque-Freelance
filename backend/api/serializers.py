@@ -49,6 +49,12 @@ class ProdutoSerializer(serializers.ModelSerializer):
         model = m.Produto
         fields = '__all__'
 
+class ProdutoDTOSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.Produto
+        fields = ('id', 'nome', 'foto')
+
 
 class VendaSerializer(serializers.ModelSerializer):
 

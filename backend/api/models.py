@@ -55,13 +55,17 @@ class Cliente(models.Model):
         db_table = 'clientes'
 
 
+def upload_pessoa_image(instance, filename):
+    qs = Produto.objects.order_by('-id').first()
+    last_id = qs.pk if qs else 1
+    return f'produtos/{last_id}-{instance.nome}-{filename}'
+
 
 class Produto(models.Model):
     nome = models.CharField(max_length=255)
     descricao = models.TextField(blank=True, null=True)
-    descricao = models.TextField(blank=True, null=True)
     preco_compra = models.FloatField(blank=True, null=True)
-    foto = models.ImageField(upload_to='produtos/', blank=True, null=True)
+    foto = models.ImageField( blank=True, null=True, upload_to=upload_pessoa_image)
 
     class Meta:
         managed = False
