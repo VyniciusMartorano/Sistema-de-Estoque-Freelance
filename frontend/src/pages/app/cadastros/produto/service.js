@@ -5,9 +5,9 @@ class Service {
     return apiBase.axios.get(`/produto/search/?query=${query}`)
   }
 
-  saveOrUpdate(payload) {
-    return apiBase.axios[payload.id ? 'put' : 'post'](
-      `/produto/${payload.id ? payload.id + '/' : ''}`,
+  saveOrUpdate(payload, produtoId) {
+    return apiBase.axios[produtoId ? 'put' : 'post'](
+      `/produto/${produtoId ? produtoId + '/' : ''}`,
       payload,
       { headers: { 'Content-Type': `multipart/form-data` } }
     )

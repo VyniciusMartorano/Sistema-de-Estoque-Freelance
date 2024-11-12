@@ -23,6 +23,7 @@ export function ConsultaProduto() {
   const service = new Service()
 
   useEffect(() => {
+    search()
     setProdutoId(null)
   }, [])
 
@@ -51,7 +52,7 @@ export function ConsultaProduto() {
       .then(
         () => {
           setProdutos(produtos.filter((i) => i.id !== produtoId))
-          toast.success('O cliente foi deletado com sucesso!')
+          toast.success('O produto foi deletado com sucesso!')
         },
         (error) => {
           if (error.response && error.response.status === 400) {
