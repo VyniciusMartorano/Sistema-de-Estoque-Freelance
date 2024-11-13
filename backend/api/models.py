@@ -31,6 +31,7 @@ class MenuItem(models.Model):
 
 
 class User(AbstractUser):
+    is_adm = models.BooleanField(default=False)
     is_vendedor = models.BooleanField(default=False)
     is_gerente = models.BooleanField(default=False)
 
@@ -129,6 +130,25 @@ class SaldoEstoque(models.Model):
     class Meta:
         managed = False
         db_table = 'saldoestoque'
+
+
+
+class ProdutosPrecosUsuarios(models.Model):
+
+    USER_CHOICES = [
+        (1, 'administrador'),
+        (2, 'gestor'),
+        (3, 'vendedor'),
+    ]
+        
+    produto = models.ForeignKey('Produto', on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    tipo_user = models.IntegerField(choices=USER_CHOICES)
+    percentual = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    class Meta:
+        managed = False
+        db_table = 'produtosprecosusuarios'
 
 
 

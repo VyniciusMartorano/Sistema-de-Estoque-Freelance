@@ -44,10 +44,33 @@ class ClienteSerializer(serializers.ModelSerializer):
 
 
 class ProdutoSerializer(serializers.ModelSerializer):
+    percentual = serializers.SerializerMethodField()
+
+
+    def get_percentual(self, obj: m.Produto):
+        tp_user = None
+        user = self.context.get('request').user
+
+        if user.is_adm:
+            tp_user = 1
+        elif user.is_gerente:
+            tp_user = 2
+        elif user.is_vendedor:
+            tp_user = 3
+
+        qs = m.ProdutosPrecosUsuarios.objects.filter(
+            tipo_user=tp_user,
+            user_id=user.pk,
+            produto_id=obj.pk
+        )
+
+        return qs.first().percentual if qs.exists() else None
 
     class Meta:
         model = m.Produto
         fields = '__all__'
+
+
 
 class ProdutoDTOSerializer(serializers.ModelSerializer):
 
@@ -83,6 +106,13 @@ class SaldoEstoqueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.SaldoEstoque
+        fields = '__all__'
+
+
+class ProdutosPrecosUsuariosSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.ProdutosPrecosUsuarios
         fields = '__all__'
 
 

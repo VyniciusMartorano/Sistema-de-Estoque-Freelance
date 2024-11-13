@@ -4,7 +4,8 @@ ADD COLUMN is_vendedor BOOLEAN DEFAULT FALSE;
 ALTER TABLE auth_user
 ADD COLUMN is_gerente BOOLEAN DEFAULT FALSE;
 
-
+ALTER TABLE auth_user
+ADD COLUMN is_adm BOOLEAN DEFAULT FALSE;
 
 CREATE TABLE Clientes (
     id SERIAL PRIMARY KEY,
@@ -26,20 +27,15 @@ CREATE TABLE Produtos (
     foto varchar(255)
 );
 
-
-CREATE TABLE ProdutosPrecos (
+user_tipo (1 - adm, 2 - gestor, 3 - vendedor)
+CREATE TABLE ProdutosPrecosUsuarios (
     id SERIAL PRIMARY KEY,
     produto_id INTEGER NOT NULL,
-    adm_id INTEGER NOT NULL,
-    gestor_id INTEGER NOT NULL,
-    vendedor_id INTEGER NOT NULL,
-    percentual_adm DECIMAL(10, 2),
-    percentual_gestor DECIMAL(10, 2),
-    percentual_vendedor DECIMAL(10, 2),
+    user_id INTEGER NOT NULL,
+    tipo_user INTEGER NOT NULL,
+    percentual DECIMAL(10, 2),
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE SET NULL,
     FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE,
-    FOREIGN KEY (adm_id) REFERENCES auth_user(id) ON DELETE SET NULL,
-    FOREIGN KEY (gestor_id) REFERENCES auth_user(id) ON DELETE SET NULL,
-    FOREIGN KEY (vendedor_id) REFERENCES auth_user(id) ON DELETE SET NULL
 );
 
 

@@ -8,6 +8,7 @@ import { Screen } from '@/components/screen'
 import { ProdutoContext } from '@/context/ProdutoContext'
 import { useSGCNavigate } from '@/useNavigate'
 
+import { InputNum } from '../../../../components/input/input-number'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 import Service from './service'
 
@@ -18,8 +19,9 @@ export function CadastroProduto() {
     id: null,
     nome: '',
     descricao: '',
-    preco_compra: '',
+    preco_compra: null,
     foto: null,
+    percentual: null,
   })
 
   const service = new Service()
@@ -74,6 +76,7 @@ export function CadastroProduto() {
     } else if (produto.foto) {
       formData.append('foto', produto.foto)
     }
+    formData.append('percentual', produto.percentual)
 
     setInPromiseSave(true)
     service
@@ -167,13 +170,24 @@ export function CadastroProduto() {
               />
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
-              <Input
+              <InputNum
                 value={produto.preco_compra}
                 onChange={(e) => handleFieldChange(e, 'preco_compra')}
-                type="number"
                 className="w-full"
+                maxFractionDigits={2}
                 label="Preço de Compra"
-                step="0.01"
+                min={0}
+              />
+            </div>
+            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+              <InputNum
+                value={produto.percentual}
+                onChange={(e) => handleFieldChange(e, 'percentual')}
+                className="w-full"
+                locale="de-DE"
+                maxFractionDigits={2}
+                label="Percentual de lucro"
+                min={0}
               />
             </div>
             <div className="p-inputtext-sm my-6 flex flex-grow-0 ">

@@ -147,6 +147,38 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
 
+    def update(self, request, *args, **kwargs):
+        # Recupera o objeto do produto a ser atualizado
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        user = request.user
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+    
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        print(user)
+
+        serializer = self.get_serializer(data=request.data)
+        
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_create(serializer)
+
+
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
 
@@ -194,6 +226,12 @@ class EstoqueExtratoViewSet(viewsets.ModelViewSet):
 class SaldoEstoqueViewSet(viewsets.ModelViewSet):
     queryset = m.SaldoEstoque.objects.using('default').all()
     serializer_class = s.SaldoEstoqueSerializer
+
+
+
+class ProdutosPrecosUsuariosViewSet(viewsets.ModelViewSet):
+    queryset = m.ProdutosPrecosUsuarios.objects.using('default').all()
+    serializer_class = s.ProdutosPrecosUsuariosSerializer
 
 
 
