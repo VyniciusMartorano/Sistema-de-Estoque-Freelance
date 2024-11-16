@@ -1,4 +1,4 @@
-import logomarca from '@/assets/logo.jpg'
+import logomarca from '@/assets/logo.png'
 
 export function HeaderSidebar() {
   return (

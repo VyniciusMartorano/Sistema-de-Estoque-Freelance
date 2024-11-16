@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const basesUrl = {
+export const basesUrl = {
   core: import.meta.env.VITE_CORE_URL,
 }
 

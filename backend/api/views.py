@@ -148,7 +148,6 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     
 
     def update(self, request, *args, **kwargs):
-        # Recupera o objeto do produto a ser atualizado
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 

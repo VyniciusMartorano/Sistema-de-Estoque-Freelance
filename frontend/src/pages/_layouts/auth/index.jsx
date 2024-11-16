@@ -2,7 +2,7 @@ import { Card } from 'primereact/card'
 import { useContext } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
-import logomarca from '@/assets/logo.jpg'
+import logomarca from '@/assets/logo.png'
 import { AuthContext } from '@/context/AuthContext'
 
 export function AuthLayout() {

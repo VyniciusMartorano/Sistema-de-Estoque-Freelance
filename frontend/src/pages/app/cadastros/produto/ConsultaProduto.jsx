@@ -1,4 +1,5 @@
 import { Button } from 'primereact/button'
+import { Image } from 'primereact/image'
 import { useContext, useEffect, useState } from 'react'
 import { IoPencil } from 'react-icons/io5'
 import { toast } from 'sonner'
@@ -11,6 +12,7 @@ import { Table } from '@/components/table'
 import { ProdutoContext } from '@/context/ProdutoContext'
 import { useSGCNavigate } from '@/useNavigate'
 
+import { basesUrl } from '../../../../api/apiBase'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 import Service from './service'
 
@@ -79,7 +81,8 @@ export function ConsultaProduto() {
       </div>
     </div>
   )
-
+  const icon = <i className="pi pi-eye"></i>
+  const url = new URL(basesUrl.core)
   return (
     <div>
       <Screen
@@ -89,7 +92,7 @@ export function ConsultaProduto() {
           <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
             <Input
               value={filter}
-              onChange={(e) => setFilter(e.target.vaeu)}
+              onChange={(e) => setFilter(e.target.value)}
               type="text"
               className="w-full"
               label="Buscar"
@@ -111,6 +114,21 @@ export function ConsultaProduto() {
           value={produtos}
           isLoading={inPromise}
           columns={[
+            {
+              field: 'foto',
+              header: 'Foto',
+              className: '1/12 p-1',
+              body: (item) => (
+                <Image
+                  src={item.foto ? `${url.origin}/` + item.foto : ''}
+                  indicatorIcon={icon}
+                  width="30px"
+                  height="30px"
+                  preview
+                  alt="Imagem do Produto"
+                />
+              ),
+            },
             {
               field: 'nome',
               header: 'Nome',

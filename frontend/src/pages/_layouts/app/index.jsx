@@ -6,7 +6,7 @@ import { Sidebar } from 'primereact/sidebar'
 import { useContext, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 
-import logo from '@/assets/logo.jpg'
+import logo from '@/assets/logo.png'
 import { AuthContext } from '@/context/AuthContext'
 import { useSGCNavigate } from '@/useNavigate'
 import { Helpers } from '@/utils/helpers'

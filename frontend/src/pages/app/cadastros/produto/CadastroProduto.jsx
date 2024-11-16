@@ -19,9 +19,9 @@ export function CadastroProduto() {
     id: null,
     nome: '',
     descricao: '',
-    preco_compra: null,
+    preco_compra: 0,
     foto: null,
-    percentual: null,
+    percentual: 0,
   })
 
   const service = new Service()
@@ -176,6 +176,7 @@ export function CadastroProduto() {
                 className="w-full"
                 maxFractionDigits={2}
                 label="Preço de Compra"
+                prefix="R$ "
                 min={0}
               />
             </div>
@@ -185,8 +186,22 @@ export function CadastroProduto() {
                 onChange={(e) => handleFieldChange(e, 'percentual')}
                 className="w-full"
                 locale="de-DE"
+                suffix="%"
                 maxFractionDigits={2}
                 label="Percentual de lucro"
+                min={0}
+              />
+            </div>
+            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+              <InputNum
+                value={
+                  produto.preco_compra +
+                  produto.preco_compra * (produto.percentual / 100)
+                }
+                disabled={true}
+                className="w-full"
+                maxFractionDigits={2}
+                label="Valor com acresimo"
                 min={0}
               />
             </div>

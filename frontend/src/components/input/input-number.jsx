@@ -16,7 +16,7 @@ const InputNum = React.forwardRef(
   ) => {
     return (
       <div
-        className={`p-inputgroup text-xs ${containerStyle ?? ''} mt-5 sm:mt-0`}
+        className={`p-inputgroup text-xs ${containerStyle ?? ''} mt-6 sm:mt-0`}
       >
         {iconClassName && (
           <span className="p-inputgroup-addon h-8">
