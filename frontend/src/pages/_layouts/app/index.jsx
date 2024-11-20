@@ -51,7 +51,7 @@ export function AppLayout() {
     <div>
       {isLoading && (
         <div className="absolute z-[9999999] flex h-screen w-screen items-center justify-center bg-black bg-opacity-50 ">
-          <img alt="Logo Simas" className="w-52 animate-bounce" src={logo} />
+          <img alt="Logo" className="w-52 animate-bounce" src={logo} />
         </div>
       )}
       <div className="menu-desktop relative  h-screen">

@@ -45,26 +45,50 @@ class ClienteSerializer(serializers.ModelSerializer):
 
 class ProdutoSerializer(serializers.ModelSerializer):
     percentual = serializers.SerializerMethodField()
+    preco_compra = serializers.SerializerMethodField()
 
 
     def get_percentual(self, obj: m.Produto):
-        tp_user = None
         user = self.context.get('request').user
-
-        if user.is_adm:
-            tp_user = 1
-        elif user.is_gerente:
-            tp_user = 2
-        elif user.is_vendedor:
-            tp_user = 3
+   
 
         qs = m.ProdutosPrecosUsuarios.objects.filter(
-            tipo_user=tp_user,
             user_id=user.pk,
             produto_id=obj.pk
         )
 
         return qs.first().percentual if qs.exists() else None
+    
+
+    def get_preco_compra(self, obj: m.Produto):
+        qs = m.CustosProdutos.objects.filter(produto_id=obj.pk).order_by('-dataent', '-id').first()
+        custo = 0 if not qs else qs.preco_unitario
+        user = self.context.get('request').user
+        if user.is_adm: ...
+        elif user.is_gerente:
+            qs = m.ProdutosPrecosUsuarios.objects.filter(
+                produto_id=obj.pk,user_id=m.User.objects.get(is_adm=1).pk
+            ).first()
+
+            custo = custo + (custo * (qs.percentual / 100)) if qs else custo
+            
+        elif user.is_vendedor:
+            preco_adm = m.ProdutosPrecosUsuarios.objects.filter(
+                produto_id=obj.pk,user_id=m.User.objects.get(is_adm=1).pk
+            ).first()
+
+            custo = custo + (custo * (preco_adm.percentual / 100)) if preco_adm else custo
+
+            gestor_id = m.GestoresVendedores.objects.filter(vendedor_id=user.pk).first().pk
+            
+            preco_gestor = m.ProdutosPrecosUsuarios.objects.filter(
+                produto_id=obj.pk,user_id=gestor_id
+            ).first()
+            custo = custo + (custo * (preco_gestor.percentual / 100)) if preco_gestor else custo
+
+
+
+        return custo
 
     class Meta:
         model = m.Produto
@@ -102,11 +126,6 @@ class EstoqueExtratoSerializer(serializers.ModelSerializer):
 
 
 
-class SaldoEstoqueSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = m.SaldoEstoque
-        fields = '__all__'
 
 
 class ProdutosPrecosUsuariosSerializer(serializers.ModelSerializer):

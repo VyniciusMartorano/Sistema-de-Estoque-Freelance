@@ -1,21 +1,7 @@
-# SGC SIMAS - FRONTEND
 
 ## URL's para produção
 
 ### Interno (http)
-VITE_CORE_URL='http://192.168.1.7:8000/api'
-VITE_QUALIDADE_URL='http://192.168.1.7:8000/api/qualidade'
-VITE_RELATORIOS_URL='http://192.168.1.7:8000/api/relatorios'
-VITE_SAJE_URL='http://192.168.1.7:8000/saje-backend'
-VITE_COLABORADOR_URL='http://192.168.1.2/api/pessoal/'
-VITE_FATURAMENTO_URL='http://localhost:3000/api/faturamento/'
-
-### Externo (https)
-VITE_CORE_URL='https://sgi.cherrypop.com.br/api'
-VITE_QUALIDADE_URL='https://sgi.cherrypop.com.br/api/qualidade'
-VITE_RELATORIOS_URL='https://sgi.cherrypop.com.br/api/relatorios'
-VITE_SAJE_URL='https://sgi.cherrypop.com.br/saje-backend'
-VITE_COLABORADOR_URL='https://sgc.cherrypop.com.br:8443/api/pessoal/'
 VITE_FATURAMENTO_URL='http://localhost:3000/api/faturamento/'
 
 

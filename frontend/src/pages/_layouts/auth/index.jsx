@@ -23,12 +23,8 @@ export function AuthLayout() {
         <Card
           className="border-1 w-[80%] rounded-lg bg-white p-0 shadow-xl lg:w-3/6 xl:w-2/6"
           header={
-            <div className="bg-sgc-blue-background-light rounded-t-lg p-4">
-              <img
-                src={logomarca}
-                className="m-auto block w-36"
-                alt="Logo Simas Industrial"
-              />
+            <div className="rounded-t-lg bg-sgc-blue-background-light p-4">
+              <img src={logomarca} className="m-auto block w-36" alt="Logo" />
             </div>
           }
         >

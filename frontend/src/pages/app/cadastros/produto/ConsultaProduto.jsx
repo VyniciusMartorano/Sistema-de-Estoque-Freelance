@@ -122,8 +122,8 @@ export function ConsultaProduto() {
                 <Image
                   src={item.foto ? `${url.origin}/` + item.foto : ''}
                   indicatorIcon={icon}
-                  width="30px"
-                  height="30px"
+                  width="50px"
+                  height="50px"
                   preview
                   alt="Imagem do Produto"
                 />

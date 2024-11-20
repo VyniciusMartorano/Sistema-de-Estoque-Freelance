@@ -40,6 +40,23 @@ class User(AbstractUser):
         db_table = 'auth_user'
 
 
+class GestoresVendedores(models.Model):
+    vendedor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='gestores'
+    )
+    gestor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='vendedores'
+    )
+
+    class Meta:
+        db_table = 'gestoresvendedores'
+        unique_together = ('vendedor', 'gestor')
+
+
 class Cliente(models.Model):
     nome = models.CharField(max_length=255)
     endereco = models.CharField(max_length=255, blank=True, null=True)
@@ -65,7 +82,6 @@ def upload_pessoa_image(instance, filename):
 class Produto(models.Model):
     nome = models.CharField(max_length=255)
     descricao = models.TextField(blank=True, null=True)
-    preco_compra = models.FloatField(blank=True, null=True)
     foto = models.ImageField( blank=True, null=True, upload_to=upload_pessoa_image)
 
     class Meta:
@@ -73,10 +89,21 @@ class Produto(models.Model):
         db_table = 'produtos'
 
 
+class CustosProdutos(models.Model):
+    produto = models.ForeignKey(Produto,on_delete=models.CASCADE)
+    preco_unitario = models.DecimalField(max_digits=10,decimal_places=2)
+    quantidade = models.FloatField()
+    dataent = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'CustosProdutos'
+
 class Venda(models.Model):
     data_venda = models.DateTimeField(auto_now_add=True)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 
     class Meta:
@@ -114,6 +141,7 @@ class EstoqueExtrato(models.Model):
 
     data = models.DateTimeField(auto_now_add=True)
     produto = models.ForeignKey('Produto', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     tipomov = models.IntegerField(choices=TIPO_MOV_CHOICES)
     iddoc = models.IntegerField()
 
@@ -122,33 +150,41 @@ class EstoqueExtrato(models.Model):
         db_table = 'estoqueextrato'
 
 
-class SaldoEstoque(models.Model):
-    produto = models.ForeignKey('Produto', on_delete=models.CASCADE)
-    gestor = models.ForeignKey(User, on_delete=models.CASCADE)
-    saldo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    class Meta:
-        managed = False
-        db_table = 'saldoestoque'
-
 
 
 class ProdutosPrecosUsuarios(models.Model):
-
-    USER_CHOICES = [
-        (1, 'administrador'),
-        (2, 'gestor'),
-        (3, 'vendedor'),
-    ]
-        
     produto = models.ForeignKey('Produto', on_delete=models.PROTECT)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    tipo_user = models.IntegerField(choices=USER_CHOICES)
     percentual = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     class Meta:
         managed = False
         db_table = 'produtosprecosusuarios'
+
+
+
+class CustosProdutos(models.Model):
+    produto = models.ForeignKey(
+        Produto,  
+        on_delete=models.CASCADE,
+        db_column='produto_id',
+        related_name='custos'
+    )
+    preco_unitario = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    quantidade = models.DecimalField(
+        max_digits=10,
+        decimal_places=3
+    )
+    dataent = models.DateField(db_column='dataent')
+
+    
+    class Meta:
+        managed = False
+        db_table = 'custosprodutos'
+
 
 
 

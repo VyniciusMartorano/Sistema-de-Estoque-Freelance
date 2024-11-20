@@ -145,6 +145,7 @@ export function CadastroProduto() {
                   src={renderImageSrc()}
                   indicatorIcon={icon}
                   preview
+                  className="mt-4 max-h-[100px] max-w-[100px]"
                   alt="Imagem do Produto"
                 />
               </div>
@@ -171,6 +172,7 @@ export function CadastroProduto() {
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <InputNum
+                disabled={true}
                 value={produto.preco_compra}
                 onChange={(e) => handleFieldChange(e, 'preco_compra')}
                 className="w-full"

@@ -164,7 +164,6 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        print(user)
 
         serializer = self.get_serializer(data=request.data)
         
@@ -220,11 +219,6 @@ class EstoqueExtratoViewSet(viewsets.ModelViewSet):
     queryset = m.EstoqueExtrato.objects.using('default').all()
     serializer_class = s.EstoqueExtratoSerializer
 
-
-
-class SaldoEstoqueViewSet(viewsets.ModelViewSet):
-    queryset = m.SaldoEstoque.objects.using('default').all()
-    serializer_class = s.SaldoEstoqueSerializer
 
 
 

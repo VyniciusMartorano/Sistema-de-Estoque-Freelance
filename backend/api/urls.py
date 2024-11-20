@@ -12,7 +12,6 @@ router.register('produto', v.ProdutoViewSet)
 router.register('venda', v.VendaViewSet)
 router.register('vendaitems', v.VendaItemViewSet)
 router.register('estoqueextrato', v.EstoqueExtratoViewSet)
-router.register('saldoestoque', v.SaldoEstoqueViewSet)
 router.register('produtosprecousuarios', v.ProdutosPrecosUsuariosViewSet)
 
 

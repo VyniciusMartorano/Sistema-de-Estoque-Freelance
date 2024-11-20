@@ -7,6 +7,13 @@ ADD COLUMN is_gerente BOOLEAN DEFAULT FALSE;
 ALTER TABLE auth_user
 ADD COLUMN is_adm BOOLEAN DEFAULT FALSE;
 
+CREATE TABLE GestoresVendedores (
+    vendedor_id INTEGER NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    gestor_id INTEGER NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    PRIMARY KEY (vendedor_id, gestor_id)
+);
+
+
 CREATE TABLE Clientes (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
@@ -23,16 +30,14 @@ CREATE TABLE Produtos (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     descricao TEXT,
-    preco_compra DECIMAL(10, 2),
     foto varchar(255)
 );
 
-user_tipo (1 - adm, 2 - gestor, 3 - vendedor)
+
 CREATE TABLE ProdutosPrecosUsuarios (
     id SERIAL PRIMARY KEY,
     produto_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    tipo_user INTEGER NOT NULL,
     percentual DECIMAL(10, 2),
     FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE SET NULL,
     FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE,
@@ -44,10 +49,12 @@ CREATE TABLE Vendas (
     id SERIAL PRIMARY KEY,
     data_venda TIMESTAMP NOT NULL DEFAULT NOW(),
     cliente_id INTEGER NOT NULL,
+    user_id INTEGER,
     CONSTRAINT fk_cliente
         FOREIGN KEY (cliente_id) 
         REFERENCES clientes(id) 
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE SET NULL
 );
 
 -- Criação da tabela VendasItens
@@ -67,37 +74,57 @@ CREATE TABLE VendasItens (
         ON DELETE CASCADE
 );
 
+CREATE TABLE CI (
+    id SERIAL PRIMARY KEY,
+    data_venda TIMESTAMP NOT NULL DEFAULT NOW(),
+    cliente_id INTEGER NOT NULL,
+    user_id INTEGER,
+    CONSTRAINT fk_cliente
+        FOREIGN KEY (cliente_id) 
+        REFERENCES clientes(id) 
+        ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE SET NULL
+);
+
+-- Criação da tabela VendasItens
+CREATE TABLE CI_ITENS (
+    id SERIAL PRIMARY KEY,
+    ci_id INTEGER NOT NULL,
+    produto_id INTEGER NOT NULL,
+    quantidade INTEGER NOT NULL,
+    preco_unitario DECIMAL(10, 2) NOT NULL,
+    CONSTRAINT fk_produto
+        FOREIGN KEY (produto_id)
+        REFERENCES Produtos(id)
+        ON DELETE CASCADE
+);
 
 
+
+
+
+CREATE TABLE CustosProdutos (
+    id SERIAL PRIMARY KEY,
+    produto_id INTEGER NOT NULL REFERENCES produtos(id) ON DELETE CASCADE,
+    preco_unitario DECIMAL(10, 2) NOT NULL,
+    quantidade NUMERIC(10, 3) NOT NULL,
+    dataent DATE NOT NULL
+);
 
 
 CREATE TABLE EstoqueExtrato (
     id SERIAL PRIMARY KEY,
     data TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    produto_id INT NOT NULL,
-    tipo INT CHECK (tipo IN (1, 2)),  -- 1 = Entrada, 2 = Saída
-    tipomov INT CHECK (tipomov IN (1, 2)),  -- 1 = CI, 2 = VENDA
-    iddoc INT NOT NULL,
+    produto_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    tipo INTEGER CHECK (tipo IN (1, 2)),  -- 1 = Entrada, 2 = Saída
+    tipomov INTEGER CHECK (tipomov IN (1, 2)),  -- 1 = CI, 2 = VENDA
+    iddoc INTEGER NOT NULL,
     FOREIGN KEY (produto_id) REFERENCES Produtos(id)
 );
 
-CREATE TABLE SaldoEstoque (
-    id SERIAL PRIMARY KEY,
-    produto_id INT NOT NULL,
-    gestor_id INT NOT NULL,
-    saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
-    FOREIGN KEY (produto_id) REFERENCES Produtos(id),
-    FOREIGN KEY (gestor_id) REFERENCES auth_user(id)
-);
 
 
--- Adiciona a coluna trava_preco_adm
-ALTER TABLE produtos
-ADD COLUMN trava_preco_adm BOOLEAN DEFAULT FALSE;
-
--- Adiciona a coluna preco_fixo_adm
-ALTER TABLE produtos
-ADD COLUMN preco_fixo_adm NUMERIC(10, 2);
 
 
 CREATE TABLE core_menuitem (
