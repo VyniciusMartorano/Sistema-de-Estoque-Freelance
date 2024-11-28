@@ -6,7 +6,6 @@ import { ButtonSGC } from '@/components/buttons'
 import { Select } from '@/components/input'
 import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
-// import { SpanError } from '@/components/span-error'
 import { ClienteContext } from '@/context/ClienteContext'
 import { SGC_ROUTES } from '@/routes/navigation-routes'
 import { useSGCNavigate } from '@/useNavigate'
@@ -17,8 +16,6 @@ import Service from './service'
 
 export function CadastroCliente() {
   const { clienteId } = useContext(ClienteContext)
-  // const msgFieldNotFilled = 'Não preenchido!'
-  // const [isSubmitted, setIsSubmitted] = useState(false)
   const { navigate } = useSGCNavigate()
 
   const [cliente, setCliente] = useState({

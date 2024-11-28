@@ -74,32 +74,21 @@ CREATE TABLE VendasItens (
         ON DELETE CASCADE
 );
 
-CREATE TABLE CI (
+CREATE TABLE ci (
     id SERIAL PRIMARY KEY,
-    data_venda TIMESTAMP NOT NULL DEFAULT NOW(),
-    cliente_id INTEGER NOT NULL,
-    user_id INTEGER,
-    CONSTRAINT fk_cliente
-        FOREIGN KEY (cliente_id) 
-        REFERENCES clientes(id) 
-        ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES auth_user(id) ON DELETE SET NULL
-);
-
--- Criação da tabela VendasItens
-CREATE TABLE CI_ITENS (
-    id SERIAL PRIMARY KEY,
-    ci_id INTEGER NOT NULL,
-    produto_id INTEGER NOT NULL,
-    quantidade INTEGER NOT NULL,
-    preco_unitario DECIMAL(10, 2) NOT NULL,
-    CONSTRAINT fk_produto
-        FOREIGN KEY (produto_id)
-        REFERENCES Produtos(id)
-        ON DELETE CASCADE
+    data DATE NOT NULL,
+    tipo INTEGER NOT NULL CHECK (tipo IN (1, 2)),
+    observacao VARCHAR(255)
 );
 
 
+CREATE TABLE ci_itens (
+    id SERIAL PRIMARY KEY,
+    ci_id INTEGER NOT NULL REFERENCES ci(id),
+    produto_id INTEGER NOT NULL REFERENCES produtos(id) ,
+    quantidade FLOAT NOT NULL,
+    preco_unitario DECIMAL(10, 2)
+);
 
 
 
@@ -120,6 +109,7 @@ CREATE TABLE EstoqueExtrato (
     tipo INTEGER CHECK (tipo IN (1, 2)),  -- 1 = Entrada, 2 = Saída
     tipomov INTEGER CHECK (tipomov IN (1, 2)),  -- 1 = CI, 2 = VENDA
     iddoc INTEGER NOT NULL,
+    quantidade NUMERIC(10, 3) NOT NULL,
     FOREIGN KEY (produto_id) REFERENCES Produtos(id)
 );
 

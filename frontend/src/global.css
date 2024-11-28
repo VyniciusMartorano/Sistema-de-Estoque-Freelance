@@ -13,6 +13,12 @@
   @tailwind utilities;
 }
 
+h2 {
+  font-size: 1.5em;
+  font-weight: 700;
+  padding: 0.2rem;
+}
+
 div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
   height: 2rem !important;
 }

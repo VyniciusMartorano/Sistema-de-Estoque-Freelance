@@ -11,11 +11,11 @@ export const DateFormats = {
   DATE_TIME_ISO: 'YYYY-MM-DDTHH:mm:sssZ',
 }
 export class Formaters {
-  static formatCPF(cpf) {
+  formatCPF(cpf) {
     return cpf.replace(/\D/g, '')
   }
 
-  static formatDate(date, format = DateFormats.DATE) {
+  formatDate(date, format = DateFormats.DATE) {
     if (!date) return ''
     if (format === DateFormats.DATE_TIME_ISO) {
       return moment(date).toISOString()

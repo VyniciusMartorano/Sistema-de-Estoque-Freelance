@@ -13,6 +13,8 @@ router.register('venda', v.VendaViewSet)
 router.register('vendaitems', v.VendaItemViewSet)
 router.register('estoqueextrato', v.EstoqueExtratoViewSet)
 router.register('produtosprecousuarios', v.ProdutosPrecosUsuariosViewSet)
+router.register('ci', v.CIViewSet)
+router.register('ci_itens', v.CIITEMViewSet)
 
 
 urlpatterns = router.urls

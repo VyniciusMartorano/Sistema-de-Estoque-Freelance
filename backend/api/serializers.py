@@ -46,6 +46,16 @@ class ClienteSerializer(serializers.ModelSerializer):
 class ProdutoSerializer(serializers.ModelSerializer):
     percentual = serializers.SerializerMethodField()
     preco_compra = serializers.SerializerMethodField()
+    label = serializers.SerializerMethodField()
+    saldo_disponivel = serializers.SerializerMethodField()
+
+
+    def get_label(self, obj: m.Produto):
+        return f'{obj.pk} - {obj.nome}'
+
+    def get_saldo_disponivel(self, obj: m.Produto):                                                                     
+        return m.EstoqueExtrato.functions.get_saldo_produto(obj.pk)
+    
 
 
     def get_percentual(self, obj: m.Produto):
@@ -132,6 +142,26 @@ class ProdutosPrecosUsuariosSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = m.ProdutosPrecosUsuarios
+        fields = '__all__'
+
+
+class CISerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = m.CI
+        fields = '__all__'
+
+
+class CIITEMSerializer(serializers.ModelSerializer):
+    label_produto = serializers.SerializerMethodField()
+
+
+    def get_label_produto(self, obj: m.Produto):
+        return obj.nome
+    
+
+    class Meta:
+        model = m.CI_ITEM
         fields = '__all__'
 
 

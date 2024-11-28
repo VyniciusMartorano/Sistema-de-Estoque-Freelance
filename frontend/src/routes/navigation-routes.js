@@ -6,6 +6,10 @@ const SGC_ROUTES = {
     LOGIN: '/login',
     SIGNUP: '/cadastro',
   },
+  ESTOQUE: {
+    CI: '/estoque/ci',
+    CADASTRO_CI: '/estoque/ci/cadastro',
+  },
   CADASTROS: {
     CLIENTE: '/clientes',
     CADASTRO_CLIENTE: '/clientes/cadastro',

@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import Permission
+from django.db.models import Sum, Q
 
 
 
@@ -122,11 +123,24 @@ class VendaItem(models.Model):
         managed = False
         db_table = 'vendasitens'
 
+class EstoqueExtratoFunctions:
 
+    def get_saldo_produto(self, produto_id):
+        entradas = EstoqueExtrato.objects.filter(
+            produto_id=produto_id, 
+            tipo=EstoqueExtrato.ENTRADA
+        ).aggregate(total=Sum('quantidade'))['total'] or 0
+
+        saidas = EstoqueExtrato.objects.filter(
+            produto_id=produto_id, 
+            tipo=EstoqueExtrato.SAIDA
+        ).aggregate(total=Sum('quantidade'))['total'] or 0
+
+        return entradas - saidas
 
 class EstoqueExtrato(models.Model):
-    ENTRADA = 'entrada'
-    SAIDA = 'saida'
+    ENTRADA = 1
+    SAIDA = 2
     TIPO_CHOICES = [
         (ENTRADA, 'Entrada'),
         (SAIDA, 'Saída'),
@@ -142,8 +156,16 @@ class EstoqueExtrato(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     produto = models.ForeignKey('Produto', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
+    quantidade = models.FloatField()
+    
+    tipo = models.IntegerField(choices=TIPO_CHOICES)
     tipomov = models.IntegerField(choices=TIPO_MOV_CHOICES)
     iddoc = models.IntegerField()
+
+    functions = EstoqueExtratoFunctions()
+
+
+
 
     class Meta:
         managed = False
@@ -188,3 +210,32 @@ class CustosProdutos(models.Model):
 
 
 
+class CI(models.Model):
+    ENTRADA = 1
+    SAIDA = 2
+    TIPO_CHOICES = [
+        (ENTRADA, 'CI'),
+        (SAIDA, 'Venda'),
+    ]
+    data = models.DateField(null=False, blank=False)
+    tipo = models.IntegerField(choices=TIPO_CHOICES)
+    observacao = models.CharField(
+        null=True, blank=True
+    )
+
+
+    class Meta:
+        managed = False
+        db_table = 'ci'
+
+1
+class CI_ITEM(models.Model):
+    ci = models.ForeignKey(CI, on_delete=models.PROTECT)
+    produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
+    quantidade = models.FloatField(null=False, blank=False)
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=False)
+
+
+    class Meta:
+        managed = False
+        db_table = 'ci_itens'
