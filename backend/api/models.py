@@ -185,29 +185,6 @@ class ProdutosPrecosUsuarios(models.Model):
 
 
 
-class CustosProdutos(models.Model):
-    produto = models.ForeignKey(
-        Produto,  
-        on_delete=models.CASCADE,
-        db_column='produto_id',
-        related_name='custos'
-    )
-    preco_unitario = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-    quantidade = models.DecimalField(
-        max_digits=10,
-        decimal_places=3
-    )
-    dataent = models.DateField(db_column='dataent')
-
-    
-    class Meta:
-        managed = False
-        db_table = 'custosprodutos'
-
-
 
 
 class CI(models.Model):
@@ -239,3 +216,32 @@ class CI_ITEM(models.Model):
     class Meta:
         managed = False
         db_table = 'ci_itens'
+
+
+class CustosProdutos(models.Model):
+    ci = models.ForeignKey(
+        CI,  
+        db_column='ci_id',
+        on_delete=models.CASCADE,
+        related_name='ci'
+    )
+    produto = models.ForeignKey(
+        Produto,  
+        on_delete=models.CASCADE,
+        db_column='produto_id',
+        related_name='custos'
+    )
+    preco_unitario = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    quantidade = models.DecimalField(
+        max_digits=10,
+        decimal_places=3
+    )
+    dataent = models.DateField(db_column='dataent')
+
+    
+    class Meta:
+        managed = False
+        db_table = 'custosprodutos'

@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 from . import models as m
-
+from rest_framework_bulk import BulkSerializerMixin, BulkListSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -152,17 +152,50 @@ class CISerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CIITEMSerializer(serializers.ModelSerializer):
-    label_produto = serializers.SerializerMethodField()
+class CIITEMSerializer(BulkSerializerMixin,serializers.ModelSerializer):
+    produto_label = serializers.SerializerMethodField()
 
 
-    def get_label_produto(self, obj: m.Produto):
-        return obj.nome
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        ci = validated_data['ci']
+        produto = validated_data['produto']
+        preco_unitario = validated_data['preco_unitario']
+        quantidade = validated_data['quantidade']
+
+        if ci.tipo == m.CI.ENTRADA:
+            custos_produto = m.CustosProdutos(
+                produto=produto,
+                preco_unitario=preco_unitario,
+                quantidade=quantidade,
+                dataent=ci.data,
+                ci_id=ci.pk
+            )
+            custos_produto.save() 
+
+
+        extrato = m.EstoqueExtrato(
+            data=ci.data,
+            produto=produto,
+            user_id=user.pk,
+            quantidade=quantidade,
+            tipo=ci.tipo,
+            tipomov=m.EstoqueExtrato.CI,
+            iddoc=ci.pk
+        )
+        extrato.save()
+      
+        instance = super().create(validated_data)
+        return instance
+
+    def get_produto_label(self, obj: m.CI_ITEM):
+        return obj.produto.nome
     
 
     class Meta:
         model = m.CI_ITEM
         fields = '__all__'
+        list_serializer_class = BulkListSerializer
 
 
 

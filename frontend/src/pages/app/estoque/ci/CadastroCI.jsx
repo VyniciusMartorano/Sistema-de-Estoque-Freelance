@@ -2,11 +2,12 @@ import { useContext, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { ButtonSGC } from '@/components/buttons'
+import { DeletePopup } from '@/components/dialogs/delete-popup'
 import { Select } from '@/components/input'
 import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
-import { ProdutoContext } from '@/context/ProdutoContext'
+import { EstoqueContext } from '@/context/EstoqueContext'
 import { useSGCNavigate } from '@/useNavigate'
 
 import { InputCalendar } from '../../../../components/input/calendar'
@@ -18,7 +19,7 @@ import Service from './service'
 
 export function CadastroCI() {
   const { navigate } = useSGCNavigate()
-  const { ciId } = useContext(ProdutoContext)
+  const { ciId } = useContext(EstoqueContext)
   const [itens, setItens] = useState([])
   const [produtos, setProdutos] = useState([])
   const formatador = new Formaters()
@@ -54,6 +55,7 @@ export function CadastroCI() {
       .getCiById(ciId)
       .then(
         async ({ data }) => {
+          data.data = new Date(data.data + ' 00:00:00')
           setCI(data)
           getItensByCI(data.id)
         },
@@ -62,7 +64,7 @@ export function CadastroCI() {
         }
       )
       .finally(() => setInPromise(false))
-  }, [ciId])
+  }, [])
 
   useEffect(() => {
     getProdutos()
@@ -92,6 +94,14 @@ export function CadastroCI() {
   }
 
   const handleFieldChange = (e, field) => {
+    if (field === 'tipo') {
+      setItem({
+        produto: null,
+        quantidade: 0,
+        preco_unitario: 0,
+        saldo_disponivel: 0,
+      })
+    }
     const value = e.target ? e.target.value : e.value
     setCI((prevProduto) => ({
       ...prevProduto,
@@ -100,9 +110,21 @@ export function CadastroCI() {
   }
   const handleFieldItemChange = (e, field) => {
     const value = e.target ? e.target.value : e.value
+    let produto = null
+
+    if (field === 'produto') {
+      produto = produtos.find((i) => i.id === value)
+    }
+
     setItem((prevProduto) => ({
       ...prevProduto,
       [field]: value,
+      saldo_disponivel: produto
+        ? produto.saldo_disponivel
+        : prevProduto.saldo_disponivel,
+      preco_unitario: produto
+        ? produto.preco_unitario
+        : prevProduto.preco_unitario,
     }))
   }
 
@@ -123,6 +145,7 @@ export function CadastroCI() {
         async ({ data }) => {
           setItens(data)
           toast.success('A CI foi salva com sucesso!')
+          navigate(SGC_ROUTES.ESTOQUE.CI)
         },
         () => toast.error('Ocorreu um erro ao salvar a CI.')
       )
@@ -141,7 +164,7 @@ export function CadastroCI() {
     }
     service.saveOrUpdate(payload).then(
       async (resp) => {
-        setCI({ ...resp.data, data: new Date(resp.data.data) })
+        setCI({ ...resp.data, data: new Date(resp.data.data + ' 00:00:00') })
         saveOrUpdateItens(resp.data.id)
       },
       () => {
@@ -150,10 +173,21 @@ export function CadastroCI() {
       }
     )
   }
+  const removeItem = (produtoId) => {
+    setItens(itens.filter((i) => i.produto !== produtoId))
+  }
+
   const addItem = () => {
     const exceptions = CI.tipo === tipoEnum.SAIDA ? ['preco_unitario'] : []
     if (isEmpty(item, exceptions)) {
       toast.warning('Preencha os campos corretamente para adicionar o item.')
+      return
+    }
+    const produtoInList = itens.filter((i) => i.produto === item.produto)
+    if (produtoInList.length > 0) {
+      toast.warning(
+        'O produto ja foi registrado na CI, remova da listagem e lance novamente!'
+      )
       return
     }
 
@@ -178,7 +212,9 @@ export function CadastroCI() {
     getProdutos()
   }
 
-  const headerTable = (
+  const headerTable = ciId ? (
+    <div></div>
+  ) : (
     <div className="grid">
       <Select
         label="Produto"
@@ -256,7 +292,6 @@ export function CadastroCI() {
               <InputCalendar
                 disabled={true}
                 value={CI.data}
-                onChange={(e) => handleFieldChange(e, 'data')}
                 className="w-full"
                 label="Data"
               />
@@ -278,6 +313,7 @@ export function CadastroCI() {
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <Input
+                disabled={ciId}
                 value={CI.observacao}
                 onChange={(e) => handleFieldChange(e, 'observacao')}
                 type="text"
@@ -302,12 +338,29 @@ export function CadastroCI() {
                 {
                   field: 'quantidade',
                   header: 'Quantidade',
-                  className: 'w-4/12 p-1',
+                  className: 'w-4/12 p-1 text-right',
                 },
                 {
                   field: 'preco_unitario',
                   header: 'P. Unit',
-                  className: 'w-4/12 p-1',
+                  className: 'w-4/12 p-1 text-right',
+                },
+                {
+                  field: '',
+                  header: '',
+                  body: (item) =>
+                    ciId ? (
+                      <div></div>
+                    ) : (
+                      <div className="flex h-6 justify-end gap-1 text-white">
+                        <DeletePopup
+                          feedbackMessage="Deseja realmente apagar o item?"
+                          itemLabel={''}
+                          onAccept={() => removeItem(item.produto)}
+                        />
+                      </div>
+                    ),
+                  className: '',
                 },
               ]}
             ></Table>
@@ -328,6 +381,23 @@ export function CadastroCI() {
                   header: 'Quantidade',
                   className: 'w-4/12 p-1',
                 },
+                {
+                  field: '',
+                  header: '',
+                  body: (item) =>
+                    ciId ? (
+                      <div></div>
+                    ) : (
+                      <div className="flex h-6 justify-end gap-1 text-white">
+                        <DeletePopup
+                          feedbackMessage="Deseja realmente apagar o item?"
+                          itemLabel={''}
+                          onAccept={() => removeItem(item.produto)}
+                        />
+                      </div>
+                    ),
+                  className: '',
+                },
               ]}
             ></Table>
           )}
@@ -343,17 +413,19 @@ export function CadastroCI() {
                 onClick={() => navigate(SGC_ROUTES.ESTOQUE.CI)}
               />
             </div>
-            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
-              <ButtonSGC
-                disabled={inPromiseSave}
-                label="Salvar"
-                icon="pi pi-check"
-                className="h-8 w-full"
-                onClick={saveOrUpdate}
-                bgColor="sgc-green-primary"
-                type="submit"
-              />
-            </div>
+            {!ciId && (
+              <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
+                <ButtonSGC
+                  disabled={inPromiseSave}
+                  label="Salvar"
+                  icon="pi pi-check"
+                  className="h-8 w-full"
+                  onClick={saveOrUpdate}
+                  bgColor="sgc-green-primary"
+                  type="submit"
+                />
+              </div>
+            )}
           </div>
         </div>
       </Screen>

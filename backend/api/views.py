@@ -8,6 +8,7 @@ from django.contrib.auth.models import Permission
 from . import filters as f 
 from django.db.models import Q
 from rest_framework.exceptions import ValidationError
+from rest_framework_bulk import BulkModelViewSet
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -254,45 +255,17 @@ class CIViewSet(viewsets.ModelViewSet):
         if observacao:
             queryset = queryset.filter(observacao__icontains=observacao)
 
-        serializer = s.ClienteSerializer(queryset.order_by('-id'), many=True)
+        serializer = s.CISerializer(queryset.order_by('-id'), many=True)
 
         return Response(serializer.data)
     
 
 
-class CIITEMViewSet(viewsets.ModelViewSet):
+class CIITEMViewSet(BulkModelViewSet):
     queryset = m.CI_ITEM.objects.all()
     serializer_class = s.CIITEMSerializer
 
-    def create(self, request, *args, **kwargs):
-        print(request.data)
-        if isinstance(request.data, list):  
-            print('aaaa')
-            response_data = []
-            for item in request.data:
-                if 'id' in item and item['id']: 
-                    try:
-                        instance = m.CI_ITEM.objects.get(id=item['id'])
-                        serializer = self.get_serializer(instance, data=item, partial=True)
-                        serializer.is_valid(raise_exception=True)
-                        serializer.save()
-                        response_data.append(serializer.data)
-                    except m.CI_ITEM.DoesNotExist:
-                        raise ValidationError({"detail": f"Item com ID {item['id']} não encontrado."})
-                else:
-                    serializer = self.get_serializer(data=item)
-                    print(serializer)
-                    serializer.is_valid(raise_exception=True)
-                    serializer.save()
-                    response_data.append(serializer.data)
 
-            return Response(response_data, status=status.HTTP_200_OK)
-        else:
-            # Comportamento padrão para um único objeto
-            return super().create(request, *args, **kwargs)
-
-    def perform_create(self, serializer):
-        serializer.save()
 
 
     @action(detail=False, methods=['post'])
@@ -304,8 +277,8 @@ class CIITEMViewSet(viewsets.ModelViewSet):
         queryset = m.CI_ITEM.objects.all()
         
         if ci_id:
-            queryset = queryset.filter(ci_id=ci_id)
+            queryset = queryset.filter(ci=ci_id)
 
-        serializer = s.ClienteSerializer(queryset.order_by('-id'), many=True)
+        serializer = self.serializer_class(queryset.order_by('-id'), many=True)
 
         return Response(serializer.data)

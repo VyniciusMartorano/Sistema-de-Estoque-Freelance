@@ -49,7 +49,7 @@ export function ConsultaCI() {
 
   const handleNavigateToEdit = (ciId) => {
     setCiId(ciId)
-    navigate(SGC_ROUTES.CADASTROS.CADASTRO_PRODUTO)
+    navigate(SGC_ROUTES.ESTOQUE.CADASTRO_CI)
   }
 
   const search = () => {
@@ -144,16 +144,26 @@ export function ConsultaCI() {
               field: 'data',
               header: 'Data',
               className: '1/12 p-1',
+              body: (item) => (
+                <div className="flex h-6 justify-start gap-1 ">
+                  {formatador.formatDate(item.data)}
+                </div>
+              ),
             },
             {
               field: 'tipo',
               header: 'Tipo',
               className: 'w-2/12 p-1',
               body: (item) => (
-                <div className="flex h-6 justify-end gap-1 ">
+                <div className="flex h-6 justify-start gap-1 ">
                   {item.tipo === tipoEnum.ENTRADA ? 'Entrada' : 'Saída'}
                 </div>
               ),
+            },
+            {
+              field: 'observacao',
+              header: 'Observação',
+              className: 'w-2/12 p-1',
             },
             {
               field: '',
