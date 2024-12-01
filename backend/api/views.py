@@ -25,6 +25,12 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = s.UserSerializer(qs, many=True).data
         return Response(data=serializer, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['GET'])
+    def get_all(self, *args, **kwargs):
+        qs = m.User.objects.all().order_by('-id')
+        serializer = s.UserDTOSerializer(qs, many=True).data
+        return Response(data=serializer, status=status.HTTP_200_OK)
+
 
 
     @action(detail=False, methods=['post'])
@@ -252,7 +258,41 @@ class EstoqueExtratoViewSet(viewsets.ModelViewSet):
     queryset = m.EstoqueExtrato.objects.using('default').all()
     serializer_class = s.EstoqueExtratoSerializer
 
+    @action(detail=False, methods=['post'])
+    def search(self, *args, **kwargs):
+        req = self.request.data
 
+        de = req['de'] if 'de' in req else None
+        ate = req['ate'] if 'ate' in req else None
+        tipo = req['tipo'] if 'tipo' in req else None
+        tipomov = req['tipomov'] if 'tipomov' in req else None
+        user = req['user'] if 'user' in req else None
+        produto = req['produto'] if 'produto' in req else None
+
+        queryset = m.EstoqueExtrato.objects.order_by('-id')
+
+        if de:
+            queryset = queryset.filter(data__gte=de)
+
+        if ate:
+            queryset = queryset.filter(data__lte=ate)
+        
+        if tipo:
+            queryset = queryset.filter(tipo=tipo)
+
+        if tipomov:
+            queryset = queryset.filter(tipomov=tipomov)
+        
+        if user:
+            queryset = queryset.filter(user=user)
+
+        if produto:
+            queryset = queryset.filter(produto=produto)
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        return Response(serializer.data)
+    
 
 
 class ProdutosPrecosUsuariosViewSet(viewsets.ModelViewSet):

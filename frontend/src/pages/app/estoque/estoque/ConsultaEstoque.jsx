@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { InputText } from 'primereact/inputtext'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/buttons'
@@ -13,11 +14,16 @@ import Service from './service'
 
 export function ConsultaEstoque() {
   const formatador = new Formaters()
+  const [inPromiseSearchProduto, setinPromiseSearchProduto] = useState(false)
+  const [produtos, setProdutos] = useState([])
+  const [users, setUsers] = useState([])
+
   const [filters, setFilters] = useState({
     de: new Date(),
     ate: new Date(),
     tipo: null,
-    observacao: null,
+    produto: null,
+    user: null,
   })
   const [registros, setRegistros] = useState([])
   const [inPromise, setInPromise] = useState(false)
@@ -26,7 +32,31 @@ export function ConsultaEstoque() {
     ENTRADA: 1,
     SAIDA: 2,
   }
+  useEffect(() => {
+    getProdutos()
+    getUsers()
+  }, [])
 
+  const getProdutos = () => {
+    setinPromiseSearchProduto(true)
+    service
+      .getProdutos()
+      .then(
+        ({ data }) => setProdutos(data),
+        () => {
+          toast.error('Ocorreu um erro ao buscar os produtos disponiveis!')
+        }
+      )
+      .finally(() => setinPromiseSearchProduto(false))
+  }
+  const getUsers = () => {
+    service.getUsers().then(
+      ({ data }) => setUsers(data),
+      () => {
+        toast.error('Ocorreu um erro ao buscar os usuarios!')
+      }
+    )
+  }
   const handleFilterChange = (e, field) => {
     const value = e.target ? e.target.value : e.value
     setFilters((prevFilters) => ({
@@ -40,8 +70,8 @@ export function ConsultaEstoque() {
     service
       .search({
         ...filters,
-        de: formatador.formatDate(filters.de, 'YYYY-MM-DD'),
-        ate: formatador.formatDate(filters.ate, 'YYYY-MM-DD'),
+        de: formatador.formatDate(filters.de, 'YYYY-MM-DD') + ' 00:00:00',
+        ate: formatador.formatDate(filters.ate, 'YYYY-MM-DD') + ' 23:59:59',
       })
       .then(
         ({ data }) => setRegistros(data),
@@ -49,6 +79,24 @@ export function ConsultaEstoque() {
       )
       .finally(() => setInPromise(false))
   }
+
+  const header = (
+    <div className=" p-inputgroup flex-1 text-xs">
+      <span className=" p-inputgroup-addon h-8">Total:</span>
+      <InputText
+        className="p-inputtext-sm h-8 text-right"
+        disabled={true}
+        value={registros
+          .reduce((soma, item) => {
+            if (item.tipo === tipoEnum.ENTRADA) {
+              return soma + item.quantidade
+            }
+            return soma - item.quantidade
+          }, 0)
+          .toFixed(2)}
+      />
+    </div>
+  )
 
   return (
     <div>
@@ -68,6 +116,31 @@ export function ConsultaEstoque() {
               onChange={(e) => handleFilterChange(e, 'ate')}
               className="w-full"
               label="Até"
+            />
+          </div>
+          <div className="mr-1 mt-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
+            <Select
+              label="Usuario"
+              className="mr-2 w-full"
+              value={filters.user}
+              onChange={(e) => handleFilterChange(e, 'user')}
+              options={users}
+              optionLabel="label"
+              optionValue="id"
+              filter
+            />
+          </div>
+          <div className="mr-1 mt-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
+            <Select
+              label="Produto"
+              className="mr-2 w-full"
+              value={filters.produto}
+              onChange={(e) => handleFilterChange(e, 'produto')}
+              options={produtos}
+              optionLabel="label"
+              optionValue="id"
+              loading={inPromiseSearchProduto}
+              filter
             />
           </div>
           <div className="mr-1 mt-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
@@ -97,6 +170,7 @@ export function ConsultaEstoque() {
         <Table
           paginator={true}
           value={registros}
+          header={header}
           isLoading={inPromise}
           columns={[
             {
@@ -110,19 +184,34 @@ export function ConsultaEstoque() {
               ),
             },
             {
+              field: 'user_label',
+              header: 'Usuario',
+              className: '1/12 p-1',
+            },
+            {
+              field: 'produto_label',
+              header: 'Produto',
+              className: '1/12 p-1',
+            },
+            {
               field: 'tipo',
               header: 'Tipo',
-              className: 'w-2/12 p-1',
+              className: 'w-1/12 p-1',
               body: (item) => (
-                <div className="flex h-6 justify-start gap-1 ">
+                <div className="flex h-6 justify-start gap-1 p-1 ">
                   {item.tipo === tipoEnum.ENTRADA ? 'Entrada' : 'Saída'}
                 </div>
               ),
             },
             {
-              field: 'observacao',
-              header: 'Observação',
+              field: 'quantidade',
+              header: 'Qtde',
               className: 'w-2/12 p-1',
+              body: (item) => (
+                <div className="flex h-6 justify-end gap-1 p-1 ">
+                  {item.quantidade.toFixed(2)}
+                </div>
+              ),
             },
           ]}
         ></Table>

@@ -16,5 +16,4 @@ router.register('produtosprecousuarios', v.ProdutosPrecosUsuariosViewSet)
 router.register('ci', v.CIViewSet)
 router.register('ci_itens', v.CIITEMViewSet)
 
-
 urlpatterns = router.urls

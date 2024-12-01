@@ -331,17 +331,17 @@ export function CadastroCI() {
                 {
                   field: 'produto_label',
                   header: 'Produto',
-                  className: '4/12 p-1',
+                  className: '8/12 p-1',
                 },
                 {
                   field: 'quantidade',
                   header: 'Quantidade',
-                  className: 'w-4/12 p-1 text-right',
+                  className: 'w-2/12 p-1 text-right',
                 },
                 {
                   field: 'preco_unitario',
                   header: 'P. Unit',
-                  className: 'w-4/12 p-1 text-right',
+                  className: 'w-2/12 p-1 text-right',
                   body: (item) => <div>{item.preco_unitario.toFixed(2)}</div>,
                 },
                 {

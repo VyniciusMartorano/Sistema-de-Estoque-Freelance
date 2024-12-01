@@ -18,6 +18,21 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         
         return user
+class UserDTOSerializer(serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+
+
+    def get_label(self, obj: m.User):
+        return f'{obj.pk} - {obj.first_name} {obj.last_name if obj.last_name else ''}'
+
+
+    class Meta:
+        model = m.User
+        fields = ('id', 'label')
+
+
+
+
 
 class MenuItemSerializer(serializers.Serializer):
     label = serializers.CharField(max_length=50)
@@ -129,6 +144,15 @@ class VendaItemSerializer(serializers.ModelSerializer):
 
 
 class EstoqueExtratoSerializer(serializers.ModelSerializer):
+    produto_label = serializers.SerializerMethodField()
+    user_label = serializers.SerializerMethodField()
+
+    def get_produto_label(self, obj: m.EstoqueExtrato):
+        return obj.produto.nome
+
+
+    def get_user_label(self, obj: m.EstoqueExtrato):
+        return obj.user.first_name
 
     class Meta:
         model = m.EstoqueExtrato
