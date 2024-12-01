@@ -122,9 +122,6 @@ export function CadastroCI() {
       saldo_disponivel: produto
         ? produto.saldo_disponivel
         : prevProduto.saldo_disponivel,
-      preco_unitario: produto
-        ? produto.preco_unitario
-        : prevProduto.preco_unitario,
     }))
   }
 
@@ -235,7 +232,7 @@ export function CadastroCI() {
         maxFractionDigits={2}
         label="Quantidade"
         locale="en-US"
-        min={0}
+        min={0.0}
         max={CI.tipo === tipoEnum.ENTRADA ? null : item.saldo_disponivel}
       />
       {CI.tipo === tipoEnum.SAIDA && (
@@ -255,6 +252,7 @@ export function CadastroCI() {
           onChange={(e) => handleFieldItemChange(e, 'preco_unitario')}
           className="w-full"
           maxFractionDigits={2}
+          minFractionDigits={2}
           locale="en-US"
           label="Preço Unitário"
           min={0}
@@ -344,6 +342,7 @@ export function CadastroCI() {
                   field: 'preco_unitario',
                   header: 'P. Unit',
                   className: 'w-4/12 p-1 text-right',
+                  body: (item) => <div>{item.preco_unitario.toFixed(2)}</div>,
                 },
                 {
                   field: '',

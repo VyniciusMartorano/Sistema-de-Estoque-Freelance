@@ -7,6 +7,8 @@ import { CadastroProduto } from '../../pages/app/cadastros/produto/CadastroProdu
 import { ConsultaProduto } from '../../pages/app/cadastros/produto/ConsultaProduto'
 import { CadastroCI } from '../../pages/app/estoque/ci/CadastroCI'
 import { ConsultaCI } from '../../pages/app/estoque/ci/ConsultaCI'
+import { ConsultaEstoque } from '../../pages/app/estoque/estoque/ConsultaEstoque'
+import { ConsultaVenda } from '../../pages/app/estoque/venda/ConsultaVenda'
 import { SGC_ROUTES } from '../navigation-routes'
 
 export const privateRoutes = {
@@ -40,6 +42,14 @@ export const privateRoutes = {
     {
       path: SGC_ROUTES.ESTOQUE.CADASTRO_CI,
       element: <CadastroCI />,
+    },
+    {
+      path: SGC_ROUTES.ESTOQUE.VENDA,
+      element: <ConsultaVenda />,
+    },
+    {
+      path: SGC_ROUTES.ESTOQUE.ESTOQUE,
+      element: <ConsultaEstoque />,
     },
   ],
 }

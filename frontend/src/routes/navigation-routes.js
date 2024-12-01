@@ -7,6 +7,8 @@ const SGC_ROUTES = {
     SIGNUP: '/cadastro',
   },
   ESTOQUE: {
+    VENDA: '/estoque/vendas',
+    ESTOQUE: '/estoque/saldos',
     CI: '/estoque/ci',
     CADASTRO_CI: '/estoque/ci/cadastro',
   },

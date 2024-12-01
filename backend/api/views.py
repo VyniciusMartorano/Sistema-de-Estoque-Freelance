@@ -211,6 +211,38 @@ class VendaViewSet(viewsets.ModelViewSet):
     serializer_class = s.VendaSerializer
 
 
+    @action(detail=False, methods=['post'])
+    def search(self, *args, **kwargs):
+        queryset = m.Venda.objects.order_by('-id')
+        req = self.request.data
+
+        de = req['de'] if 'de' in req else None
+        ate = req['ate'] if 'ate' in req else None
+        cliente = req['cliente'] if 'cliente' in req else None
+        user = req['user'] if 'user' in req else None
+
+
+        if de:
+            queryset = queryset.filter(data_venda__gte=de)
+
+        if ate:
+            queryset = queryset.filter(data_venda__lte=ate)
+        
+        if cliente:
+            queryset = queryset.filter(observacao__icontains=cliente)
+
+        if user:
+            queryset = queryset.filter(user=user)
+
+        serializer = s.CISerializer(queryset, many=True)
+
+        return Response(serializer.data)
+    
+
+
+
+
+
 class VendaItemViewSet(viewsets.ModelViewSet):
     queryset = m.VendaItem.objects.using('default').all()
     serializer_class = s.VendaItemSerializer
