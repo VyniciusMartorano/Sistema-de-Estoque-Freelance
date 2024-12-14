@@ -51,7 +51,6 @@ export function CadastroCliente() {
   }, [])
 
   const payloadIsValid = (payload) => {
-    console.log(payload)
     if (isEmpty(payload)) {
       toast.warning('Preencha os campos vazios e tente novamente!')
       return false
@@ -82,7 +81,7 @@ export function CadastroCliente() {
           { label: 'Clientes', link: SGC_ROUTES.CADASTROS.ALMOXARIFADO },
           {
             label: 'Cadastro',
-            link: SGC_ROUTES.CADASTROS.CADASTRO_ALMOXARIFADO,
+            link: SGC_ROUTES.CADASTROS.CADASTRO_CLIENTE,
           },
         ]}
       >

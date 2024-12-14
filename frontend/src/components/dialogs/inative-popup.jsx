@@ -1,10 +1,10 @@
 import { ConfirmPopup } from 'primereact/confirmpopup'
 import { useRef, useState } from 'react'
-import { FaRegTrashAlt } from 'react-icons/fa'
+import { FaRegMinusSquare } from 'react-icons/fa'
 
 import { IconButton } from '../buttons'
 
-export function DeletePopup({
+export function InativePopup({
   onAccept,
   onReject,
   feedbackMessage,
@@ -44,7 +44,7 @@ export function DeletePopup({
 
       <div ref={buttonEl}>
         <IconButton
-          iconComponent={<FaRegTrashAlt size={18} />}
+          iconComponent={<FaRegMinusSquare size={18} />}
           className="bg-sgc-red-primary p-1"
           type="button"
           containerHeight="h-6"

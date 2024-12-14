@@ -73,7 +73,7 @@ export function ConsultaVenda() {
           size="small"
           label="Novo"
           className="md:w-1/24  flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1  sm:w-full   lg:w-1/6 xl:w-1/6 2xl:w-1/6"
-          onClick={() => navigate(SGC_ROUTES.ESTOQUE.CADASTRO_CI)}
+          onClick={() => navigate(SGC_ROUTES.ESTOQUE.CADASTRO_VENDA)}
         >
           <i className="pi pi-plus"></i>
         </Button>

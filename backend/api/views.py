@@ -19,6 +19,30 @@ class UserViewSet(viewsets.ModelViewSet):
     def list(self, request):
         return Response(s.UserSerializer(request.user).data)
     
+
+    @action(detail=False, methods=['post'])
+    def search(self, *args, **kwargs):
+        req = self.request.data
+        nome = req['nome'] if 'nome' in req else None
+        tipo = req['tipo'] if 'tipo' in req else None
+
+        queryset = m.User.objects.all()
+
+        if nome:
+            queryset = queryset.filter(first_name__icontains=nome)
+        
+        if tipo:
+            if tipo == 1:
+                queryset = queryset.filter(is_gerente=1)
+            elif tipo == 2:
+                queryset = queryset.filter(is_vendedor=1)
+
+        serializer = s.UserSerializer(queryset, many=True)
+
+        return Response(serializer.data)
+    
+
+
     @action(detail=False, methods=['GET'])
     def get_gestores(self, *args, **kwargs):
         qs = m.User.objects.filter(is_gerente=1)
@@ -46,6 +70,31 @@ class UserViewSet(viewsets.ModelViewSet):
         user.set_password(password)
         user.save()
         return Response(data='', status=status.HTTP_200_OK)
+    
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        print(data)
+        password = data.pop('password', None)
+        
+
+
+        if not password:
+            return Response(
+                {"error": "Password is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+
+        user = serializer.save()
+
+        user.set_password(str(password))
+        user.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PermissionViewSet(viewsets.ViewSet):
@@ -116,6 +165,25 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = s.ClienteSerializer
     filterset_class = f.ClienteFilter
 
+
+    
+    def list(self, request):
+        qs = m.Cliente.objects.using('default').all()
+        user = self.request.user
+
+        if user.is_adm:
+           pass
+        elif user.is_gerente:
+            qs = qs.filter(gestor=user.pk)
+        elif user.is_vendedor:
+            gestores = m.GestoresVendedores.objects.filter(
+                vendedor=user.pk
+            ).values_list('gestor_id',flat=True)
+            qs = qs.filter(gestor_id__in=gestores)
+
+        serializer = self.serializer_class(qs, many=True).data
+        return Response(data=serializer, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['post'])
     def search(self, *args, **kwargs):
         req = self.request.data
@@ -161,8 +229,12 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         user = request.user
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        
         serializer.is_valid(raise_exception=True)
+        m.ProdutosPrecosUsuarios.objects.update_or_create(
+            user_id=user.pk,
+            produto_id=instance.pk,
+            percentual=request.data['percentual']
+        )
 
         self.perform_update(serializer)
 
@@ -173,12 +245,14 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         user = request.user
 
         serializer = self.get_serializer(data=request.data)
-        
         serializer.is_valid(raise_exception=True)
-
         self.perform_create(serializer)
 
-
+        m.ProdutosPrecosUsuarios.objects.update_or_create(
+            user_id=user.pk,
+            produto_id=instance.pk,
+            percentual=request.data['percentual']
+        )
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -190,9 +264,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         qs_venda = m.VendaItem.objects.filter(
             produto_id=instance.pk
         )
-        qs_estoque = m.SaldoEstoque.objects.filter(
-            produto_id=instance.pk
-        )
+
         qs_estoque_mov = m.EstoqueExtrato.objects.filter(
             produto_id=instance.pk
         )
@@ -202,6 +274,8 @@ class ProdutoViewSet(viewsets.ModelViewSet):
                 data='Não é possivel apagar um produto que ja tem [vendas, estoque] registrados(as).',
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+        m.ProdutosPrecosUsuarios.objects.filter(produto=instance.pk).delete()
         
         self.perform_destroy(instance)
         
@@ -240,7 +314,7 @@ class VendaViewSet(viewsets.ModelViewSet):
         if user:
             queryset = queryset.filter(user=user)
 
-        serializer = s.CISerializer(queryset, many=True)
+        serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
     

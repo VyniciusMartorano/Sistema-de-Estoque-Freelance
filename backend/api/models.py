@@ -45,12 +45,12 @@ class GestoresVendedores(models.Model):
     vendedor = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='gestores'
+        related_name='gestor'
     )
     gestor = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='vendedores'
+        related_name='vendedor'
     )
 
     class Meta:

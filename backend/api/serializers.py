@@ -2,28 +2,35 @@
 from rest_framework import serializers
 from . import models as m
 from rest_framework_bulk import BulkSerializerMixin, BulkListSerializer
-
+from django.db.models import F, Sum
 
 class UserSerializer(serializers.ModelSerializer):
+    tipo_label = serializers.SerializerMethodField()
+
+    def get_tipo_label(self, obj: m.User):
+        return 'Gestor' if obj.is_gerente else 'Vendedor'
+
 
     class Meta:
         model = m.User
-        fields = ('id','username', 'first_name', 'last_name', 'is_gerente', 'is_vendedor')
+        fields = ('id','username', 'first_name', 'last_name', 'is_gerente', 'is_vendedor', 'tipo_label', 'is_active')
 
 
-    def create(self, validated_data):
-        user = m.User.objects.create(username=validated_data['username'])
+    # def create(self, validated_data):
+    #     user = m.User.objects.create(username=validated_data['username'])
 
-        user.set_password(validated_data['password'])
-        user.save()
+    #     user.set_password(validated_data['password'])
+    #     user.save()
         
-        return user
+    #     return user
+    
 class UserDTOSerializer(serializers.ModelSerializer):
     label = serializers.SerializerMethodField()
 
 
     def get_label(self, obj: m.User):
         return f'{obj.pk} - {obj.first_name} {obj.last_name if obj.last_name else ''}'
+
 
 
     class Meta:
@@ -129,6 +136,16 @@ class ProdutoDTOSerializer(serializers.ModelSerializer):
 
 
 class VendaSerializer(serializers.ModelSerializer):
+    total_venda = serializers.SerializerMethodField()
+
+    def get_total_venda(self, obj: m.Venda):
+        return m.VendaItem.objects.filter(
+            venda=obj.pk
+        ).aggregate(
+            total_valor=Sum(F('quantidade') * F('vr_unitario'))
+        )
+
+
 
     class Meta:
         model = m.Venda
