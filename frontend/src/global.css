@@ -40,15 +40,12 @@ div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
   align-items: center !important;
   width: 10rem !important;
 }
-#pr_id_5 > a {
-  color: white;
+.p-megamenu-button {
+  color: white !important;
+  background-color: transparent !important;
+  border: 1.5px solid white;
 }
-#pr_id_5 > a:hover {
-  background-color: none;
-}
-#pr_id_5 > a {
-  background-color: none;
-}
+
 .p-megamenu {
   border: none;
 }
