@@ -12,6 +12,7 @@ const service = new Service()
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined)
+  const [inPromiseUser, setInPromiseUser] = useState(true)
   const [menus, setMenus] = useState([])
   const [permissions, setPermissions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -79,7 +80,10 @@ export function AuthProvider({ children }) {
           service
             .getUser()
             .then(({ data }) => setUser(data))
-            .finally(() => setIsLoading(false))
+            .finally(() => {
+              setIsLoading(false)
+              setInPromiseUser(false)
+            })
         )
         service.getMenus().then(({ data }) => setMenus(data))
         service.getPermissions().then(({ data }) => setPermissions(data))
@@ -154,7 +158,7 @@ export function AuthProvider({ children }) {
         menus,
       }}
     >
-      {children}
+      {inPromiseUser ? <div></div> : children}
     </AuthContext.Provider>
   )
 }

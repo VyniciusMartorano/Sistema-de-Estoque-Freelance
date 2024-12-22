@@ -1,0 +1,1 @@
+só pode haver um usuario com staff se nao da problema no produto

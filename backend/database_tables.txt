@@ -8,11 +8,11 @@ ALTER TABLE auth_user
 ADD COLUMN is_adm BOOLEAN DEFAULT FALSE;
 
 CREATE TABLE GestoresVendedores (
+    id SERIAL PRIMARY KEY, -- Coluna 'id' auto-incremental e chave primária
     vendedor_id INTEGER NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
     gestor_id INTEGER NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
-    PRIMARY KEY (vendedor_id, gestor_id)
+    CONSTRAINT unique_vendedor_gestor UNIQUE (vendedor_id, gestor_id) -- Regra de unicidade
 );
-
 
 CREATE TABLE Clientes (
     id SERIAL PRIMARY KEY,
@@ -20,8 +20,8 @@ CREATE TABLE Clientes (
     endereco VARCHAR(255),
     telefone VARCHAR(20),
     email VARCHAR(255) UNIQUE,
-    gestor_id INTEGER,
-    FOREIGN KEY (gestor_id) REFERENCES auth_user(id) ON DELETE SET NULL
+    vendedor_id INTEGER,
+    FOREIGN KEY (vendedor_id) REFERENCES auth_user(id) ON DELETE SET NULL
 );
 
 
@@ -77,6 +77,7 @@ CREATE TABLE VendasItens (
 CREATE TABLE ci (
     id SERIAL PRIMARY KEY,
     data DATE NOT NULL,
+    user_id INTEGER NOT NULL,
     tipo INTEGER NOT NULL CHECK (tipo IN (1, 2)),
     observacao VARCHAR(255)
 );

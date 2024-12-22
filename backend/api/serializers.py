@@ -6,31 +6,30 @@ from django.db.models import F, Sum
 
 class UserSerializer(serializers.ModelSerializer):
     tipo_label = serializers.SerializerMethodField()
+    gestor = serializers.SerializerMethodField()
 
     def get_tipo_label(self, obj: m.User):
         return 'Gestor' if obj.is_gerente else 'Vendedor'
 
+    def get_gestor(self, obj: m.User):
+        if obj.is_vendedor:
+            qs = m.GestoresVendedores.objects.get(vendedor_id=obj.pk)
+            return qs.gestor.pk if qs else -1
+        
+        return None
+
 
     class Meta:
         model = m.User
-        fields = ('id','username', 'first_name', 'last_name', 'is_gerente', 'is_vendedor', 'tipo_label', 'is_active')
+        fields = ('id','username', 'first_name', 'last_name', 'is_gerente', 'is_vendedor', 'tipo_label', 'is_active', 'gestor')
 
 
-    # def create(self, validated_data):
-    #     user = m.User.objects.create(username=validated_data['username'])
-
-    #     user.set_password(validated_data['password'])
-    #     user.save()
-        
-    #     return user
     
 class UserDTOSerializer(serializers.ModelSerializer):
     label = serializers.SerializerMethodField()
 
-
     def get_label(self, obj: m.User):
-        return f'{obj.pk} - {obj.first_name} {obj.last_name if obj.last_name else ''}'
-
+        return f'{obj.pk} - {obj.first_name} {obj.last_name if obj.last_name else ''} ({'G' if obj.is_gerente else 'V'})'
 
 
     class Meta:
@@ -54,10 +53,10 @@ class MenuItemSerializer(serializers.Serializer):
 
 
 class ClienteSerializer(serializers.ModelSerializer):
-    gestor_nome = serializers.SerializerMethodField()
+    vendedor_nome = serializers.SerializerMethodField()
 
-    def get_gestor_nome(self, obj: m.Cliente):
-        return obj.gestor.first_name if obj.gestor else ''
+    def get_vendedor_nome(self, obj: m.Cliente):
+        return obj.vendedor.first_name if obj.vendedor else ''
 
     class Meta:
         model = m.Cliente
@@ -82,7 +81,6 @@ class ProdutoSerializer(serializers.ModelSerializer):
 
     def get_percentual(self, obj: m.Produto):
         user = self.context.get('request').user
-   
 
         qs = m.ProdutosPrecosUsuarios.objects.filter(
             user_id=user.pk,
@@ -96,22 +94,22 @@ class ProdutoSerializer(serializers.ModelSerializer):
         qs = m.CustosProdutos.objects.filter(produto_id=obj.pk).order_by('-dataent', '-id').first()
         custo = 0 if not qs else qs.preco_unitario
         user = self.context.get('request').user
-        if user.is_adm: ...
+        if user.is_staff: ...
         elif user.is_gerente:
             qs = m.ProdutosPrecosUsuarios.objects.filter(
-                produto_id=obj.pk,user_id=m.User.objects.get(is_adm=1).pk
+                produto_id=obj.pk,user_id=m.User.objects.get(is_staff=1).pk
             ).first()
 
             custo = custo + (custo * (qs.percentual / 100)) if qs else custo
             
         elif user.is_vendedor:
             preco_adm = m.ProdutosPrecosUsuarios.objects.filter(
-                produto_id=obj.pk,user_id=m.User.objects.get(is_adm=1).pk
+                produto_id=obj.pk,user_id=m.User.objects.get(is_staff=1).pk
             ).first()
 
             custo = custo + (custo * (preco_adm.percentual / 100)) if preco_adm else custo
 
-            gestor_id = m.GestoresVendedores.objects.filter(vendedor_id=user.pk).first().pk
+            gestor_id = m.GestoresVendedores.objects.filter(vendedor_id=user.pk).first().gestor.pk
             
             preco_gestor = m.ProdutosPrecosUsuarios.objects.filter(
                 produto_id=obj.pk,user_id=gestor_id
@@ -187,6 +185,11 @@ class ProdutosPrecosUsuariosSerializer(serializers.ModelSerializer):
 
 
 class CISerializer(serializers.ModelSerializer):
+    user_label = serializers.SerializerMethodField()
+
+    def get_user_label(self, obj: m.EstoqueExtrato):
+        return f'{obj.user.pk} - {obj.user.first_name} {obj.user.last_name}' 
+
 
     class Meta:
         model = m.CI
@@ -198,8 +201,9 @@ class CIITEMSerializer(BulkSerializerMixin,serializers.ModelSerializer):
 
 
     def create(self, validated_data):
-        user = self.context.get('request').user
         ci = validated_data['ci']
+        print(ci)
+        user_id = m.CI.objects.get(pk=validated_data['ci'].pk).user.pk
         produto = validated_data['produto']
         preco_unitario = validated_data['preco_unitario']
         quantidade = validated_data['quantidade']
@@ -218,7 +222,7 @@ class CIITEMSerializer(BulkSerializerMixin,serializers.ModelSerializer):
         extrato = m.EstoqueExtrato(
             data=ci.data,
             produto=produto,
-            user_id=user.pk,
+            user_id=user_id,
             quantidade=quantidade,
             tipo=ci.tipo,
             tipomov=m.EstoqueExtrato.CI,

@@ -25,7 +25,7 @@ export function CadastroUsuario() {
     last_name: '',
     is_gerente: null,
     is_vendedor: null,
-    tipo: 1,
+    tipo: null,
   })
   const tipoEnum = {
     GESTOR: 1,
@@ -37,7 +37,6 @@ export function CadastroUsuario() {
 
   const handleFieldChange = (e, field) => {
     const value = e.target ? e.target.value : e.value
-    console.log(user)
 
     setUser((prevFilters) => ({
       ...prevFilters,
@@ -46,13 +45,13 @@ export function CadastroUsuario() {
         field === 'tipo' && value === tipoEnum.GESTOR
           ? 1
           : field === 'tipo'
-            ? null
+            ? 0
             : prevFilters.is_gerente,
       is_vendedor:
         field === 'tipo' && value === tipoEnum.VENDEDOR
           ? 1
           : field === 'tipo'
-            ? null
+            ? 0
             : prevFilters.is_vendedor,
 
       gestor:
@@ -62,7 +61,6 @@ export function CadastroUsuario() {
             ? value
             : prevFilters.gestor,
     }))
-    console.log(user)
   }
 
   useEffect(() => {
@@ -70,7 +68,12 @@ export function CadastroUsuario() {
     if (!userId) return
 
     service.getUserById(userId).then(
-      ({ data }) => setUser(data),
+      ({ data }) => {
+        setUser({
+          ...data,
+          tipo: data.is_gerente ? tipoEnum.GESTOR : tipoEnum.VENDEDOR,
+        })
+      },
       () => {
         toast.error('Ocorreu um erro ao buscar o user selecionado!')
       }
@@ -90,6 +93,10 @@ export function CadastroUsuario() {
       )
     ) {
       toast.warning('Preencha os campos vazios e tente novamente!')
+      return false
+    }
+    if (payload.username.includes(' ')) {
+      toast.warning('O nome de usuario não pode conter espaços!')
       return false
     }
     if (payload.is_vendedor && payload.is_gerente) {
@@ -114,7 +121,10 @@ export function CadastroUsuario() {
           toast.success('O usuario foi salvo com sucesso!')
           navigate(SGC_ROUTES.CADASTROS.USUARIO)
         },
-        () => toast.error('Ocorreu um erro ao salvar os dados.')
+        (error) =>
+          toast.error(
+            error.response?.data || 'Ocorreu um erro ao salvar os dados.'
+          )
       )
       .finally(() => setInPromiseSave(false))
   }
@@ -134,6 +144,7 @@ export function CadastroUsuario() {
           <div className="p-inputtext-sm my-6 flex flex-grow-0 flex-wrap">
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
               <Input
+                disabled={user.id}
                 value={user.username}
                 onChange={(e) => handleFieldChange(e, 'username')}
                 type="text"
@@ -153,6 +164,7 @@ export function CadastroUsuario() {
             {!user.id && (
               <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
                 <Input
+                  disabled={user.id}
                   value={user.password}
                   onChange={(e) => handleFieldChange(e, 'password')}
                   type="password"
@@ -164,6 +176,7 @@ export function CadastroUsuario() {
             {!user.id && (
               <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
                 <Input
+                  disabled={user.id}
                   value={user.password_repeat}
                   onChange={(e) => handleFieldChange(e, 'password_repeat')}
                   type="password"
@@ -172,26 +185,27 @@ export function CadastroUsuario() {
                 />
               </div>
             )}
-            {!user.id && (
+
+            <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
+              <Select
+                disabled={user.id}
+                label="Tipo"
+                className="mr-2 w-full"
+                value={user.tipo}
+                onChange={(e) => handleFieldChange(e, 'tipo')}
+                options={[
+                  { label: 'Gestor', value: 1 },
+                  { label: 'Vendedor', value: 2 },
+                ]}
+                showClear={false}
+                optionLabel="label"
+                optionValue="value"
+              />
+            </div>
+            {user.tipo === 2 && (
               <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
                 <Select
-                  label="Tipo"
-                  className="mr-2 w-full"
-                  value={user.tipo}
-                  onChange={(e) => handleFieldChange(e, 'tipo')}
-                  options={[
-                    { label: 'Gestor', value: 1 },
-                    { label: 'Vendedor', value: 2 },
-                  ]}
-                  showClear={false}
-                  optionLabel="label"
-                  optionValue="value"
-                />
-              </div>
-            )}
-            {!user.id && user.tipo === 2 && (
-              <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
-                <Select
+                  disabled={user.id}
                   label="Gestor"
                   className="mr-2 w-full"
                   value={user.gestor}

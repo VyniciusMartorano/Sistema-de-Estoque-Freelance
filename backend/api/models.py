@@ -32,9 +32,8 @@ class MenuItem(models.Model):
 
 
 class User(AbstractUser):
-    is_adm = models.BooleanField(default=False)
-    is_vendedor = models.BooleanField(default=False)
-    is_gerente = models.BooleanField(default=False)
+    is_vendedor = models.BooleanField(default=False, null=True, blank=True)
+    is_gerente = models.BooleanField(default=False, null=True, blank=True)
 
     class Meta:
         managed = False
@@ -45,17 +44,17 @@ class GestoresVendedores(models.Model):
     vendedor = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='gestor'
+        related_name='vendedor'
     )
     gestor = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='vendedor'
+        related_name='gestor'
     )
 
     class Meta:
         db_table = 'gestoresvendedores'
-        unique_together = ('vendedor', 'gestor')
+        managed = False
 
 
 class Cliente(models.Model):
@@ -63,7 +62,7 @@ class Cliente(models.Model):
     endereco = models.CharField(max_length=255, blank=True, null=True)
     telefone = models.CharField(max_length=20, blank=True, null=True)
     email = models.EmailField(unique=True)
-    gestor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    vendedor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.nome
@@ -195,6 +194,7 @@ class CI(models.Model):
         (SAIDA, 'Venda'),
     ]
     data = models.DateField(null=False, blank=False)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     tipo = models.IntegerField(choices=TIPO_CHOICES)
     observacao = models.CharField(
         null=True, blank=True

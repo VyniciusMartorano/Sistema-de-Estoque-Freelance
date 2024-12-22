@@ -24,6 +24,10 @@ class Service {
     return apiBase.axios.get(`/produto/`)
   }
 
+  getUsers() {
+    return apiBase.axios.get(`/user/get_all/`)
+  }
+
   getItensByCI(ci_id) {
     return apiBase.axios.post(`/ci_itens/search/`, { ci_id })
   }

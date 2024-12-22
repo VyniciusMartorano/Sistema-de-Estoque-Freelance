@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { ButtonSGC } from '@/components/buttons'
 import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
+import { AuthContext } from '@/context/AuthContext'
 import { ProdutoContext } from '@/context/ProdutoContext'
 import { useSGCNavigate } from '@/useNavigate'
 
@@ -15,6 +16,7 @@ import Service from './service'
 export function CadastroProduto() {
   const { navigate } = useSGCNavigate()
   const { produtoId } = useContext(ProdutoContext)
+  const { user } = useContext(AuthContext)
   const [produto, setProduto] = useState({
     id: null,
     nome: '',
@@ -54,8 +56,8 @@ export function CadastroProduto() {
   }
 
   const payloadIsValid = (payload) => {
-    if (!payload.nome || !payload.preco_compra) {
-      toast.warning('Preencha os campos obrigatórios e tente novamente!')
+    if (!payload.nome || !payload.preco_compra || !payload.percentual) {
+      toast.warning('Preencha os campos e tente novamente!')
       return false
     }
     return true
@@ -154,6 +156,7 @@ export function CadastroProduto() {
           <div className="p-inputtext-sm my-6  flex flex-grow-0 flex-wrap">
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <Input
+                disabled={user.is_vendedor}
                 value={produto.nome}
                 onChange={(e) => handleFieldChange(e, 'nome')}
                 type="text"
@@ -163,6 +166,7 @@ export function CadastroProduto() {
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <Input
+                disabled={user.is_vendedor}
                 value={produto.descricao}
                 onChange={(e) => handleFieldChange(e, 'descricao')}
                 type="text"
@@ -211,6 +215,7 @@ export function CadastroProduto() {
               <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
                 <div className="mr-1w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
                   <ButtonSGC
+                    disabled={user.is_vendedor}
                     className=" p-button-info h-7"
                     icon="pi pi-upload"
                     label="Selecionar Imagem"

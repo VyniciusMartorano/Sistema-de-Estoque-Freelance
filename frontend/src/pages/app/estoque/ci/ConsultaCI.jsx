@@ -27,6 +27,8 @@ export function ConsultaCI() {
     observacao: null,
   })
   const [registros, setRegistros] = useState([])
+  const [users, setUsers] = useState([])
+  const [inPromiseSearchUsers, setinPromiseSearchUsers] = useState(false)
   const [inPromise, setInPromise] = useState(false)
   const service = new Service()
   const tipoEnum = {
@@ -37,7 +39,21 @@ export function ConsultaCI() {
   useEffect(() => {
     search()
     setCiId(null)
+    getUsers()
   }, [])
+
+  const getUsers = () => {
+    setinPromiseSearchUsers(true)
+    service
+      .getUsers()
+      .then(
+        ({ data }) => setUsers(data),
+        () => {
+          toast.error('Ocorreu um erro ao buscar os usuarios disponiveis!')
+        }
+      )
+      .finally(() => setinPromiseSearchUsers(false))
+  }
 
   const handleFilterChange = (e, field) => {
     const value = e.target ? e.target.value : e.value
@@ -101,6 +117,18 @@ export function ConsultaCI() {
               label="Até"
             />
           </div>
+          <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+            <Select
+              label="Usuario"
+              className="mr-2 w-full"
+              value={filters.user}
+              loading={inPromiseSearchUsers}
+              onChange={(e) => handleFilterChange(e, 'user')}
+              options={users}
+              optionLabel="label"
+              optionValue="id"
+            />
+          </div>
           <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
             <Input
               value={filters.observacao}
@@ -145,7 +173,7 @@ export function ConsultaCI() {
               header: 'Data',
               className: '1/12 p-1',
               body: (item) => (
-                <div className="flex h-6 justify-start gap-1 ">
+                <div className="flex  justify-start gap-1 ">
                   {formatador.formatDate(item.data)}
                 </div>
               ),
@@ -153,17 +181,22 @@ export function ConsultaCI() {
             {
               field: 'tipo',
               header: 'Tipo',
-              className: 'w-2/12 p-1',
+              className: 'w-1/12 p-1',
               body: (item) => (
-                <div className="flex h-6 justify-start gap-1 ">
+                <div className="flex  justify-start ">
                   {item.tipo === tipoEnum.ENTRADA ? 'Entrada' : 'Saída'}
                 </div>
               ),
             },
             {
+              field: 'user_label',
+              header: 'Usuario',
+              className: 'w-3/12 p-1',
+            },
+            {
               field: 'observacao',
-              header: 'Observação',
-              className: 'w-2/12 p-1',
+              header: 'Obs',
+              className: 'w-3/12 p-1',
             },
             {
               field: '',

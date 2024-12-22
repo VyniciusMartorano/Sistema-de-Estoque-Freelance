@@ -22,6 +22,7 @@ export function CadastroCI() {
   const { ciId } = useContext(EstoqueContext)
   const [itens, setItens] = useState([])
   const [produtos, setProdutos] = useState([])
+  const [users, setUsers] = useState([])
   const formatador = new Formaters()
   const [item, setItem] = useState({
     produto: null,
@@ -33,6 +34,7 @@ export function CadastroCI() {
     id: null,
     data: new Date(),
     observacao: '',
+    user: null,
     tipo: 1,
   })
 
@@ -43,6 +45,7 @@ export function CadastroCI() {
 
   const [inPromise, setInPromise] = useState(false)
   const [inPromiseSearchProduto, setinPromiseSearchProduto] = useState(false)
+  const [inPromiseSearchUsers, setinPromiseSearchUsers] = useState(false)
 
   const service = new Service()
   const [inPromiseSave, setInPromiseSave] = useState(false)
@@ -68,7 +71,22 @@ export function CadastroCI() {
 
   useEffect(() => {
     getProdutos()
+    getUsers()
   }, [])
+
+  const getUsers = () => {
+    setinPromiseSearchUsers(true)
+    service
+      .getUsers()
+      .then(
+        ({ data }) => setUsers(data),
+        () => {
+          toast.error('Ocorreu um erro ao buscar os usuarios disponiveis!')
+        }
+      )
+      .finally(() => setinPromiseSearchUsers(false))
+  }
+
   const getProdutos = () => {
     setinPromiseSearchProduto(true)
     service
@@ -126,7 +144,7 @@ export function CadastroCI() {
   }
 
   const payloadIsValid = (payload) => {
-    if (!payload.tipo || !payload.observacao) {
+    if (!payload.tipo || !payload.observacao || !payload.user) {
       toast.warning('Preencha os campos obrigatórios e tente novamente!')
       return false
     }
@@ -296,7 +314,7 @@ export function CadastroCI() {
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <Select
-                disabled={itens.length > 0}
+                disabled={itens.length > 0 || ciId}
                 label="Tipo"
                 className="mr-2 w-full"
                 value={CI.tipo}
@@ -307,6 +325,19 @@ export function CadastroCI() {
                 ]}
                 optionLabel="label"
                 optionValue="value"
+              />
+            </div>
+            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+              <Select
+                disabled={ciId}
+                label="Usuario"
+                className="mr-2 w-full"
+                value={CI.user}
+                loading={inPromiseSearchUsers}
+                onChange={(e) => handleFieldChange(e, 'user')}
+                options={users}
+                optionLabel="label"
+                optionValue="id"
               />
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
@@ -342,7 +373,9 @@ export function CadastroCI() {
                   field: 'preco_unitario',
                   header: 'P. Unit',
                   className: 'w-2/12 p-1 text-right',
-                  body: (item) => <div>{item.preco_unitario.toFixed(2)}</div>,
+                  body: (item) => (
+                    <div>{parseFloat(item.preco_unitario).toFixed(2)}</div>
+                  ),
                 },
                 {
                   field: '',
@@ -402,16 +435,6 @@ export function CadastroCI() {
           )}
 
           <div className="mt-5 flex w-full flex-row flex-wrap justify-start gap-2">
-            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
-              <ButtonSGC
-                label="Voltar"
-                bgColor="sgc-blue-primary"
-                icon="pi pi-arrow-left"
-                type="button"
-                className="h-8 w-full"
-                onClick={() => navigate(SGC_ROUTES.ESTOQUE.CI)}
-              />
-            </div>
             {!ciId && (
               <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
                 <ButtonSGC
@@ -425,6 +448,16 @@ export function CadastroCI() {
                 />
               </div>
             )}
+            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
+              <ButtonSGC
+                label="Voltar"
+                bgColor="sgc-blue-primary"
+                icon="pi pi-arrow-left"
+                type="button"
+                className="h-8 w-full"
+                onClick={() => navigate(SGC_ROUTES.ESTOQUE.CI)}
+              />
+            </div>
           </div>
         </div>
       </Screen>

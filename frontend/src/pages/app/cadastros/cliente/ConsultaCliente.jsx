@@ -19,14 +19,14 @@ export function ConsultaCliente() {
   const { setClienteId } = useContext(ClienteContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({ nome: '', gestor_id: null })
-  const [gestores, setGestores] = useState([])
+  const [gestores, setVendedores] = useState([])
   const [clientes, setClientes] = useState([])
   const [inPromise, setInPromise] = useState(false)
   const service = new Service()
 
   useEffect(() => {
     setClienteId(null)
-    service.getGestores().then(({ data }) => setGestores(data))
+    service.getVendedores().then(({ data }) => setVendedores(data))
   }, [])
 
   const handleNavigateToEdit = (clienteId) => {
@@ -101,10 +101,10 @@ export function ConsultaCliente() {
           </div>
           <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
             <Select
-              label="Gestor"
+              label="Vendedor"
               className="mr-2 w-full"
-              value={filters.gestor_id}
-              onChange={(e) => handleFilterChange(e, 'gestor_id')}
+              value={filters.vendedor_id}
+              onChange={(e) => handleFilterChange(e, 'vendedor_id')}
               options={gestores}
               optionLabel="first_name"
               optionValue="id"
@@ -132,8 +132,8 @@ export function ConsultaCliente() {
               className: '1/12 p-1',
             },
             {
-              field: 'gestor_nome',
-              header: 'Gestor',
+              field: 'vendedor_nome',
+              header: 'Vendedor',
               className: 'w-2/12 p-1',
             },
             {

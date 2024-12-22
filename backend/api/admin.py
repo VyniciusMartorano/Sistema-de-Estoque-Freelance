@@ -13,15 +13,15 @@ class ClienteForm(forms.ModelForm):
     # Sobrescreva o campo gestor para filtrar apenas os usuários com is_gerente=True
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['gestor'].queryset = User.objects.filter(is_gerente=True)
+        self.fields['vendedor'].queryset = User.objects.filter(is_vendedor=True)
 
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
     form = ClienteForm 
-    list_display = ('nome', 'email', 'telefone', 'gestor') 
+    list_display = ('nome', 'email', 'telefone', 'vendedor') 
     search_fields = ('nome', 'email', 'telefone')
-    list_filter = ('gestor',)
+    list_filter = ('vendedor',)
     ordering = ('nome',) 
 
 

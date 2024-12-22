@@ -20,13 +20,13 @@ export function CadastroCliente() {
 
   const [cliente, setCliente] = useState({
     nome: '',
-    gestor: null,
+    vendedor: null,
     endereco: '',
     telefone: '',
     email: '',
   })
   const service = new Service()
-  const [gestores, setGestores] = useState([])
+  const [vendedores, setVendedores] = useState([])
   const [inPromiseSave, setInPromiseSave] = useState(false)
 
   const handleFieldChange = (e, field) => {
@@ -38,7 +38,7 @@ export function CadastroCliente() {
   }
 
   useEffect(() => {
-    service.getGestores().then(({ data }) => setGestores(data))
+    service.getVendedores().then(({ data }) => setVendedores(data))
 
     if (!clienteId) return
 
@@ -68,6 +68,7 @@ export function CadastroCliente() {
         ({ data }) => {
           setCliente(data)
           toast.success('O cliente foi salvo com sucesso!')
+          navigate(SGC_ROUTES.CADASTROS.CLIENTE)
         },
         () => toast.error('Ocorreu um erro ao salvar os dados.')
       )
@@ -127,11 +128,12 @@ export function CadastroCliente() {
             </div>
             <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
               <Select
-                label="Gestor"
+                label="Vendedor"
+                disabled={cliente.id}
                 className="mr-2 w-full"
-                value={cliente.gestor}
-                onChange={(e) => handleFieldChange(e, 'gestor')}
-                options={gestores}
+                value={cliente.vendedor}
+                onChange={(e) => handleFieldChange(e, 'vendedor')}
+                options={vendedores}
                 optionLabel="first_name"
                 optionValue="id"
               />

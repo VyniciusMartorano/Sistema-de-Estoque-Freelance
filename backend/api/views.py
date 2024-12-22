@@ -9,6 +9,8 @@ from . import filters as f
 from django.db.models import Q
 from rest_framework.exceptions import ValidationError
 from rest_framework_bulk import BulkModelViewSet
+from django.contrib.auth.models import Group
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -25,11 +27,16 @@ class UserViewSet(viewsets.ModelViewSet):
         req = self.request.data
         nome = req['nome'] if 'nome' in req else None
         tipo = req['tipo'] if 'tipo' in req else None
+        ativo = req['ativo'] if 'ativo' in req else None
 
-        queryset = m.User.objects.all()
+        queryset = m.User.objects.all().filter(
+             ~Q(is_staff=1)
+        )
 
         if nome:
             queryset = queryset.filter(first_name__icontains=nome)
+        if ativo:
+            queryset = queryset.filter(is_active=ativo)
         
         if tipo:
             if tipo == 1:
@@ -45,56 +52,55 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def get_gestores(self, *args, **kwargs):
-        qs = m.User.objects.filter(is_gerente=1)
+        qs = m.User.objects.filter(Q(is_gerente=1), Q(is_active=1), ~Q(is_staff=1))
         serializer = s.UserSerializer(qs, many=True).data
         return Response(data=serializer, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'])
     def get_all(self, *args, **kwargs):
-        qs = m.User.objects.all().order_by('-id')
+        qs = m.User.objects.all().filter(Q(is_active=1), ~Q(is_staff=1)).order_by('-id')
         serializer = s.UserDTOSerializer(qs, many=True).data
         return Response(data=serializer, status=status.HTTP_200_OK)
 
 
 
-    @action(detail=False, methods=['post'])
-    def update_password(self, *args, **kwargs):
-        req = self.request.data
-        email = req['email'] if 'email' in req else None
-        password = req['password'] if 'password' in req else None
-
-        if not (email and password):
-            return Response(data='Envie o email e a senha', status=status.HTTP_400_BAD_REQUEST)
-
-        user = m.User.objects.get(username=email)
-        user.set_password(password)
-        user.save()
-        return Response(data='', status=status.HTTP_200_OK)
-    
-
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        print(data)
         password = data.pop('password', None)
         
-
-
-        if not password:
+        if m.User.objects.filter(username=data['username']).exists():
             return Response(
-                {"error": "Password is required."},
+                {'detail': 'Este nome de usuário já está em uso!'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
+        
+     
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
 
         user = serializer.save()
-
         user.set_password(str(password))
         user.save()
 
+        if data['is_vendedor'] == 1:
+            m.GestoresVendedores.objects.create(
+                vendedor_id=user.id,
+                gestor_id=data['gestor']
+            )
+            
+            vendedor_group = Group.objects.filter(name='vendedor').first()
+            if vendedor_group:
+                user.groups.add(vendedor_group)
+        else:
+            gestor_group = Group.objects.filter(name='gestor').first()
+            if gestor_group:
+                user.groups.add(gestor_group)
+
+
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 
 class PermissionViewSet(viewsets.ViewSet):
@@ -171,7 +177,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
         qs = m.Cliente.objects.using('default').all()
         user = self.request.user
 
-        if user.is_adm:
+        if user.is_staff:
            pass
         elif user.is_gerente:
             qs = qs.filter(gestor=user.pk)
@@ -188,15 +194,15 @@ class ClienteViewSet(viewsets.ModelViewSet):
     def search(self, *args, **kwargs):
         req = self.request.data
         nome = req['nome'] if 'nome' in req else None
-        gestor_id = req['gestor_id'] if 'gestor_id' in req else None
+        vendedor_id = req['vendedor_id'] if 'vendedor_id' in req else None
 
         queryset = m.Cliente.objects.all()
 
         if nome:
             queryset = queryset.filter(nome__istartswith=nome)
         
-        if gestor_id:
-            queryset = queryset.filter(gestor_id=gestor_id)
+        if vendedor_id:
+            queryset = queryset.filter(vendedor_id=vendedor_id)
 
         serializer = s.ClienteSerializer(queryset, many=True)
 
@@ -233,11 +239,12 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         m.ProdutosPrecosUsuarios.objects.update_or_create(
             user_id=user.pk,
             produto_id=instance.pk,
-            percentual=request.data['percentual']
+            defaults={
+                'percentual': request.data['percentual']
+            }
         )
 
         self.perform_update(serializer)
-
         return Response(serializer.data)
     
 
@@ -247,6 +254,16 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
+
+        user_adm = m.User.objects.get(is_staff=1)
+
+        if not user.is_staff:
+            m.ProdutosPrecosUsuarios.objects.create(
+                user_id=user_adm.pk,
+                produto_id=instance.pk,
+                percentual=20
+            )
+
 
         m.ProdutosPrecosUsuarios.objects.update_or_create(
             user_id=user.pk,
@@ -386,6 +403,7 @@ class CIViewSet(viewsets.ModelViewSet):
         de = req['de'] if 'de' in req else None
         ate = req['ate'] if 'ate' in req else None
         observacao = req['observacao'] if 'observacao' in req else None
+        user = req['user'] if 'user' in req else None
         tipo = req['tipo'] if 'tipo' in req else None
 
         queryset = m.CI.objects.all()
@@ -394,6 +412,9 @@ class CIViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(data__gte=de)
         if ate:
             queryset = queryset.filter(data__lte=ate)
+        
+        if user:
+            queryset = queryset.filter(user=user)
         
         if tipo:
             queryset = queryset.filter(tipo=tipo)

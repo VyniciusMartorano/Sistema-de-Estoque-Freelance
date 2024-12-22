@@ -56,7 +56,7 @@ export function AppLayout() {
       )}
       <div className="menu-desktop relative  h-screen">
         <div
-          className={`menu-desktop fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 bg-sgc-blue-background-light pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
+          className={`menu-desktop fixed left-0 right-0 top-0 z-50 flex w-full flex-row items-center justify-between gap-4 bg-sgc-blue-primary pr-5 ${isLoading && 'blur-xl'} ${visible ? 'pl-[296px]' : 'pl-[116px]'}`}
         >
           <ButtonToggleSidebar handleOpenSidebar={handleOpenSidebar} />
           <div className="menu-desktop flex flex-row">
@@ -117,7 +117,7 @@ export function AppLayout() {
           orientation="horizontal"
           end={end}
           breakpoint="960px"
-          className="surface-0 shadow-2 rounded-none bg-sgc-blue-background-light p-3"
+          className="surface-0 shadow-2 rounded-none bg-sgc-blue-primary p-3"
         />
       </div>
       <div className="p-2">

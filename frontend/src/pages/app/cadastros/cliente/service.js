@@ -1,8 +1,8 @@
 import { apiBase } from '@/api/apibase'
 
 class Service {
-  getGestores() {
-    return apiBase.axios.get(`/user/get_gestores/`)
+  getVendedores() {
+    return apiBase.axios.post(`/user/search/`, { ativo: 1, tipo: 2 })
   }
 
   search(payload) {

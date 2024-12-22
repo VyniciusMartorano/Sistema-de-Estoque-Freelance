@@ -9,8 +9,8 @@ class ClienteFilter(filters.FilterSet):
     endereco = filters.CharFilter(lookup_expr='icontains')    
     telefone = filters.CharFilter(lookup_expr='icontains')   
     email = filters.CharFilter(lookup_expr='icontains')      
-    gestor_id = filters.NumberFilter(field_name='gestor')    
+    vendedor_id = filters.NumberFilter(field_name='vendedor')    
 
     class Meta:
         model = m.Cliente
-        fields = ['nome', 'endereco', 'telefone', 'email', 'gestor_id']
+        fields = ['nome', 'endereco', 'telefone', 'email', 'vendedor_id']

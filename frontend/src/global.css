@@ -40,10 +40,22 @@ div.p-dropdown-header .p-dropdown-filter-container input.p-dropdown-filter {
   align-items: center !important;
   width: 10rem !important;
 }
+#pr_id_5 > a {
+  color: white;
+}
+#pr_id_5 > a:hover {
+  background-color: none;
+}
+#pr_id_5 > a {
+  background-color: none;
+}
+.p-megamenu {
+  border: none;
+}
 
 .p-sidebar .p-sidebar-header {
   padding: 0.5rem !important;
-  background-color: #60a5fa;
+  background-color: #027abc;
 }
 
 .p-column-title {
