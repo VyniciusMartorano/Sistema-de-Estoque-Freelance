@@ -74,8 +74,9 @@ class ProdutoSerializer(serializers.ModelSerializer):
     def get_label(self, obj: m.Produto):
         return f'{obj.pk} - {obj.nome}'
 
-    def get_saldo_disponivel(self, obj: m.Produto):                                                                     
-        return m.EstoqueExtrato.functions.get_saldo_produto(obj.pk)
+    def get_saldo_disponivel(self, obj: m.Produto):                                             
+        user_id = self.context['user_id'] if 'user_id' in self.context else -1
+        return m.EstoqueExtrato.functions.get_saldo_produto(obj.pk, user_id)
     
 
 
@@ -189,16 +190,6 @@ class CISerializer(serializers.ModelSerializer):
 
     def get_user_label(self, obj: m.EstoqueExtrato):
         return f'{obj.user.pk} - {obj.user.first_name} {obj.user.last_name}' 
-
-
-
-    def create(self, validated_data):
-        
-
-      
-        instance = super().create(validated_data)
-        return instance
-
 
     class Meta:
         model = m.CI

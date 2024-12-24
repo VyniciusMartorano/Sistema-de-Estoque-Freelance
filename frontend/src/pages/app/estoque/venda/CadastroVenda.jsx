@@ -31,6 +31,8 @@ export function CadastroVenda() {
     quantidade: 0,
     preco_unitario: 0,
     saldo_disponivel: 0,
+    preco_compra: 0,
+    percentual: 0,
   })
   const [venda, setVenda] = useState({
     id: null,
@@ -72,7 +74,7 @@ export function CadastroVenda() {
   const getProdutos = () => {
     setinPromiseSearchProduto(true)
     service
-      .getProdutos()
+      .getProdutosComSaldo(user.id)
       .then(
         ({ data }) => setProdutos(data),
         () => {
@@ -123,6 +125,12 @@ export function CadastroVenda() {
         ? produto.saldo_disponivel
         : prevProduto.saldo_disponivel,
       preco_unitario: produto ? produto.preco_unitario : 0,
+      preco_compra: produto ? produto.preco_compra : prevProduto.preco_compra,
+      percentual: produto
+        ? produto.percentual
+        : field === 'percentual'
+          ? value
+          : prevProduto.percentual,
     }))
   }
 
@@ -200,6 +208,8 @@ export function CadastroVenda() {
       quantidade: 0,
       preco_unitario: 0,
       saldo_disponivel: 0,
+      percentual: 0,
+      preco_compra: 0,
     })
     getProdutos()
   }
@@ -237,9 +247,30 @@ export function CadastroVenda() {
         locale="en-US"
       />
       <InputNum
+        disabled={true}
+        value={item.preco_compra}
+        onChange={(e) => handleFieldItemChange(e, 'preco_compra')}
+        className="w-full"
+        maxFractionDigits={2}
+        minFractionDigits={2}
+        locale="en-US"
+        label="Preço Base"
+        min={0}
+      />
+      <InputNum
         disabled={!item.produto}
-        value={item.preco_unitario}
-        onChange={(e) => handleFieldItemChange(e, 'preco_unitario')}
+        value={item.percentual}
+        onChange={(e) => handleFieldItemChange(e, 'percentual')}
+        className="w-full"
+        locale="de-DE"
+        suffix="%"
+        maxFractionDigits={2}
+        label="Percentual de lucro"
+        min={0}
+      />
+      <InputNum
+        disabled={true}
+        value={item.preco_compra + item.percentual * (item.preco_compra / 100)}
         className="w-full"
         maxFractionDigits={2}
         minFractionDigits={2}

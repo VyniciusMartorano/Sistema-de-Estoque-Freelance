@@ -180,12 +180,13 @@ class ClienteViewSet(viewsets.ModelViewSet):
         if user.is_staff:
            pass
         elif user.is_gerente:
-            qs = qs.filter(gestor=user.pk)
+            vendedores = m.GestoresVendedores.objects.filter(
+               gestor=user.pk 
+            ).values_list('vendedor_id', flat=True)
+
+            qs = qs.filter(vendedor__in=vendedores)
         elif user.is_vendedor:
-            gestores = m.GestoresVendedores.objects.filter(
-                vendedor=user.pk
-            ).values_list('gestor_id',flat=True)
-            qs = qs.filter(gestor_id__in=gestores)
+            qs.filter(vendedor=user.pk)
 
         serializer = self.serializer_class(qs, many=True).data
         return Response(data=serializer, status=status.HTTP_200_OK)
@@ -214,6 +215,19 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = m.Produto.objects.using('default').all()
     serializer_class = s.ProdutoSerializer
 
+    @action(detail=False, methods=['get'])
+    def get_produtos_dto(self, *args, **kwargs):
+        user_id = self.request.query_params.get('user_id')
+        qs = m.Produto.objects.all()
+
+        serializer = self.serializer_class(
+            qs, many=True, context={
+                'user_id': user_id, 
+                'request': self.request
+            }
+        ).data
+        return Response(data=serializer, status=status.HTTP_200_OK)
+    
 
     @action(detail=False, methods=['get'])
     def search(self, *args, **kwargs):
@@ -395,6 +409,16 @@ class ProdutosPrecosUsuariosViewSet(viewsets.ModelViewSet):
 class CIViewSet(viewsets.ModelViewSet):
     queryset = m.CI.objects.all()
     serializer_class = s.CISerializer
+
+    def create(self, request, *args, **kwargs):
+        validated_data = request.data
+        validated_data['created_by'] = request.user.id
+        
+        serializer = self.get_serializer(data=validated_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'])
     def search(self, *args, **kwargs):

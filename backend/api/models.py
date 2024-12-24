@@ -124,14 +124,16 @@ class VendaItem(models.Model):
 
 class EstoqueExtratoFunctions:
 
-    def get_saldo_produto(self, produto_id):
+    def get_saldo_produto(self, produto_id: int, user_id: int):
         entradas = EstoqueExtrato.objects.filter(
             produto_id=produto_id, 
+            user_id=user_id,
             tipo=EstoqueExtrato.ENTRADA
         ).aggregate(total=Sum('quantidade'))['total'] or 0
 
         saidas = EstoqueExtrato.objects.filter(
             produto_id=produto_id, 
+            user_id=user_id,
             tipo=EstoqueExtrato.SAIDA
         ).aggregate(total=Sum('quantidade'))['total'] or 0
 
@@ -195,7 +197,7 @@ class CI(models.Model):
     ]
     data = models.DateField(null=False, blank=False)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
-    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='created_by')
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False, related_name='created_by', db_column='created_by')
     tipo = models.IntegerField(choices=TIPO_CHOICES)
     observacao = models.CharField(
         null=True, blank=True

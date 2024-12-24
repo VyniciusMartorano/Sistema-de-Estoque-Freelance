@@ -20,8 +20,8 @@ class Service {
     return apiBase.axios.get(`/ci/${ciId}/`)
   }
 
-  getProdutos() {
-    return apiBase.axios.get(`/produto/`)
+  getProdutosComSaldo(userId) {
+    return apiBase.axios.get(`/produto/get_produtos_dto/?user_id=${userId}`)
   }
 
   getClientes() {

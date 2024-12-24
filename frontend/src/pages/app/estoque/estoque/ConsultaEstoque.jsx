@@ -1,11 +1,12 @@
 import { InputText } from 'primereact/inputtext'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/buttons'
 import { Select } from '@/components/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
+import { AuthContext } from '@/context/AuthContext'
 
 import { InputCalendar } from '../../../../components/input/calendar'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
@@ -16,14 +17,15 @@ export function ConsultaEstoque() {
   const formatador = new Formaters()
   const [inPromiseSearchProduto, setinPromiseSearchProduto] = useState(false)
   const [produtos, setProdutos] = useState([])
+  const { user } = useContext(AuthContext)
   const [users, setUsers] = useState([])
 
   const [filters, setFilters] = useState({
-    de: new Date(),
+    de: new Date('2024-01-01 00:00:00'),
     ate: new Date(),
     tipo: null,
     produto: null,
-    user: null,
+    user: user.is_vendedor ? user.id : null,
   })
   const [registros, setRegistros] = useState([])
   const [inPromise, setInPromise] = useState(false)
@@ -82,7 +84,7 @@ export function ConsultaEstoque() {
 
   const header = (
     <div className=" p-inputgroup flex-1 text-xs">
-      <span className=" p-inputgroup-addon h-8">Total:</span>
+      <span className=" p-inputgroup-addon h-8">Saldo:</span>
       <InputText
         className="p-inputtext-sm h-8 text-right"
         disabled={true}
@@ -118,18 +120,20 @@ export function ConsultaEstoque() {
               label="Até"
             />
           </div>
-          <div className="mr-1 mt-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
-            <Select
-              label="Usuario"
-              className="mr-2 w-full"
-              value={filters.user}
-              onChange={(e) => handleFilterChange(e, 'user')}
-              options={users}
-              optionLabel="label"
-              optionValue="id"
-              filter
-            />
-          </div>
+          {!user.is_vendedor && (
+            <div className="mr-1 mt-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
+              <Select
+                label="Usuario"
+                className="mr-2 w-full"
+                value={filters.user}
+                onChange={(e) => handleFilterChange(e, 'user')}
+                options={users}
+                optionLabel="label"
+                optionValue="id"
+                filter
+              />
+            </div>
+          )}
           <div className="mr-1 mt-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
             <Select
               label="Produto"

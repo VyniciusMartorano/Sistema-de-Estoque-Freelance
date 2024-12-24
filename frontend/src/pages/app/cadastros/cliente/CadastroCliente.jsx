@@ -140,19 +140,19 @@ export function CadastroCliente() {
             </div>
           </div>
 
-          <div className="mt-5 flex w-full flex-row justify-start gap-2">
+          <div className="mt-5 flex w-full flex-row flex-wrap justify-start gap-2">
             <ButtonSGC
               label="Voltar"
               bgColor="sgc-blue-primary"
               icon="pi pi-arrow-left"
               type="button"
-              className="h-7"
+              className="h-8 w-full"
               onClick={() => navigate(SGC_ROUTES.CADASTROS.CLIENTE)}
             />
             <ButtonSGC
               disabled={inPromiseSave}
               label="Salvar"
-              className="h-7"
+              className="h-8 w-full"
               icon="pi pi-check"
               onClick={saveOrUpdate}
               bgColor="sgc-green-primary"

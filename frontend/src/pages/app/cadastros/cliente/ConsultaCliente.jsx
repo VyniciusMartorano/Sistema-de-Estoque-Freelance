@@ -9,6 +9,7 @@ import { Select } from '@/components/input'
 import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
+import { AuthContext } from '@/context/AuthContext'
 import { ClienteContext } from '@/context/ClienteContext'
 import { useSGCNavigate } from '@/useNavigate'
 
@@ -18,11 +19,15 @@ import Service from './service'
 export function ConsultaCliente() {
   const { setClienteId } = useContext(ClienteContext)
   const { navigate } = useSGCNavigate()
-  const [filters, setFilters] = useState({ nome: '', gestor_id: null })
   const [gestores, setVendedores] = useState([])
   const [clientes, setClientes] = useState([])
+  const { user } = useContext(AuthContext)
   const [inPromise, setInPromise] = useState(false)
   const service = new Service()
+  const [filters, setFilters] = useState({
+    nome: '',
+    vendedor_id: user.is_vendedor ? user.id : null,
+  })
 
   useEffect(() => {
     setClienteId(null)
@@ -99,17 +104,19 @@ export function ConsultaCliente() {
               label="Nome"
             />
           </div>
-          <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
-            <Select
-              label="Vendedor"
-              className="mr-2 w-full"
-              value={filters.vendedor_id}
-              onChange={(e) => handleFilterChange(e, 'vendedor_id')}
-              options={gestores}
-              optionLabel="first_name"
-              optionValue="id"
-            />
-          </div>
+          {!user.is_vendedor && (
+            <div className="mr-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
+              <Select
+                label="Vendedor"
+                className="mr-2 w-full"
+                value={filters.vendedor_id}
+                onChange={(e) => handleFilterChange(e, 'vendedor_id')}
+                options={gestores}
+                optionLabel="first_name"
+                optionValue="id"
+              />
+            </div>
+          )}
 
           <div className="md:w-1/24 mt-2 w-full sm:mt-2 sm:w-full md:mt-2 lg:mt-0 lg:w-1/6 xl:w-1/6 2xl:w-1/6">
             <IconButton

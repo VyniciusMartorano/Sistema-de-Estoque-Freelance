@@ -123,6 +123,7 @@ export function ConsultaCI() {
               className="mr-2 w-full"
               value={filters.user}
               loading={inPromiseSearchUsers}
+              filter
               onChange={(e) => handleFilterChange(e, 'user')}
               options={users}
               optionLabel="label"

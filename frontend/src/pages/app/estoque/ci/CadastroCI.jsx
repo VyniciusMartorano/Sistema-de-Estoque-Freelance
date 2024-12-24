@@ -70,7 +70,6 @@ export function CadastroCI() {
   }, [])
 
   useEffect(() => {
-    getProdutos()
     getUsers()
   }, [])
 
@@ -87,10 +86,10 @@ export function CadastroCI() {
       .finally(() => setinPromiseSearchUsers(false))
   }
 
-  const getProdutos = () => {
+  const getProdutos = (userId) => {
     setinPromiseSearchProduto(true)
     service
-      .getProdutos()
+      .getProdutosComSaldo(userId)
       .then(
         ({ data }) => setProdutos(data),
         () => {
@@ -125,7 +124,18 @@ export function CadastroCI() {
       ...prevProduto,
       [field]: value,
     }))
+
+    if (field === 'user') {
+      getProdutos(value)
+      setItem({
+        produto: null,
+        quantidade: 0,
+        preco_unitario: 0,
+        saldo_disponivel: 0,
+      })
+    }
   }
+
   const handleFieldItemChange = (e, field) => {
     const value = e.target ? e.target.value : e.value
     let produto = null
@@ -205,6 +215,14 @@ export function CadastroCI() {
       )
       return
     }
+    if (item.quantidade < 0.01) {
+      toast.warning('A quantidade deve ser superior a 0!')
+      return
+    }
+    if (!CI.user) {
+      toast.warning('Você deve selecionar o usuario antes de adicionar!')
+      return
+    }
 
     const produto = produtos.find((i) => i.id === item.produto)
     setItens([
@@ -224,7 +242,7 @@ export function CadastroCI() {
       preco_unitario: 0,
       saldo_disponivel: 0,
     })
-    getProdutos()
+    getProdutos(CI.user)
   }
 
   const headerTable = ciId ? (
@@ -232,6 +250,7 @@ export function CadastroCI() {
   ) : (
     <div className="grid">
       <Select
+        disabled={!CI.user}
         label="Produto"
         className="mr-2 w-full"
         value={item.produto}
@@ -329,7 +348,7 @@ export function CadastroCI() {
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <Select
-                disabled={ciId}
+                disabled={itens.length > 0 || ciId}
                 label="Usuario"
                 className="mr-2 w-full"
                 value={CI.user}
@@ -435,6 +454,16 @@ export function CadastroCI() {
           )}
 
           <div className="mt-5 flex w-full flex-row flex-wrap justify-start gap-2">
+            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
+              <ButtonSGC
+                label="Voltar"
+                bgColor="sgc-blue-primary"
+                icon="pi pi-arrow-left"
+                type="button"
+                className="h-8 w-full"
+                onClick={() => navigate(SGC_ROUTES.ESTOQUE.CI)}
+              />
+            </div>
             {!ciId && (
               <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
                 <ButtonSGC
@@ -448,16 +477,6 @@ export function CadastroCI() {
                 />
               </div>
             )}
-            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
-              <ButtonSGC
-                label="Voltar"
-                bgColor="sgc-blue-primary"
-                icon="pi pi-arrow-left"
-                type="button"
-                className="h-8 w-full"
-                onClick={() => navigate(SGC_ROUTES.ESTOQUE.CI)}
-              />
-            </div>
           </div>
         </div>
       </Screen>
