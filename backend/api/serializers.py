@@ -191,6 +191,15 @@ class CISerializer(serializers.ModelSerializer):
         return f'{obj.user.pk} - {obj.user.first_name} {obj.user.last_name}' 
 
 
+
+    def create(self, validated_data):
+        
+
+      
+        instance = super().create(validated_data)
+        return instance
+
+
     class Meta:
         model = m.CI
         fields = '__all__'
@@ -202,7 +211,6 @@ class CIITEMSerializer(BulkSerializerMixin,serializers.ModelSerializer):
 
     def create(self, validated_data):
         ci = validated_data['ci']
-        print(ci)
         user_id = m.CI.objects.get(pk=validated_data['ci'].pk).user.pk
         produto = validated_data['produto']
         preco_unitario = validated_data['preco_unitario']

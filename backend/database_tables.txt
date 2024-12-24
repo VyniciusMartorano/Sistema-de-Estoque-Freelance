@@ -79,6 +79,7 @@ CREATE TABLE ci (
     data DATE NOT NULL,
     user_id INTEGER NOT NULL,
     tipo INTEGER NOT NULL CHECK (tipo IN (1, 2)),
+    created_by INTEGER NOT NULL,
     observacao VARCHAR(255)
 );
 

@@ -195,6 +195,7 @@ class CI(models.Model):
     ]
     data = models.DateField(null=False, blank=False)
     user = models.ForeignKey(User, on_delete=models.PROTECT)
+    created_by = models.ForeignKey(User, on_delete=models.PROTECT, related_name='created_by')
     tipo = models.IntegerField(choices=TIPO_CHOICES)
     observacao = models.CharField(
         null=True, blank=True

@@ -88,6 +88,8 @@ export function AuthProvider({ children }) {
         service.getMenus().then(({ data }) => setMenus(data))
         service.getPermissions().then(({ data }) => setPermissions(data))
       }
+    } else {
+      setInPromiseUser(false)
     }
   }, [token])
 
@@ -159,6 +161,7 @@ export function AuthProvider({ children }) {
       }}
     >
       {inPromiseUser ? <div></div> : children}
+      {/* {inPromiseUser ? <div></div> : children} */}
     </AuthContext.Provider>
   )
 }
