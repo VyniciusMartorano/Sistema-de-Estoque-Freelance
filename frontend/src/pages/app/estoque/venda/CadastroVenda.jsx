@@ -1,3 +1,4 @@
+import { Image } from 'primereact/image'
 import { InputText } from 'primereact/inputtext'
 import { useContext, useEffect, useState } from 'react'
 import { toast } from 'sonner'
@@ -10,11 +11,11 @@ import { Table } from '@/components/table'
 import { EstoqueContext } from '@/context/EstoqueContext'
 import { useSGCNavigate } from '@/useNavigate'
 
+import { basesUrl } from '../../../../api/apiBase'
 import { InputCalendar } from '../../../../components/input/calendar'
 import { InputNum } from '../../../../components/input/input-number'
 import { AuthContext } from '../../../../context/AuthContext'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
-// import { Formaters } from '../../../../utils/formaters'
 import isEmpty from '../../../../utils/isEmpty'
 import Service from './service'
 
@@ -52,10 +53,10 @@ export function CadastroVenda() {
 
     setInPromise(true)
     service
-      .getCiById(vendaId)
+      .getVendaById(vendaId)
       .then(
         async ({ data }) => {
-          data.data = new Date(data.data + ' 00:00:00')
+          data.data_venda = new Date(data.data_venda)
           setVenda(data)
           getItensVenda(data.id)
         },
@@ -300,6 +301,8 @@ export function CadastroVenda() {
       </div>
     </div>
   )
+  const icon = <i className="pi pi-eye"></i>
+  const url = new URL(basesUrl.core)
 
   return (
     <div>
@@ -330,6 +333,7 @@ export function CadastroVenda() {
                 value={venda.cliente}
                 onChange={(e) => handleFieldChange(e, 'cliente')}
                 options={clientes}
+                filter
                 optionLabel="nome"
                 optionValue="id"
               />
@@ -343,9 +347,27 @@ export function CadastroVenda() {
             isLoading={inPromise}
             columns={[
               {
-                field: 'produto_label',
                 header: 'Produto',
                 className: '7/12 p-1',
+                body: (item) => (
+                  <div className="flex h-8  gap-1 p-1">
+                    <Image
+                      src={
+                        item.produto_foto
+                          ? `${url.origin}/media/` + item.produto_foto
+                          : ''
+                      }
+                      indicatorIcon={icon}
+                      width="30px"
+                      height="30px"
+                      preview
+                      alt="Produto"
+                    />
+                    <div className=" flex items-center justify-center">
+                      {item.produto_label}
+                    </div>
+                  </div>
+                ),
               },
               {
                 field: 'quantidade',

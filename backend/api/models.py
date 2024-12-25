@@ -155,13 +155,13 @@ class EstoqueExtrato(models.Model):
     ]
 
     data = models.DateTimeField(auto_now_add=True)
-    produto = models.ForeignKey('Produto', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
-    quantidade = models.FloatField()
+    produto = models.ForeignKey('Produto', on_delete=models.CASCADE, null=False, blank=False)
+    user = models.ForeignKey(User, on_delete=models.PROTECT, null=False, blank=False)
+    quantidade = models.FloatField(null=False, blank=False)
     
-    tipo = models.IntegerField(choices=TIPO_CHOICES)
-    tipomov = models.IntegerField(choices=TIPO_MOV_CHOICES)
-    iddoc = models.IntegerField()
+    tipo = models.IntegerField(choices=TIPO_CHOICES, null=False, blank=False)
+    tipomov = models.IntegerField(choices=TIPO_MOV_CHOICES, null=False, blank=False)
+    iddoc = models.IntegerField(null=False, blank=False)
 
     functions = EstoqueExtratoFunctions()
 

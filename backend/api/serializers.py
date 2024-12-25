@@ -163,6 +163,14 @@ class VendaSerializer(serializers.ModelSerializer):
 
 
 class VendaItemSerializer(serializers.ModelSerializer):
+    produto_label = serializers.SerializerMethodField()
+    produto_foto = serializers.SerializerMethodField()
+
+    def get_produto_label(self, obj: m.VendaItem):
+        return obj.produto.nome
+    
+    def get_produto_foto(self, obj: m.VendaItem):
+        return str(obj.produto.foto) if obj.produto.foto else ''
 
     def create(self, validated_data):
         user = self.context.get('request').user

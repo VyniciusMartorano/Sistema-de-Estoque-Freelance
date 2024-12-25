@@ -340,7 +340,7 @@ class VendaViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(data_venda__lte=ate)
         
         if cliente:
-            queryset = queryset.filter(observacao__icontains=cliente)
+            queryset = queryset.filter(cliente=cliente)
 
         if user:
             queryset = queryset.filter(user=user)
@@ -351,12 +351,50 @@ class VendaViewSet(viewsets.ModelViewSet):
     
 
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        vendaId = instance.pk
+        
+        self.perform_destroy(instance)
 
+
+        m.VendaItem.objects.filter(
+            venda_id=vendaId
+        ).delete()
+
+        m.EstoqueExtrato.objects.filter(
+            iddoc=vendaId,
+            tipomov=m.EstoqueExtrato.VENDA
+        ).delete()
+        
+        
+        return Response(
+            {"detail": "Produto deletado com sucesso."},
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class VendaItemViewSet(BulkModelViewSet):
     queryset = m.VendaItem.objects.using('default').all()
     serializer_class = s.VendaItemSerializer
+
+
+    @action(detail=False, methods=['post'])
+    def search(self, *args, **kwargs):
+        req = self.request.data
+        queryset = m.VendaItem.objects.all()
+
+        vendaId = req['vendaId'] if 'vendaId' in req else None
+
+        
+        if vendaId:
+            queryset = queryset.filter(venda_id=vendaId)
+        
+        serializer = self.serializer_class(queryset.order_by('-id'), many=True)
+
+        return Response(serializer.data)
+    
+
 
 
 class EstoqueExtratoViewSet(viewsets.ModelViewSet):
@@ -397,7 +435,7 @@ class EstoqueExtratoViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(queryset, many=True)
 
         return Response(serializer.data)
-    
+
 
 
 class ProdutosPrecosUsuariosViewSet(viewsets.ModelViewSet):

@@ -4,6 +4,8 @@ import { IoEye } from 'react-icons/io5'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/buttons'
+import { DeletePopup } from '@/components/dialogs/delete-popup'
+import { Select } from '@/components/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
 import { EstoqueContext } from '@/context/EstoqueContext'
@@ -16,20 +18,22 @@ import Service from './service'
 
 export function ConsultaVenda() {
   const formatador = new Formaters()
-  const { setCiId } = useContext(EstoqueContext)
+  const { setVendaId } = useContext(EstoqueContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({
     de: new Date('2024-01-01 00:00:00'),
     ate: new Date(),
-    observacao: null,
+    cliente: null,
   })
+  const [clientes, setClientes] = useState([])
   const [registros, setRegistros] = useState([])
   const [inPromise, setInPromise] = useState(false)
   const service = new Service()
 
   useEffect(() => {
     search()
-    setCiId(null)
+    getClientes()
+    setVendaId(null)
   }, [])
 
   const handleFilterChange = (e, field) => {
@@ -40,9 +44,17 @@ export function ConsultaVenda() {
     }))
   }
 
-  const handleNavigateToEdit = (ciId) => {
-    setCiId(ciId)
-    navigate(SGC_ROUTES.ESTOQUE.CADASTRO_CI)
+  const handleNavigateToEdit = (vendaId) => {
+    setVendaId(vendaId)
+    navigate(SGC_ROUTES.ESTOQUE.CADASTRO_VENDA)
+  }
+  const getClientes = () => {
+    service.getClientes().then(
+      ({ data }) => setClientes(data),
+      () => {
+        toast.error('Ocorreu um erro ao buscar os clientes!')
+      }
+    )
   }
 
   const search = () => {
@@ -58,6 +70,18 @@ export function ConsultaVenda() {
         (error) => toast.error(`Ocorreu um erro ao consultar. Erro: ${error}`)
       )
       .finally(() => setInPromise(false))
+  }
+
+  const excluirVenda = (vendaId) => {
+    service.excluirVenda(vendaId).then(
+      () => {
+        setRegistros(registros.filter((i) => i.id !== vendaId))
+        toast.success('A venda foi excluída com sucesso!')
+      },
+      () => {
+        toast.warning('Ocorreu um erro ao excluir a venda!')
+      }
+    )
   }
 
   const headerTable = (
@@ -92,6 +116,18 @@ export function ConsultaVenda() {
               onChange={(e) => handleFilterChange(e, 'ate')}
               className="w-full"
               label="Até"
+            />
+          </div>
+          <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+            <Select
+              label="Cliente"
+              className="mr-2 w-full"
+              filter
+              value={filters.cliente}
+              onChange={(e) => handleFilterChange(e, 'cliente')}
+              options={clientes}
+              optionLabel="nome"
+              optionValue="id"
             />
           </div>
 
@@ -154,6 +190,11 @@ export function ConsultaVenda() {
                     onClick={() => handleNavigateToEdit(item.id)}
                     iconComponent={<IoEye size={18} />}
                     className="bg-sgc-blue-primary p-1"
+                  />
+                  <DeletePopup
+                    feedbackMessage="Toda movimentação de estoque sera excluida, Deseja realmente excluir a venda?"
+                    itemLabel={''}
+                    onAccept={() => excluirVenda(item.id)}
                   />
                 </div>
               ),

@@ -16,8 +16,12 @@ class Service {
     return apiBase.axios.post(`/vendaitems/`, payload)
   }
 
-  getCiById(ciId) {
-    return apiBase.axios.get(`/venda/${ciId}/`)
+  getVendaById(vendaId) {
+    return apiBase.axios.get(`/venda/${vendaId}/`)
+  }
+
+  excluirVenda(vendaId) {
+    return apiBase.axios.delete(`/venda/${vendaId}/`)
   }
 
   getProdutosComSaldo(userId) {
@@ -28,8 +32,8 @@ class Service {
     return apiBase.axios.get(`/cliente/`)
   }
 
-  getItensByCI(ci_id) {
-    return apiBase.axios.post(`/vendaitems/search/`, { ci_id })
+  getItensVenda(vendaId) {
+    return apiBase.axios.post(`/vendaitems/search/`, { vendaId })
   }
 }
 
