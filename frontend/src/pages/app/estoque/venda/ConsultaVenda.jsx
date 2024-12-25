@@ -4,7 +4,6 @@ import { IoEye } from 'react-icons/io5'
 import { toast } from 'sonner'
 
 import { IconButton } from '@/components/buttons'
-import { Select } from '@/components/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
 import { EstoqueContext } from '@/context/EstoqueContext'
@@ -20,18 +19,13 @@ export function ConsultaVenda() {
   const { setCiId } = useContext(EstoqueContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({
-    de: new Date(),
+    de: new Date('2024-01-01 00:00:00'),
     ate: new Date(),
-    tipo: null,
     observacao: null,
   })
   const [registros, setRegistros] = useState([])
   const [inPromise, setInPromise] = useState(false)
   const service = new Service()
-  const tipoEnum = {
-    ENTRADA: 1,
-    SAIDA: 2,
-  }
 
   useEffect(() => {
     search()
@@ -56,8 +50,8 @@ export function ConsultaVenda() {
     service
       .search({
         ...filters,
-        de: formatador.formatDate(filters.de, 'YYYY-MM-DD'),
-        ate: formatador.formatDate(filters.ate, 'YYYY-MM-DD'),
+        de: formatador.formatDate(filters.de, 'YYYY-MM-DD') + ' 00:00:00',
+        ate: formatador.formatDate(filters.ate, 'YYYY-MM-DD') + ' 23:59:59',
       })
       .then(
         ({ data }) => setRegistros(data),
@@ -100,20 +94,6 @@ export function ConsultaVenda() {
               label="Até"
             />
           </div>
-          <div className="mr-1 mt-1 w-full sm:w-full md:w-3/6 lg:w-2/4 xl:w-1/5 ">
-            <Select
-              label="Tipo"
-              className="mr-2 w-full"
-              value={filters.tipo}
-              onChange={(e) => handleFilterChange(e, 'tipo')}
-              options={[
-                { label: 'Entrada', value: 1 },
-                { label: 'Saída', value: 2 },
-              ]}
-              optionLabel="label"
-              optionValue="value"
-            />
-          </div>
 
           <div className="md:w-1/24 mt-2 w-full sm:mt-2 sm:w-full md:mt-2 lg:mt-0 lg:w-1/6 xl:w-1/6 2xl:w-1/6">
             <IconButton
@@ -133,27 +113,35 @@ export function ConsultaVenda() {
             {
               field: 'data',
               header: 'Data',
-              className: '1/12 p-1',
+              className: '1/6 p-1',
               body: (item) => (
                 <div className="flex h-6 justify-start gap-1 ">
-                  {formatador.formatDate(item.data)}
+                  {formatador.formatDate(item.data_venda)}
                 </div>
               ),
             },
             {
-              field: 'tipo',
-              header: 'Tipo',
-              className: 'w-2/12 p-1',
-              body: (item) => (
-                <div className="flex h-6 justify-start gap-1 ">
-                  {item.tipo === tipoEnum.ENTRADA ? 'Entrada' : 'Saída'}
-                </div>
-              ),
+              field: 'vendedor_label',
+              header: 'Vendedor',
+              className: 'w-2/6 p-1',
             },
             {
-              field: 'observacao',
-              header: 'Observação',
-              className: 'w-2/12 p-1',
+              field: 'cliente_label',
+              header: 'Cliente',
+              className: 'w-2/6 p-1',
+            },
+            {
+              field: 'total_venda',
+              header: 'Total',
+              className: 'w-2/6 p-1',
+              body: (item) => (
+                <div className="flex h-6 justify-end gap-1 p-1">
+                  {item.total_venda.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  })}
+                </div>
+              ),
             },
             {
               field: '',

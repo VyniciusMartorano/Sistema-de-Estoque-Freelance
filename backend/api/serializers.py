@@ -136,13 +136,24 @@ class ProdutoDTOSerializer(serializers.ModelSerializer):
 
 class VendaSerializer(serializers.ModelSerializer):
     total_venda = serializers.SerializerMethodField()
+    vendedor_label = serializers.SerializerMethodField()
+    cliente_label = serializers.SerializerMethodField()
 
     def get_total_venda(self, obj: m.Venda):
-        return m.VendaItem.objects.filter(
+        vr_tot = m.VendaItem.objects.filter(
             venda=obj.pk
         ).aggregate(
-            total_valor=Sum(F('quantidade') * F('vr_unitario'))
-        )
+            total_valor=Sum(F('quantidade') * F('preco_unitario'))
+        )['total_valor']
+
+        return vr_tot if vr_tot else 0
+
+    def get_vendedor_label(self, obj: m.Venda):
+        return f'{obj.user.pk} - {obj.user.first_name if obj.user.first_name else ''} {obj.user.last_name if obj.user.last_name else ''}'
+    
+
+    def get_cliente_label(self, obj: m.Venda):
+        return f'{obj.cliente.pk} - {obj.cliente.nome}'
 
 
 
@@ -152,6 +163,23 @@ class VendaSerializer(serializers.ModelSerializer):
 
 
 class VendaItemSerializer(serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        
+        m.EstoqueExtrato.objects.create(
+            data=validated_data['venda'].data_venda,
+            produto_id=validated_data['produto'].pk,
+            user_id=user.pk,
+            quantidade=validated_data['quantidade'],
+            tipo=m.EstoqueExtrato.SAIDA,
+            tipomov=m.EstoqueExtrato.VENDA,
+            iddoc=validated_data['venda'].pk
+        )
+      
+        instance = super().create(validated_data)
+        return instance
+
 
     class Meta:
         model = m.VendaItem

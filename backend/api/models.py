@@ -136,7 +136,7 @@ class EstoqueExtratoFunctions:
             user_id=user_id,
             tipo=EstoqueExtrato.SAIDA
         ).aggregate(total=Sum('quantidade'))['total'] or 0
-
+        
         return entradas - saidas
 
 class EstoqueExtrato(models.Model):

@@ -354,7 +354,7 @@ class VendaViewSet(viewsets.ModelViewSet):
 
 
 
-class VendaItemViewSet(viewsets.ModelViewSet):
+class VendaItemViewSet(BulkModelViewSet):
     queryset = m.VendaItem.objects.using('default').all()
     serializer_class = s.VendaItemSerializer
 

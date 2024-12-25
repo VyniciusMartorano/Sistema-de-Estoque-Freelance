@@ -1,10 +1,10 @@
+import { InputText } from 'primereact/inputtext'
 import { useContext, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 import { ButtonSGC } from '@/components/buttons'
 import { DeletePopup } from '@/components/dialogs/delete-popup'
 import { Select } from '@/components/input'
-import { Input } from '@/components/input/input'
 import { Screen } from '@/components/screen'
 import { Table } from '@/components/table'
 import { EstoqueContext } from '@/context/EstoqueContext'
@@ -135,15 +135,19 @@ export function CadastroVenda() {
   }
 
   const payloadIsValid = (payload) => {
-    if (!payload.tipo || !payload.observacao) {
+    if (!payload.cliente) {
       toast.warning('Preencha os campos obrigatórios e tente novamente!')
       return false
+    }
+    if (itens.length < 1) {
+      toast.warning('Você precisa adicionar os itens!')
+      return
     }
     return true
   }
   const saveOrUpdateItens = (vendaId) => {
     const refatoredItens = itens.map((i) => {
-      return { ...i, ci: vendaId }
+      return { ...i, venda: vendaId }
     })
     service
       .saveItens(refatoredItens)
@@ -169,7 +173,7 @@ export function CadastroVenda() {
     }
     service.saveOrUpdate(payload).then(
       async (resp) => {
-        setVenda({ ...resp.data, data: new Date(resp.data.data + ' 00:00:00') })
+        setVenda({ ...venda, id: resp.data.id })
         saveOrUpdateItens(resp.data.id)
       },
       () => {
@@ -201,6 +205,8 @@ export function CadastroVenda() {
       {
         ...item,
         produto_label: produto.label,
+        preco_unitario:
+          item.preco_compra + item.percentual * (item.preco_compra / 100),
       },
     ])
     setItem({
@@ -214,7 +220,9 @@ export function CadastroVenda() {
     getProdutos()
   }
 
-  const headerTable = (
+  const headerTable = venda.id ? (
+    <></>
+  ) : (
     <div className="grid">
       <Select
         label="Produto"
@@ -316,6 +324,7 @@ export function CadastroVenda() {
             </div>
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <Select
+                disabled={venda.id}
                 label="Cliente"
                 className="mr-2 w-full"
                 value={venda.cliente}
@@ -323,16 +332,6 @@ export function CadastroVenda() {
                 options={clientes}
                 optionLabel="nome"
                 optionValue="id"
-              />
-            </div>
-            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
-              <Input
-                disabled={vendaId}
-                value={venda.observacao}
-                onChange={(e) => handleFieldChange(e, 'observacao')}
-                type="text"
-                className="w-full"
-                label="Observação"
               />
             </div>
           </div>
@@ -346,24 +345,46 @@ export function CadastroVenda() {
               {
                 field: 'produto_label',
                 header: 'Produto',
-                className: '8/12 p-1',
+                className: '7/12 p-1',
               },
               {
                 field: 'quantidade',
-                header: 'Quantidade',
-                className: 'w-2/12 p-1 text-right',
+                header: 'Qtd',
+                className: 'w-1/12 p-1 text-right',
               },
               {
                 field: 'preco_unitario',
                 header: 'P. Unit',
                 className: 'w-2/12 p-1 text-right',
-                body: (item) => <div>{item.preco_unitario.toFixed(2)}</div>,
+                body: (item) => (
+                  <div className="flex h-6 justify-end gap-1 p-1">
+                    {item.preco_unitario.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    })}
+                  </div>
+                ),
+              },
+              {
+                header: 'Total',
+                className: 'w-2/12 p-1 text-right ',
+                body: (item) => (
+                  <div className="flex h-6 justify-end gap-1 p-1">
+                    {(item.quantidade * item.preco_unitario).toLocaleString(
+                      'pt-BR',
+                      {
+                        style: 'currency',
+                        currency: 'BRL',
+                      }
+                    )}
+                  </div>
+                ),
               },
               {
                 field: '',
                 header: '',
                 body: (item) =>
-                  vendaId ? (
+                  venda.id ? (
                     <div></div>
                   ) : (
                     <div className="flex h-6 justify-end gap-1 text-white">
@@ -378,6 +399,21 @@ export function CadastroVenda() {
               },
             ]}
           ></Table>
+          <div className=" p-inputgroup flex-1 text-xs">
+            <span className=" p-inputgroup-addon h-8">Valor Total:</span>
+            <InputText
+              className="p-inputtext-sm h-8 text-right"
+              disabled={true}
+              value={itens
+                .reduce((soma, item) => {
+                  return soma + item.quantidade * item.preco_unitario
+                }, 0)
+                .toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                })}
+            />
+          </div>
 
           <div className="mt-5 flex w-full flex-row flex-wrap justify-start gap-2">
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
