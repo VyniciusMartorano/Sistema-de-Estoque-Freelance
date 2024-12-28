@@ -437,6 +437,42 @@ class EstoqueExtratoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+    @action(detail=False, methods=['post'])
+    def search_saldos(self, *args, **kwargs):
+        req = self.request.data
+
+        user_filter = req['user'] if 'user' in req else None
+        produto_filter = req['produto'] if 'produto' in req else None
+
+        produtos = m.Produto.objects.all()
+        usuarios = [self.request.user]
+
+        
+        if self.request.user.is_gerente and not user_filter:    
+            usuarios = list(m.GestoresVendedores.objects.filter(gestor_id=self.request.user.pk).values_list('vendedor', flat=True, ))
+            usuarios.insert(0, self.request.user.pk)
+
+            usuarios = [m.User.objects.get(pk=i) for i in usuarios]
+
+
+        if user_filter:
+            usuarios = [m.User.objects.get(pk=user_filter)]
+
+        if produto_filter:
+            produtos = produtos.filter(pk=produto_filter)
+        
+        itens = []
+        for u in usuarios:
+            for p in produtos:
+                itens.append({
+                    'user_label': f'{u.first_name} {u.last_name if u.last_name else ''}',
+                    'produto_label': f'{p.pk} - {p.nome}',
+                    'saldo': m.EstoqueExtrato.functions.get_saldo_produto(p.pk, u.pk),
+                })
+
+        return Response(itens, status=status.HTTP_200_OK)
+
+
 
 class ProdutosPrecosUsuariosViewSet(viewsets.ModelViewSet):
     queryset = m.ProdutosPrecosUsuarios.objects.using('default').all()

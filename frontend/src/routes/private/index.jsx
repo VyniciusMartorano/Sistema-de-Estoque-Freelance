@@ -10,6 +10,7 @@ import { ConsultaUsuario } from '../../pages/app/cadastros/usuario/ConsultaUsuar
 import { CadastroCI } from '../../pages/app/estoque/ci/CadastroCI'
 import { ConsultaCI } from '../../pages/app/estoque/ci/ConsultaCI'
 import { ConsultaEstoque } from '../../pages/app/estoque/estoque/ConsultaEstoque'
+import { ConsultaSaldoEstoque } from '../../pages/app/estoque/estoque/ConsultaSaldoEstoque'
 import { CadastroVenda } from '../../pages/app/estoque/venda/CadastroVenda'
 import { ConsultaVenda } from '../../pages/app/estoque/venda/ConsultaVenda'
 import { SGC_ROUTES } from '../navigation-routes'
@@ -63,8 +64,12 @@ export const privateRoutes = {
       element: <CadastroVenda />,
     },
     {
-      path: SGC_ROUTES.ESTOQUE.ESTOQUE,
+      path: SGC_ROUTES.ESTOQUE.EXTRATO_ESTOQUE,
       element: <ConsultaEstoque />,
+    },
+    {
+      path: SGC_ROUTES.ESTOQUE.SALDO_DE_ESTOQUE,
+      element: <ConsultaSaldoEstoque />,
     },
   ],
 }

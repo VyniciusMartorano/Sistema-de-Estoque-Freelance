@@ -102,7 +102,14 @@ export function ConsultaEstoque() {
 
   return (
     <div>
-      <Screen itens={[{ label: 'Estoque', link: SGC_ROUTES.ESTOQUE.ESTOQUE }]}>
+      <Screen
+        itens={[
+          {
+            label: 'Extrato de Estoque',
+            link: SGC_ROUTES.ESTOQUE.EXTRATO_ESTOQUE,
+          },
+        ]}
+      >
         <div className="p-inputtext-sm my-6 flex flex-grow-0 flex-wrap">
           <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
             <InputCalendar

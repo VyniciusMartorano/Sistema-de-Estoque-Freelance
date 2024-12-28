@@ -9,7 +9,8 @@ const SGC_ROUTES = {
   ESTOQUE: {
     VENDA: '/estoque/vendas',
     CADASTRO_VENDA: '/estoque/vendas/cadastro',
-    ESTOQUE: '/estoque/saldos',
+    EXTRATO_ESTOQUE: '/estoque/extrato',
+    SALDO_DE_ESTOQUE: '/estoque/saldos',
     CI: '/estoque/ci',
     CADASTRO_CI: '/estoque/ci/cadastro',
   },
