@@ -64,6 +64,8 @@ CREATE TABLE VendasItens (
     produto_id INTEGER NOT NULL,
     quantidade INTEGER NOT NULL,
     preco_unitario DECIMAL(10, 2) NOT NULL,
+    percentual_vendedor FLOAT NOT NULL,
+    percentual_gestor FLOAT NOT NULL,
     CONSTRAINT fk_venda
         FOREIGN KEY (venda_id)
         REFERENCES Vendas(id) 

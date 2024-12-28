@@ -132,6 +132,8 @@ export function CadastroVenda() {
         : field === 'percentual'
           ? value
           : prevProduto.percentual,
+      percentual_gestor: 0,
+      percentual_vendedor: 0,
     }))
   }
 
@@ -217,6 +219,8 @@ export function CadastroVenda() {
       saldo_disponivel: 0,
       percentual: 0,
       preco_compra: 0,
+      percentual_gestor: 0,
+      percentual_vendedor: 0,
     })
     getProdutos()
   }

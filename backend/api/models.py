@@ -116,6 +116,9 @@ class VendaItem(models.Model):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
     preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    percentual_gestor = models.FloatField(null=False, blank=False)
+    percentual_vendedor = models.FloatField(null=False, blank=False)
+
 
 
     class Meta:

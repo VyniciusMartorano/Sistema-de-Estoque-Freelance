@@ -174,7 +174,7 @@ class VendaItemSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context.get('request').user
-        
+
         m.EstoqueExtrato.objects.create(
             data=validated_data['venda'].data_venda,
             produto_id=validated_data['produto'].pk,
@@ -184,7 +184,24 @@ class VendaItemSerializer(serializers.ModelSerializer):
             tipomov=m.EstoqueExtrato.VENDA,
             iddoc=validated_data['venda'].pk
         )
-      
+
+        qs = m.ProdutosPrecosUsuarios.objects.filter(
+            user_id=user.pk,
+            produto_id=validated_data['produto'].pk
+        )
+
+        percentual_vendedor = qs.first().percentual if qs.exists() else None
+
+        gestor_id = m.GestoresVendedores.objects.filter(vendedor_id=user.pk).first().gestor.pk
+        qs = m.ProdutosPrecosUsuarios.objects.filter(
+            user_id=gestor_id,
+            produto_id=validated_data['produto'].pk
+        )
+        percentual_gestor = qs.first().percentual if qs.exists() else None
+
+        validated_data['percentual_gestor'] = percentual_gestor
+        validated_data['percentual_vendedor'] = percentual_vendedor
+
         instance = super().create(validated_data)
         return instance
 
