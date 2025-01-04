@@ -9,7 +9,11 @@ class Service {
     return apiBase.axios[userId ? 'patch' : 'post'](
       `/user/${userId ? userId + '/' : ''}`,
       userId
-        ? { username: payload.username, first_name: payload.first_name }
+        ? {
+            username: payload.username,
+            first_name: payload.first_name,
+            password: payload.password,
+          }
         : payload
     )
   }

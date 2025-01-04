@@ -21,7 +21,7 @@ export function ConsultaCliente() {
   const { navigate } = useSGCNavigate()
   const [gestores, setVendedores] = useState([])
   const [clientes, setClientes] = useState([])
-  const { user } = useContext(AuthContext)
+  const { user, userHavePermission } = useContext(AuthContext)
   const [inPromise, setInPromise] = useState(false)
   const service = new Service()
   const [filters, setFilters] = useState({
@@ -77,14 +77,16 @@ export function ConsultaCliente() {
   const headerTable = (
     <div className="grid">
       <div className="col">
-        <Button
-          size="small"
-          label="Novo"
-          className="flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1 sm:w-full lg:w-1/6 xl:w-1/6 2xl:w-1/6"
-          onClick={() => navigate(SGC_ROUTES.CADASTROS.CADASTRO_CLIENTE)}
-        >
-          <i className="pi pi-plus"></i>
-        </Button>
+        {userHavePermission('CLIENTE_cadastrar_cliente') && (
+          <Button
+            size="small"
+            label="Novo"
+            className="flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1 sm:w-full lg:w-1/6 xl:w-1/6 2xl:w-1/6"
+            onClick={() => navigate(SGC_ROUTES.CADASTROS.CADASTRO_CLIENTE)}
+          >
+            <i className="pi pi-plus"></i>
+          </Button>
+        )}
       </div>
     </div>
   )
@@ -148,18 +150,22 @@ export function ConsultaCliente() {
               header: '',
               body: (item) => (
                 <div className="flex h-6 justify-end gap-1 text-white">
-                  <IconButton
-                    containerHeight="h-6"
-                    tooltip="Editar"
-                    onClick={() => handleNavigateToEdit(item.id)}
-                    iconComponent={<IoPencil size={18} />}
-                    className="bg-sgc-blue-primary p-1"
-                  />
-                  <DeletePopup
-                    feedbackMessage="Deseja realmente apagar o cliente"
-                    itemLabel={item.nome}
-                    onAccept={() => deleteCliente(item.id)}
-                  />
+                  {userHavePermission('CLIENTE_editar_cliente') && (
+                    <IconButton
+                      containerHeight="h-6"
+                      tooltip="Editar"
+                      onClick={() => handleNavigateToEdit(item.id)}
+                      iconComponent={<IoPencil size={18} />}
+                      className="bg-sgc-blue-primary p-1"
+                    />
+                  )}
+                  {userHavePermission('CLIENTE_excluir_cliente') && (
+                    <DeletePopup
+                      feedbackMessage="Deseja realmente apagar o cliente"
+                      itemLabel={item.nome}
+                      onAccept={() => deleteCliente(item.id)}
+                    />
+                  )}
                 </div>
               ),
               className: '',

@@ -10,11 +10,13 @@ import { ClienteContext } from '@/context/ClienteContext'
 import { SGC_ROUTES } from '@/routes/navigation-routes'
 import { useSGCNavigate } from '@/useNavigate'
 
+import { AuthContext } from '../../../../context/AuthContext'
 import isEmpty from '../../../../utils/isEmpty'
 import Service from './service'
 
 export function CadastroUsuario() {
   const { userId } = useContext(ClienteContext)
+  const { userHavePermission } = useContext(AuthContext)
   const { navigate } = useSGCNavigate()
 
   const [user, setUser] = useState({
@@ -33,6 +35,7 @@ export function CadastroUsuario() {
   }
   const service = new Service()
   const [gestores, setGestores] = useState([])
+  const [tipos, setTipos] = useState([{ label: 'Vendedor', value: 2 }])
   const [inPromiseSave, setInPromiseSave] = useState(false)
 
   const handleFieldChange = (e, field) => {
@@ -65,6 +68,14 @@ export function CadastroUsuario() {
 
   useEffect(() => {
     service.getGestores().then(({ data }) => setGestores(data))
+
+    if (userHavePermission('USUARIO_criar_gestor')) {
+      setTipos([
+        { label: 'Gestor', value: 1 },
+        { label: 'Vendedor', value: 2 },
+      ])
+    }
+
     if (!userId) return
 
     service.getUserById(userId).then(
@@ -84,7 +95,6 @@ export function CadastroUsuario() {
     if (payload.tipo === tipoEnum.GESTOR) {
       delete payload.gestor
     }
-    console.log(payload)
     if (
       isEmpty(
         payload,
@@ -161,10 +171,9 @@ export function CadastroUsuario() {
                 label="Nome"
               />
             </div>
-            {!user.id && (
+            {userHavePermission('USUARIO_redefinir_senha') && (
               <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
                 <Input
-                  disabled={user.id}
                   value={user.password}
                   onChange={(e) => handleFieldChange(e, 'password')}
                   type="password"
@@ -173,10 +182,9 @@ export function CadastroUsuario() {
                 />
               </div>
             )}
-            {!user.id && (
+            {userHavePermission('USUARIO_redefinir_senha') && (
               <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
                 <Input
-                  disabled={user.id}
                   value={user.password_repeat}
                   onChange={(e) => handleFieldChange(e, 'password_repeat')}
                   type="password"
@@ -193,10 +201,7 @@ export function CadastroUsuario() {
                 className="mr-2 w-full"
                 value={user.tipo}
                 onChange={(e) => handleFieldChange(e, 'tipo')}
-                options={[
-                  { label: 'Gestor', value: 1 },
-                  { label: 'Vendedor', value: 2 },
-                ]}
+                options={tipos}
                 showClear={false}
                 optionLabel="label"
                 optionValue="value"

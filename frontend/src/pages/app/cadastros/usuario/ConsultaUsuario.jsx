@@ -12,11 +12,13 @@ import { Table } from '@/components/table'
 import { ClienteContext } from '@/context/ClienteContext'
 import { useSGCNavigate } from '@/useNavigate'
 
+import { AuthContext } from '../../../../context/AuthContext'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 import Service from './service'
 
 export function ConsultaUsuario() {
   const { setUserId } = useContext(ClienteContext)
+  const { userHavePermission } = useContext(AuthContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({ nome: '', tipo: null, ativo: 1 })
   const [usuarios, setUsuarios] = useState([])
@@ -162,17 +164,22 @@ export function ConsultaUsuario() {
               header: '',
               body: (item) => (
                 <div className="flex h-6 justify-end gap-1 text-white">
-                  <IconButton
-                    containerHeight="h-6"
-                    tooltip="Editar"
-                    onClick={() => handleNavigateToEdit(item.id)}
-                    iconComponent={<IoPencil size={18} />}
-                    className="bg-sgc-blue-primary p-1"
-                  />
-                  <Checkbox
-                    onChange={() => inativeUser(item)}
-                    checked={item.is_active}
-                  ></Checkbox>
+                  {userHavePermission('USUARIO_editar_usuario') && (
+                    <IconButton
+                      containerHeight="h-6"
+                      tooltip="Editar"
+                      onClick={() => handleNavigateToEdit(item.id)}
+                      iconComponent={<IoPencil size={18} />}
+                      className="bg-sgc-blue-primary p-1"
+                    />
+                  )}
+                  {userHavePermission('USUARIO_inativar_usuario') && (
+                    <Checkbox
+                      onChange={() => inativeUser(item)}
+                      checked={item.is_active}
+                    ></Checkbox>
+                  )}
+                  )
                 </div>
               ),
               className: '',

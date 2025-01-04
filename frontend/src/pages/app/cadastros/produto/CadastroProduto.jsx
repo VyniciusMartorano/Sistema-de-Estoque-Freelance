@@ -16,7 +16,7 @@ import Service from './service'
 export function CadastroProduto() {
   const { navigate } = useSGCNavigate()
   const { produtoId } = useContext(ProdutoContext)
-  const { user } = useContext(AuthContext)
+  const { user, userHavePermission } = useContext(AuthContext)
   const [produto, setProduto] = useState({
     id: null,
     nome: '',
@@ -211,26 +211,27 @@ export function CadastroProduto() {
                 min={0}
               />
             </div>
-            <div className="p-inputtext-sm my-6 flex flex-grow-0 ">
-              <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
-                <div className="mr-1w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
-                  <ButtonSGC
-                    disabled={user.is_vendedor}
-                    className=" p-button-info h-7"
-                    icon="pi pi-upload"
-                    label="Selecionar Imagem"
-                    onClick={handleFileUpload}
-                  />
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={handleFileSelected}
-                  />
+            {userHavePermission('PRODUTO_alterar_imagem_produto') && (
+              <div className="p-inputtext-sm my-6 flex flex-grow-0 ">
+                <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+                  <div className="mr-1w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+                    <ButtonSGC
+                      className=" p-button-info h-7"
+                      icon="pi pi-upload"
+                      label="Selecionar Imagem"
+                      onClick={handleFileUpload}
+                    />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleFileSelected}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="mt-5 flex w-full flex-row flex-wrap justify-start gap-2">

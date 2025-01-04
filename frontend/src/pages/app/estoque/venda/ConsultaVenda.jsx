@@ -12,6 +12,7 @@ import { EstoqueContext } from '@/context/EstoqueContext'
 import { useSGCNavigate } from '@/useNavigate'
 
 import { InputCalendar } from '../../../../components/input/calendar'
+import { AuthContext } from '../../../../context/AuthContext'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 import { Formaters } from '../../../../utils/formaters'
 import Service from './service'
@@ -19,6 +20,7 @@ import Service from './service'
 export function ConsultaVenda() {
   const formatador = new Formaters()
   const { setVendaId } = useContext(EstoqueContext)
+  const { userHavePermission, user } = useContext(AuthContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({
     de: new Date('2024-01-01 00:00:00'),
@@ -87,14 +89,16 @@ export function ConsultaVenda() {
   const headerTable = (
     <div className="grid">
       <div className="col">
-        <Button
-          size="small"
-          label="Novo"
-          className="md:w-1/24  flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1  sm:w-full   lg:w-1/6 xl:w-1/6 2xl:w-1/6"
-          onClick={() => navigate(SGC_ROUTES.ESTOQUE.CADASTRO_VENDA)}
-        >
-          <i className="pi pi-plus"></i>
-        </Button>
+        {userHavePermission('VENDA_cadastrar_venda') && user.is_vendedor && (
+          <Button
+            size="small"
+            label="Novo"
+            className="md:w-1/24  flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1  sm:w-full   lg:w-1/6 xl:w-1/6 2xl:w-1/6"
+            onClick={() => navigate(SGC_ROUTES.ESTOQUE.CADASTRO_VENDA)}
+          >
+            <i className="pi pi-plus"></i>
+          </Button>
+        )}
       </div>
     </div>
   )
@@ -184,18 +188,22 @@ export function ConsultaVenda() {
               header: '',
               body: (item) => (
                 <div className="flex h-6 justify-end gap-1 text-white">
-                  <IconButton
-                    containerHeight="h-6"
-                    tooltip="Visualizar"
-                    onClick={() => handleNavigateToEdit(item.id)}
-                    iconComponent={<IoEye size={18} />}
-                    className="bg-sgc-blue-primary p-1"
-                  />
-                  <DeletePopup
-                    feedbackMessage="Toda movimentação de estoque sera excluida, Deseja realmente excluir a venda?"
-                    itemLabel={''}
-                    onAccept={() => excluirVenda(item.id)}
-                  />
+                  {userHavePermission('VENDA_visualizar_venda') && (
+                    <IconButton
+                      containerHeight="h-6"
+                      tooltip="Visualizar"
+                      onClick={() => handleNavigateToEdit(item.id)}
+                      iconComponent={<IoEye size={18} />}
+                      className="bg-sgc-blue-primary p-1"
+                    />
+                  )}
+                  {userHavePermission('VENDA_excluir_venda') && (
+                    <DeletePopup
+                      feedbackMessage="Toda movimentação de estoque sera excluida, Deseja realmente excluir a venda?"
+                      itemLabel={''}
+                      onAccept={() => excluirVenda(item.id)}
+                    />
+                  )}
                 </div>
               ),
               className: '',

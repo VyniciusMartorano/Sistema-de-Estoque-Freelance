@@ -12,6 +12,7 @@ import { EstoqueContext } from '@/context/EstoqueContext'
 import { useSGCNavigate } from '@/useNavigate'
 
 import { InputCalendar } from '../../../../components/input/calendar'
+import { AuthContext } from '../../../../context/AuthContext'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 import { Formaters } from '../../../../utils/formaters'
 import Service from './service'
@@ -19,6 +20,7 @@ import Service from './service'
 export function ConsultaCI() {
   const formatador = new Formaters()
   const { setCiId } = useContext(EstoqueContext)
+  const { userHavePermission } = useContext(AuthContext)
   const { navigate } = useSGCNavigate()
   const [filters, setFilters] = useState({
     de: new Date(),
@@ -86,14 +88,16 @@ export function ConsultaCI() {
   const headerTable = (
     <div className="grid">
       <div className="col">
-        <Button
-          size="small"
-          label="Novo"
-          className="md:w-1/24  flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1  sm:w-full   lg:w-1/6 xl:w-1/6 2xl:w-1/6"
-          onClick={() => navigate(SGC_ROUTES.ESTOQUE.CADASTRO_CI)}
-        >
-          <i className="pi pi-plus"></i>
-        </Button>
+        {userHavePermission('CI_cadastrar_ci') && (
+          <Button
+            size="small"
+            label="Novo"
+            className="md:w-1/24  flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1  sm:w-full   lg:w-1/6 xl:w-1/6 2xl:w-1/6"
+            onClick={() => navigate(SGC_ROUTES.ESTOQUE.CADASTRO_CI)}
+          >
+            <i className="pi pi-plus"></i>
+          </Button>
+        )}
       </div>
     </div>
   )
@@ -204,13 +208,15 @@ export function ConsultaCI() {
               header: '',
               body: (item) => (
                 <div className="flex h-6 justify-end gap-1 text-white">
-                  <IconButton
-                    containerHeight="h-6"
-                    tooltip="Visualizar"
-                    onClick={() => handleNavigateToEdit(item.id)}
-                    iconComponent={<IoEye size={18} />}
-                    className="bg-sgc-blue-primary p-1"
-                  />
+                  {userHavePermission('CI_visualizar_ci') && (
+                    <IconButton
+                      containerHeight="h-6"
+                      tooltip="Visualizar"
+                      onClick={() => handleNavigateToEdit(item.id)}
+                      iconComponent={<IoEye size={18} />}
+                      className="bg-sgc-blue-primary p-1"
+                    />
+                  )}
                 </div>
               ),
               className: '',

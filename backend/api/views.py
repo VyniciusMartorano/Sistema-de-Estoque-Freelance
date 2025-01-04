@@ -21,6 +21,23 @@ class UserViewSet(viewsets.ModelViewSet):
     def list(self, request):
         return Response(s.UserSerializer(request.user).data)
     
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = request.data
+
+        # Verificar se a senha está no corpo da requisição
+        if "password" in data:
+            new_password = data.pop("password")
+            instance.set_password(str(new_password))
+            instance.save()
+        
+        # Atualizar outros campos se fornecidos
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
 
     @action(detail=False, methods=['post'])
     def search(self, *args, **kwargs):
@@ -326,11 +343,22 @@ class VendaViewSet(viewsets.ModelViewSet):
     def search(self, *args, **kwargs):
         queryset = m.Venda.objects.order_by('-id')
         req = self.request.data
+        usuario = self.request.user
 
         de = req['de'] if 'de' in req else None
         ate = req['ate'] if 'ate' in req else None
         cliente = req['cliente'] if 'cliente' in req else None
         user = req['user'] if 'user' in req else None
+
+
+        if usuario.is_staff: pass
+        elif usuario.is_gerente: 
+            vendedores = m.GestoresVendedores.objects.filter(gestor_id=usuario.pk).values_list('vendedor_id', flat=True)
+            clientes = m.Cliente.objects.filter(vendedor_id__in=vendedores).values_list('pk', flat=True)
+            queryset = queryset.filter(cliente_id__in=clientes)
+        elif usuario.is_vendedor: 
+            clientes = m.Cliente.objects.filter(vendedor_id=usuario.pk).values_list('pk', flat=True)
+            queryset = queryset.filter(cliente_id__in=clientes)
 
 
         if de:

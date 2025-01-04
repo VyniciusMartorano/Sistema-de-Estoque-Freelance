@@ -123,6 +123,7 @@ export function AuthProvider({ children }) {
       apiBase.axios.defaults.headers.Authorization = `Bearer ${access}`
       await service.getUser(access).then(({ data }) => setUser(data))
       await service.getMenus(access).then(({ data }) => setMenus(data))
+      await service.getPermissions().then(({ data }) => setPermissions(data))
 
       setCookie('auth.token', access, {
         path: '/',
@@ -144,7 +145,7 @@ export function AuthProvider({ children }) {
   }
 
   function userHavePermission(permission) {
-    return permissions.includes(permission)
+    return permissions.includes(`api.${permission}`)
   }
 
   return (

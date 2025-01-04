@@ -13,11 +13,13 @@ import { ProdutoContext } from '@/context/ProdutoContext'
 import { useSGCNavigate } from '@/useNavigate'
 
 import { basesUrl } from '../../../../api/apiBase'
+import { AuthContext } from '../../../../context/AuthContext'
 import { SGC_ROUTES } from '../../../../routes/navigation-routes'
 import Service from './service'
 
 export function ConsultaProduto() {
   const { setProdutoId } = useContext(ProdutoContext)
+  const { userHavePermission } = useContext(AuthContext)
   const { navigate } = useSGCNavigate()
   const [filter, setFilter] = useState('')
   const [produtos, setProdutos] = useState([])
@@ -70,14 +72,16 @@ export function ConsultaProduto() {
   const headerTable = (
     <div className="grid">
       <div className="col">
-        <Button
-          size="small"
-          label="Novo"
-          className="md:w-1/24  flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1  sm:w-full   lg:w-1/6 xl:w-1/6 2xl:w-1/6"
-          onClick={() => navigate(SGC_ROUTES.CADASTROS.CADASTRO_PRODUTO)}
-        >
-          <i className="pi pi-plus"></i>
-        </Button>
+        {userHavePermission('PRODUTO_cadastrar_produto') && (
+          <Button
+            size="small"
+            label="Novo"
+            className="md:w-1/24  flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1  sm:w-full   lg:w-1/6 xl:w-1/6 2xl:w-1/6"
+            onClick={() => navigate(SGC_ROUTES.CADASTROS.CADASTRO_PRODUTO)}
+          >
+            <i className="pi pi-plus"></i>
+          </Button>
+        )}
       </div>
     </div>
   )
@@ -144,18 +148,22 @@ export function ConsultaProduto() {
               header: '',
               body: (item) => (
                 <div className="flex h-6 justify-end gap-1 text-white">
-                  <IconButton
-                    containerHeight="h-6"
-                    tooltip="Editar"
-                    onClick={() => handleNavigateToEdit(item.id)}
-                    iconComponent={<IoPencil size={18} />}
-                    className="bg-sgc-blue-primary p-1"
-                  />
-                  <DeletePopup
-                    feedbackMessage="Deseja realmente apagar o produto"
-                    itemLabel={item.nome}
-                    onAccept={() => deleteProduto(item.id)}
-                  />
+                  {userHavePermission('PRODUTO_editar_produto') && (
+                    <IconButton
+                      containerHeight="h-6"
+                      tooltip="Editar"
+                      onClick={() => handleNavigateToEdit(item.id)}
+                      iconComponent={<IoPencil size={18} />}
+                      className="bg-sgc-blue-primary p-1"
+                    />
+                  )}
+                  {userHavePermission('PRODUTO_excluir_produto') && (
+                    <DeletePopup
+                      feedbackMessage="Deseja realmente apagar o produto"
+                      itemLabel={item.nome}
+                      onAccept={() => deleteProduto(item.id)}
+                    />
+                  )}
                 </div>
               ),
               className: '',

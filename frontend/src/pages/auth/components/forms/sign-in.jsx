@@ -5,15 +5,15 @@ import { toast } from 'sonner'
 
 import { Input } from '@/components/input'
 import { AuthContext } from '@/context/AuthContext'
-import { SGC_ROUTES } from '@/routes/navigation-routes'
-import { useSGCNavigate } from '@/useNavigate'
+// import { SGC_ROUTES } from '@/routes/navigation-routes'
+// import { useSGCNavigate } from '@/useNavigate'
 
 export function SignInForm() {
   const { register, handleSubmit } = useForm()
 
   const { signIn } = useContext(AuthContext)
 
-  const { navigate } = useSGCNavigate()
+  // const { navigate } = useSGCNavigate()
 
   const handleSignIn = (data) => {
     toast.promise(
@@ -33,8 +33,8 @@ export function SignInForm() {
 
   return (
     <form className="w-full" onSubmit={handleSubmit(handleSignIn)}>
-      <div className="flex flex-col gap-6 bg-white">
-        <p className="my-4 w-full text-center">SISTEMA DE GESTÃO CORPORATIVA</p>
+      <div className="gap- flex flex-col bg-white">
+        <p className="my-2 w-full text-center">SISTEMA DE GESTÃO CORPORATIVA</p>
 
         <Input
           label="Usuário"
@@ -50,21 +50,20 @@ export function SignInForm() {
         />
       </div>
 
-      <div className="mt-12">
+      <div className="mt-7">
         <Button
           label="Acessar"
           type="submit"
           className="mx-auto block w-full rounded-none border-none bg-sgc-blue-background-light outline-0"
         />
 
-        <div className="my-4 h-[1px] w-full bg-sgc-gray-label"></div>
-
+        {/* <div className="my-4 h-[1px] w-full bg-sgc-gray-label"></div>
         <Button
           label="Cadastrar Usuário"
           type="button"
           className="p-d-block p-mx-auto p-button-outlined w-full rounded-none outline-sgc-blue-background-light"
           onClick={() => navigate(SGC_ROUTES.AUTH.SIGNUP)}
-        />
+        /> */}
       </div>
     </form>
   )
