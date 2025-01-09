@@ -29,7 +29,7 @@ class UserDTOSerializer(serializers.ModelSerializer):
     label = serializers.SerializerMethodField()
 
     def get_label(self, obj: m.User):
-        return f'{obj.pk} - {obj.first_name} {obj.last_name if obj.last_name else ''} ({'G' if obj.is_gerente else 'V'})'
+        return f"{obj.pk} - {obj.first_name} {obj.last_name if obj.last_name else ''} ({'G' if obj.is_gerente else 'V'})"
 
 
     class Meta:
@@ -149,7 +149,7 @@ class VendaSerializer(serializers.ModelSerializer):
         return vr_tot if vr_tot else 0
 
     def get_vendedor_label(self, obj: m.Venda):
-        return f'{obj.user.pk} - {obj.user.first_name if obj.user.first_name else ''} {obj.user.last_name if obj.user.last_name else ''}'
+        return f"{obj.user.pk} - {obj.user.first_name if obj.user.first_name else ''} {obj.user.last_name if obj.user.last_name else ''}"
     
 
     def get_cliente_label(self, obj: m.Venda):

@@ -493,7 +493,7 @@ class EstoqueExtratoViewSet(viewsets.ModelViewSet):
         for u in usuarios:
             for p in produtos:
                 itens.append({
-                    'user_label': f'{u.first_name} {u.last_name if u.last_name else ''}',
+                    'user_label': f"{u.first_name} {u.last_name if u.last_name else ''}",
                     'produto_label': f'{p.pk} - {p.nome}',
                     'saldo': m.EstoqueExtrato.functions.get_saldo_produto(p.pk, u.pk),
                 })
