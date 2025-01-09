@@ -5,9 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "cross-env VITE_DISABLE_ESLINT=true vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "host": "npx vite --host"
+  },
+  "vite": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    }
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.2",
@@ -35,13 +43,8 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@rocketseat/eslint-config": "^2.2.2",
-    "@types/node": "^20.12.12",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
-    "babel-plugin-module-resolver": "^5.0.2",
     "cross-env": "^7.0.3",
     "eslint": "^8.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.0",
