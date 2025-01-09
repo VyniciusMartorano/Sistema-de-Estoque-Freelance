@@ -6,6 +6,7 @@
     "react-hooks/exhaustive-deps": "off",
     "camelcase": "off",
     "no-use-before-define": "off",
+    "semi": ["error", "never"],
     "prettier/prettier": [
       "error",
       {
