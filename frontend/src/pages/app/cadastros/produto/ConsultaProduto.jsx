@@ -124,7 +124,7 @@ export function ConsultaProduto() {
               className: "1/12 p-1",
               body: (item) => (
                 <Image
-                  src={item.foto ? `${url.origin}/` + item.foto : ""}
+                  src={item.foto ? `${url.origin}` + item.foto : ""}
                   indicatorIcon={icon}
                   width="50px"
                   height="50px"
