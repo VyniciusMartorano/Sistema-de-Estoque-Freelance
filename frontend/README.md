@@ -1,8 +1,6 @@
 
 ## URL's para produção
 
-### Interno (http)
-VITE_FATURAMENTO_URL='http://localhost:3000/api/faturamento/'
 
 
 ### Ferramentas para desenvolvimento
