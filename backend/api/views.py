@@ -317,7 +317,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
             produto_id=instance.pk
         )
         
-        if (qs_estoque.count() + qs_estoque_mov.count() + qs_venda.count()) > 0:
+        if (qs_estoque_mov.count() + qs_estoque_mov.count() + qs_venda.count()) > 0:
             return Response(
                 data='Não é possivel apagar um produto que ja tem [vendas, estoque] registrados(as).',
                 status=status.HTTP_400_BAD_REQUEST
