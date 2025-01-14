@@ -1,17 +1,17 @@
-import { Button } from 'primereact/button'
-import { useContext } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
+import { Button } from "primereact/button";
+import { useContext } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
-import { Input } from '@/components/input'
-import { AuthContext } from '@/context/AuthContext'
+import { Input } from "@/components/input";
+import { AuthContext } from "@/context/AuthContext";
 // import { SGC_ROUTES } from '@/routes/navigation-routes'
 // import { useSGCNavigate } from '@/useNavigate'
 
 export function SignInForm() {
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit } = useForm();
 
-  const { signIn } = useContext(AuthContext)
+  const { signIn } = useContext(AuthContext);
 
   // const { navigate } = useSGCNavigate()
 
@@ -20,33 +20,33 @@ export function SignInForm() {
       signIn({ username: data.username, password: data.password }),
       {
         duration: 1000,
-        loading: 'Validando acesso...',
+        loading: "Validando acesso...",
         error: (e) => {
-          console.log(e)
-          if (e.message.status === 401) return 'Usuario ou senha não coincidem'
-          else return 'Ocorreu um erro ao fazer login'
+          console.log(e);
+          if (e.message.status === 401) return "Usuario ou senha não coincidem";
+          else return "Ocorreu um erro ao fazer login";
         },
-        success: 'Usuário autenticado com sucesso!',
-      }
-    )
-  }
+        success: "Usuário autenticado com sucesso!",
+      },
+    );
+  };
 
   return (
     <form className="w-full" onSubmit={handleSubmit(handleSignIn)}>
       <div className="gap- flex flex-col bg-white">
-        <p className="my-2 w-full text-center">SISTEMA DE GESTÃO CORPORATIVA</p>
+        <p className="my-2 w-full text-center">MUNDO DA LUA</p>
 
         <Input
           label="Usuário"
           iconClassName="pi pi-user"
-          {...register('username')}
+          {...register("username")}
         />
 
         <Input
           label="Senha"
           type="password"
           iconClassName="pi pi-key"
-          {...register('password')}
+          {...register("password")}
         />
       </div>
 
@@ -66,5 +66,5 @@ export function SignInForm() {
         /> */}
       </div>
     </form>
-  )
+  );
 }
