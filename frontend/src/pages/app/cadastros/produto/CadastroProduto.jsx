@@ -36,7 +36,7 @@ export function CadastroProduto() {
     service.getProdutoById(produtoId).then(
       async ({ data }) => {
         if (data.foto) {
-          const response = await fetch(data.foto);
+          const response = await fetch(data.foto.replace("http", "https"));
           data.foto = await response.blob();
         }
         setProduto(data);
@@ -86,7 +86,7 @@ export function CadastroProduto() {
       .then(
         async ({ data }) => {
           if (data.foto) {
-            const response = await fetch(data.foto);
+            const response = await fetch(data.foto.replace("http", "https"));
             data.foto = await response.blob();
           }
           setProduto(data);
