@@ -175,18 +175,20 @@ export function CadastroProduto() {
                 label="Descrição"
               />
             </div>
-            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
-              <InputNum
-                disabled={true}
-                value={produto.preco_compra}
-                onChange={(e) => handleFieldChange(e, "preco_compra")}
-                className="w-full"
-                maxFractionDigits={2}
-                label="Preço de Compra"
-                prefix="R$ "
-                min={0}
-              />
-            </div>
+            {produto.id && (
+              <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
+                <InputNum
+                  disabled={true}
+                  value={produto.preco_compra}
+                  onChange={(e) => handleFieldChange(e, "preco_compra")}
+                  className="w-full"
+                  maxFractionDigits={2}
+                  label="Preço de Compra"
+                  prefix="R$ "
+                  min={0}
+                />
+              </div>
+            )}
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <InputNum
                 value={produto.percentual}
