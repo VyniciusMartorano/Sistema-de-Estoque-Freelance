@@ -277,26 +277,26 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
         self.perform_update(serializer)
         return Response(serializer.data)
-    
-
+        
     def create(self, request, *args, **kwargs):
         user = request.user
-        instance = self.get_object()
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
 
+        # Salva o objeto e obtém a instância recém-criada
+        instance = serializer.save()
+
+        # Obtém o usuário administrador
         user_adm = m.User.objects.get(is_staff=1)
 
         if not user.is_staff:
             m.ProdutosPrecosUsuarios.objects.create(
                 user_id=user_adm.pk,
-                produto_id=instance.pk,
+                produto_id=instance.pk,  # Aqui pegamos o ID diretamente da instância
                 percentual=20
             )
 
-
+        # Criação ou atualização do preço para o usuário
         m.ProdutosPrecosUsuarios.objects.update_or_create(
             user_id=user.pk,
             produto_id=instance.pk,

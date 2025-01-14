@@ -56,7 +56,7 @@ export function CadastroProduto() {
   };
 
   const payloadIsValid = (payload) => {
-    if (!payload.nome || !payload.preco_compra || !payload.percentual) {
+    if (!payload.nome || !payload.percentual) {
       toast.warning("Preencha os campos e tente novamente!");
       return false;
     }
