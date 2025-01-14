@@ -1,31 +1,31 @@
-import { Image } from 'primereact/image'
-import { InputText } from 'primereact/inputtext'
-import { useContext, useEffect, useState } from 'react'
-import { toast } from 'sonner'
+import { Image } from "primereact/image";
+import { InputText } from "primereact/inputtext";
+import { useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 
-import { ButtonSGC } from '@/components/buttons'
-import { DeletePopup } from '@/components/dialogs/delete-popup'
-import { Select } from '@/components/input'
-import { Screen } from '@/components/screen'
-import { Table } from '@/components/table'
-import { EstoqueContext } from '@/context/EstoqueContext'
-import { useSGCNavigate } from '@/useNavigate'
+import { ButtonSGC } from "@/components/buttons";
+import { DeletePopup } from "@/components/dialogs/delete-popup";
+import { Select } from "@/components/input";
+import { Screen } from "@/components/screen";
+import { Table } from "@/components/table";
+import { EstoqueContext } from "@/context/EstoqueContext";
+import { useSGCNavigate } from "@/useNavigate";
 
-import { basesUrl } from '../../../../api/apiBase'
-import { InputCalendar } from '../../../../components/input/calendar'
-import { InputNum } from '../../../../components/input/input-number'
-import { AuthContext } from '../../../../context/AuthContext'
-import { SGC_ROUTES } from '../../../../routes/navigation-routes'
-import isEmpty from '../../../../utils/isEmpty'
-import Service from './service'
+import { basesUrl } from "../../../../api/apiBase";
+import { InputCalendar } from "../../../../components/input/calendar";
+import { InputNum } from "../../../../components/input/input-number";
+import { AuthContext } from "../../../../context/AuthContext";
+import { SGC_ROUTES } from "../../../../routes/navigation-routes";
+import isEmpty from "../../../../utils/isEmpty";
+import Service from "./service";
 
 export function CadastroVenda() {
-  const { navigate } = useSGCNavigate()
-  const { vendaId } = useContext(EstoqueContext)
-  const { user } = useContext(AuthContext)
-  const [itens, setItens] = useState([])
-  const [produtos, setProdutos] = useState([])
-  const [clientes, setClientes] = useState([])
+  const { navigate } = useSGCNavigate();
+  const { vendaId } = useContext(EstoqueContext);
+  const { user } = useContext(AuthContext);
+  const [itens, setItens] = useState([]);
+  const [produtos, setProdutos] = useState([]);
+  const [clientes, setClientes] = useState([]);
   // const formatador = new Formaters()
   const [item, setItem] = useState({
     produto: null,
@@ -34,89 +34,89 @@ export function CadastroVenda() {
     saldo_disponivel: 0,
     preco_compra: 0,
     percentual: 0,
-  })
+  });
   const [venda, setVenda] = useState({
     id: null,
     data_venda: new Date(),
     cliente: null,
     user: user?.id,
-  })
+  });
 
-  const [inPromise, setInPromise] = useState(false)
-  const [inPromiseSearchProduto, setinPromiseSearchProduto] = useState(false)
+  const [inPromise, setInPromise] = useState(false);
+  const [inPromiseSearchProduto, setinPromiseSearchProduto] = useState(false);
 
-  const service = new Service()
-  const [inPromiseSave, setInPromiseSave] = useState(false)
+  const service = new Service();
+  const [inPromiseSave, setInPromiseSave] = useState(false);
 
   useEffect(() => {
-    if (!vendaId) return
+    if (!vendaId) return;
 
-    setInPromise(true)
+    setInPromise(true);
     service
       .getVendaById(vendaId)
       .then(
         async ({ data }) => {
-          data.data_venda = new Date(data.data_venda)
-          setVenda(data)
-          getItensVenda(data.id)
+          data.data_venda = new Date(data.data_venda);
+          setVenda(data);
+          getItensVenda(data.id);
         },
         () => {
-          toast.error('Ocorreu um erro ao buscar o venda selecionada!')
-        }
+          toast.error("Ocorreu um erro ao buscar o venda selecionada!");
+        },
       )
-      .finally(() => setInPromise(false))
-  }, [])
+      .finally(() => setInPromise(false));
+  }, []);
 
   useEffect(() => {
-    getProdutos()
-    getClientes()
-  }, [])
+    getProdutos();
+    getClientes();
+  }, []);
 
   const getProdutos = () => {
-    setinPromiseSearchProduto(true)
+    setinPromiseSearchProduto(true);
     service
       .getProdutosComSaldo(user.id)
       .then(
         ({ data }) => setProdutos(data),
         () => {
-          toast.error('Ocorreu um erro ao buscar os produtos disponiveis!')
-        }
+          toast.error("Ocorreu um erro ao buscar os produtos disponiveis!");
+        },
       )
-      .finally(() => setinPromiseSearchProduto(false))
-  }
+      .finally(() => setinPromiseSearchProduto(false));
+  };
   const getClientes = () => {
     service.getClientes().then(
       ({ data }) => setClientes(data),
       () => {
-        toast.error('Ocorreu um erro ao buscar os clientes!')
-      }
-    )
-  }
+        toast.error("Ocorreu um erro ao buscar os clientes!");
+      },
+    );
+  };
 
   const getItensVenda = (vendaId) => {
     service.getItensVenda(vendaId).then(
       async ({ data }) => {
-        setItens(data)
+        setItens(data);
       },
       () => {
-        toast.error('Ocorreu um erro ao buscar os itens da venda selecionada!')
-      }
-    )
-  }
+        toast.error("Ocorreu um erro ao buscar os itens da venda selecionada!");
+      },
+    );
+  };
 
   const handleFieldChange = (e, field) => {
-    const value = e.target ? e.target.value : e.value
+    const value = e.target ? e.target.value : e.value;
     setVenda((prevProduto) => ({
       ...prevProduto,
       [field]: value,
-    }))
-  }
+    }));
+  };
   const handleFieldItemChange = (e, field) => {
-    const value = e.target ? e.target.value : e.value
-    let produto = null
+    const value = e.target ? e.target.value : e.value;
+    let produto = null;
 
-    if (field === 'produto') {
-      produto = produtos.find((i) => i.id === value)
+    if (field === "produto") {
+      produto = produtos.find((i) => i.id === value);
     }
 
     setItem((prevProduto) => ({
@@ -129,80 +129,80 @@ export function CadastroVenda() {
       preco_compra: produto ? produto.preco_compra : prevProduto.preco_compra,
       percentual: produto
         ? produto.percentual
-        : field === 'percentual'
+        : field === "percentual"
           ? value
           : prevProduto.percentual,
       percentual_gestor: 0,
       percentual_vendedor: 0,
-    }))
-  }
+    }));
+  };
 
   const payloadIsValid = (payload) => {
     if (!payload.cliente) {
-      toast.warning('Preencha os campos obrigatórios e tente novamente!')
-      return false
+      toast.warning("Preencha os campos obrigatórios e tente novamente!");
+      return false;
     }
     if (itens.length < 1) {
-      toast.warning('Você precisa adicionar os itens!')
-      return
+      toast.warning("Você precisa adicionar os itens!");
+      return;
     }
-    return true
-  }
+    return true;
+  };
   const saveOrUpdateItens = (vendaId) => {
     const refatoredItens = itens.map((i) => {
-      return { ...i, venda: vendaId }
-    })
+      return { ...i, venda: vendaId };
+    });
     service
       .saveItens(refatoredItens)
       .then(
         async ({ data }) => {
-          setItens(data)
-          toast.success('A venda foi salva com sucesso!')
-          navigate(SGC_ROUTES.ESTOQUE.VENDA)
+          setItens(data);
+          toast.success("A venda foi salva com sucesso!");
+          navigate(SGC_ROUTES.ESTOQUE.VENDA);
         },
-        () => toast.error('Ocorreu um erro ao salvar a venda.')
+        () => toast.error("Ocorreu um erro ao salvar a venda."),
       )
       .finally(() => {
-        setInPromiseSave(false)
-      })
-  }
+        setInPromiseSave(false);
+      });
+  };
 
   const saveOrUpdate = () => {
-    if (!payloadIsValid(venda)) return
+    if (!payloadIsValid(venda)) return;
 
-    setInPromiseSave(true)
+    setInPromiseSave(true);
     const payload = {
       ...venda,
-    }
+    };
     service.saveOrUpdate(payload).then(
       async (resp) => {
-        setVenda({ ...venda, id: resp.data.id })
-        saveOrUpdateItens(resp.data.id)
+        setVenda({ ...venda, id: resp.data.id });
+        saveOrUpdateItens(resp.data.id);
       },
       () => {
-        toast.error('Ocorreu um erro ao salvar a venda.')
-        setInPromiseSave(false)
-      }
-    )
-  }
+        toast.error("Ocorreu um erro ao salvar a venda.");
+        setInPromiseSave(false);
+      },
+    );
+  };
   const removeItem = (produtoId) => {
-    setItens(itens.filter((i) => i.produto !== produtoId))
-  }
+    setItens(itens.filter((i) => i.produto !== produtoId));
+  };
 
   const addItem = () => {
     if (isEmpty(item)) {
-      toast.warning('Preencha os campos corretamente para adicionar o item.')
-      return
+      toast.warning("Preencha os campos corretamente para adicionar o item.");
+      return;
     }
-    const produtoInList = itens.filter((i) => i.produto === item.produto)
+    const produtoInList = itens.filter((i) => i.produto === item.produto);
     if (produtoInList.length > 0) {
       toast.warning(
-        'O produto ja foi registrado na venda, remova da listagem e lance novamente!'
-      )
-      return
+        "O produto ja foi registrado na venda, remova da listagem e lance novamente!",
+      );
+      return;
     }
 
-    const produto = produtos.find((i) => i.id === item.produto)
+    const produto = produtos.find((i) => i.id === item.produto);
     setItens([
       ...itens,
       {
@@ -211,7 +211,7 @@ export function CadastroVenda() {
         preco_unitario:
           item.preco_compra + item.percentual * (item.preco_compra / 100),
       },
-    ])
+    ]);
     setItem({
       produto: null,
       quantidade: 0,
@@ -221,9 +221,9 @@ export function CadastroVenda() {
       preco_compra: 0,
       percentual_gestor: 0,
       percentual_vendedor: 0,
-    })
-    getProdutos()
-  }
+    });
+    getProdutos();
+  };
 
   const headerTable = venda.id ? (
     <></>
@@ -233,7 +233,7 @@ export function CadastroVenda() {
         label="Produto"
         className="mr-2 w-full"
         value={item.produto}
-        onChange={(e) => handleFieldItemChange(e, 'produto')}
+        onChange={(e) => handleFieldItemChange(e, "produto")}
         options={produtos}
         optionLabel="label"
         optionValue="id"
@@ -243,7 +243,7 @@ export function CadastroVenda() {
       <InputNum
         disabled={!item.produto}
         value={item.quantidade}
-        onChange={(e) => handleFieldItemChange(e, 'quantidade')}
+        onChange={(e) => handleFieldItemChange(e, "quantidade")}
         className="w-full"
         maxFractionDigits={2}
         label="Quantidade"
@@ -262,7 +262,7 @@ export function CadastroVenda() {
       <InputNum
         disabled={true}
         value={item.preco_compra}
-        onChange={(e) => handleFieldItemChange(e, 'preco_compra')}
+        onChange={(e) => handleFieldItemChange(e, "preco_compra")}
         className="w-full"
         maxFractionDigits={2}
         minFractionDigits={2}
@@ -273,7 +273,7 @@ export function CadastroVenda() {
       <InputNum
         disabled={!item.produto}
         value={item.percentual}
-        onChange={(e) => handleFieldItemChange(e, 'percentual')}
+        onChange={(e) => handleFieldItemChange(e, "percentual")}
         className="w-full"
         locale="de-DE"
         suffix="%"
@@ -304,17 +304,17 @@ export function CadastroVenda() {
         />
       </div>
     </div>
-  )
-  const icon = <i className="pi pi-eye"></i>
-  const url = new URL(basesUrl.core)
+  );
+  const icon = <i className="pi pi-eye"></i>;
+  const url = new URL(basesUrl.core);
 
   return (
     <div>
       <Screen
         itens={[
-          { label: 'venda', link: SGC_ROUTES.ESTOQUE.VENDA },
+          { label: "venda", link: SGC_ROUTES.ESTOQUE.VENDA },
           {
-            label: 'Cadastro',
+            label: "Cadastro",
             link: SGC_ROUTES.ESTOQUE.CADASTRO_VENDA,
           },
         ]}
@@ -335,7 +335,7 @@ export function CadastroVenda() {
                 label="Cliente"
                 className="mr-2 w-full"
                 value={venda.cliente}
-                onChange={(e) => handleFieldChange(e, 'cliente')}
+                onChange={(e) => handleFieldChange(e, "cliente")}
                 options={clientes}
                 filter
                 optionLabel="nome"
@@ -351,15 +351,15 @@ export function CadastroVenda() {
             isLoading={inPromise}
             columns={[
               {
-                header: 'Produto',
-                className: '7/12 p-1',
+                header: "Produto",
+                className: "7/12 p-1",
                 body: (item) => (
                   <div className="flex h-8  gap-1 p-1">
                     <Image
                       src={
                         item.produto_foto
-                          ? `${url.origin}/media/` + item.produto_foto
-                          : ''
+                          ? `${url.origin}/api/media/` + item.produto_foto
+                          : ""
                       }
                       indicatorIcon={icon}
                       width="30px"
@@ -374,41 +374,41 @@ export function CadastroVenda() {
                 ),
               },
               {
-                field: 'quantidade',
-                header: 'Qtd',
-                className: 'w-1/12 p-1 text-right',
+                field: "quantidade",
+                header: "Qtd",
+                className: "w-1/12 p-1 text-right",
               },
               {
-                field: 'preco_unitario',
-                header: 'P. Unit',
-                className: 'w-2/12 p-1 text-right',
+                field: "preco_unitario",
+                header: "P. Unit",
+                className: "w-2/12 p-1 text-right",
                 body: (item) => (
                   <div className="flex h-6 justify-end gap-1 p-1">
-                    {item.preco_unitario.toLocaleString('pt-BR', {
-                      style: 'currency',
-                      currency: 'BRL',
+                    {item.preco_unitario.toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
                     })}
                   </div>
                 ),
               },
               {
-                header: 'Total',
-                className: 'w-2/12 p-1 text-right ',
+                header: "Total",
+                className: "w-2/12 p-1 text-right ",
                 body: (item) => (
                   <div className="flex h-6 justify-end gap-1 p-1">
                     {(item.quantidade * item.preco_unitario).toLocaleString(
-                      'pt-BR',
+                      "pt-BR",
                       {
-                        style: 'currency',
-                        currency: 'BRL',
-                      }
+                        style: "currency",
+                        currency: "BRL",
+                      },
                     )}
                   </div>
                 ),
               },
               {
-                field: '',
-                header: '',
+                field: "",
+                header: "",
                 body: (item) =>
                   venda.id ? (
                     <div></div>
@@ -416,12 +416,12 @@ export function CadastroVenda() {
                     <div className="flex h-6 justify-end gap-1 text-white">
                       <DeletePopup
                         feedbackMessage="Deseja realmente apagar o item?"
-                        itemLabel={''}
+                        itemLabel={""}
                         onAccept={() => removeItem(item.produto)}
                       />
                     </div>
                   ),
-                className: '',
+                className: "",
               },
             ]}
           ></Table>
@@ -432,11 +432,11 @@ export function CadastroVenda() {
               disabled={true}
               value={itens
                 .reduce((soma, item) => {
-                  return soma + item.quantidade * item.preco_unitario
+                  return soma + item.quantidade * item.preco_unitario;
                 }, 0)
-                .toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
+                .toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL",
                 })}
             />
           </div>
@@ -469,5 +469,5 @@ export function CadastroVenda() {
         </div>
       </Screen>
     </div>
-  )
+  );
 }
