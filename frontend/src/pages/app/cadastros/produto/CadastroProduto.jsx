@@ -93,7 +93,8 @@ export function CadastroProduto() {
           toast.success("O produto foi salvo com sucesso!");
           fileInputRef.value = "";
         },
-        () => toast.error("Ocorreu um erro ao salvar o produto."),
+        (error) =>
+          toast.error(`Ocorreu um erro ao salvar o produto. ${error.response}`),
       )
       .finally(() => {
         setInPromiseSave(false);
