@@ -1,140 +1,140 @@
-import { Image } from 'primereact/image'
-import { useContext, useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
+import { Image } from "primereact/image";
+import { useContext, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
-import { ButtonSGC } from '@/components/buttons'
-import { Input } from '@/components/input/input'
-import { Screen } from '@/components/screen'
-import { AuthContext } from '@/context/AuthContext'
-import { ProdutoContext } from '@/context/ProdutoContext'
-import { useSGCNavigate } from '@/useNavigate'
+import { ButtonSGC } from "@/components/buttons";
+import { Input } from "@/components/input/input";
+import { Screen } from "@/components/screen";
+import { AuthContext } from "@/context/AuthContext";
+import { ProdutoContext } from "@/context/ProdutoContext";
+import { useSGCNavigate } from "@/useNavigate";
 
-import { InputNum } from '../../../../components/input/input-number'
-import { SGC_ROUTES } from '../../../../routes/navigation-routes'
-import Service from './service'
+import { InputNum } from "../../../../components/input/input-number";
+import { SGC_ROUTES } from "../../../../routes/navigation-routes";
+import Service from "./service";
 
 export function CadastroProduto() {
-  const { navigate } = useSGCNavigate()
-  const { produtoId } = useContext(ProdutoContext)
-  const { user, userHavePermission } = useContext(AuthContext)
+  const { navigate } = useSGCNavigate();
+  const { produtoId } = useContext(ProdutoContext);
+  const { user, userHavePermission } = useContext(AuthContext);
   const [produto, setProduto] = useState({
     id: null,
-    nome: '',
-    descricao: '',
-    preco_compra: 0,
+    nome: "",
+    descricao: "",
+    preco_compra: "0",
     foto: null,
     percentual: 0,
-  })
+  });
 
-  const service = new Service()
-  const [inPromiseSave, setInPromiseSave] = useState(false)
+  const service = new Service();
+  const [inPromiseSave, setInPromiseSave] = useState(false);
 
-  const fileInputRef = useRef(null)
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if (!produtoId) return
+    if (!produtoId) return;
     service.getProdutoById(produtoId).then(
       async ({ data }) => {
         if (data.foto) {
-          const response = await fetch(data.foto)
-          data.foto = await response.blob()
+          const response = await fetch(data.foto);
+          data.foto = await response.blob();
         }
-        setProduto(data)
+        setProduto(data);
       },
       () => {
-        toast.error('Ocorreu um erro ao buscar o produto selecionado!')
-      }
-    )
-  }, [produtoId])
+        toast.error("Ocorreu um erro ao buscar o produto selecionado!");
+      },
+    );
+  }, [produtoId]);
 
   const handleFieldChange = (e, field) => {
-    const value = e.target ? e.target.value : e.value
+    const value = e.target ? e.target.value : e.value;
     setProduto((prevProduto) => ({
       ...prevProduto,
       [field]: value,
-    }))
-  }
+    }));
+  };
 
   const payloadIsValid = (payload) => {
     if (!payload.nome || !payload.preco_compra || !payload.percentual) {
-      toast.warning('Preencha os campos e tente novamente!')
-      return false
+      toast.warning("Preencha os campos e tente novamente!");
+      return false;
     }
-    return true
-  }
+    return true;
+  };
 
   const saveOrUpdate = () => {
-    if (!payloadIsValid(produto)) return
+    if (!payloadIsValid(produto)) return;
 
-    const formData = new FormData()
+    const formData = new FormData();
     if (produto.id) {
-      formData.append('id', produto.id)
+      formData.append("id", produto.id);
     }
-    formData.append('nome', produto.nome)
-    formData.append('descricao', produto.descricao)
-    formData.append('preco_compra', produto.preco_compra)
+    formData.append("nome", produto.nome);
+    formData.append("descricao", produto.descricao);
+    formData.append("preco_compra", produto.preco_compra);
     if (produto.foto && produto.foto instanceof Blob) {
-      formData.append('foto', produto.foto, 'imagem.png')
+      formData.append("foto", produto.foto, "imagem.png");
     } else if (produto.foto) {
-      formData.append('foto', produto.foto)
+      formData.append("foto", produto.foto);
     }
-    formData.append('percentual', produto.percentual)
+    formData.append("percentual", produto.percentual);
 
-    setInPromiseSave(true)
+    setInPromiseSave(true);
     service
       .saveOrUpdate(formData, produto.id)
       .then(
         async ({ data }) => {
           if (data.foto) {
-            const response = await fetch(data.foto)
-            data.foto = await response.blob()
+            const response = await fetch(data.foto);
+            data.foto = await response.blob();
           }
-          setProduto(data)
-          toast.success('O produto foi salvo com sucesso!')
-          fileInputRef.value = ''
+          setProduto(data);
+          toast.success("O produto foi salvo com sucesso!");
+          fileInputRef.value = "";
         },
-        () => toast.error('Ocorreu um erro ao salvar o produto.')
+        () => toast.error("Ocorreu um erro ao salvar o produto."),
       )
       .finally(() => {
-        setInPromiseSave(false)
-      })
-  }
+        setInPromiseSave(false);
+      });
+  };
 
   const handleFileUpload = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.click()
+      fileInputRef.current.click();
     }
-  }
+  };
 
   const handleFileSelected = (event) => {
-    const file = event.target.files[0]
+    const file = event.target.files[0];
     if (file) {
       setProduto((prevProduto) => ({
         ...prevProduto,
         foto: file, // Armazena o arquivo selecionado diretamente
-      }))
-      toast.success('Imagem carregada com sucesso!')
+      }));
+      toast.success("Imagem carregada com sucesso!");
     }
-  }
+  };
   const renderImageSrc = () => {
     if (produto.foto && produto.foto instanceof Blob) {
-      return URL.createObjectURL(produto.foto)
+      return URL.createObjectURL(produto.foto);
     } else if (
-      typeof produto.foto === 'string' &&
-      produto.foto.startsWith('http')
+      typeof produto.foto === "string" &&
+      produto.foto.startsWith("http")
     ) {
-      return produto.foto
+      return produto.foto;
     }
-    return null
-  }
-  const icon = <i className="pi pi-eye"></i>
+    return null;
+  };
+  const icon = <i className="pi pi-eye"></i>;
   return (
     <div>
       <Screen
         itens={[
-          { label: 'Produtos', link: SGC_ROUTES.CADASTROS.PRODUTO },
+          { label: "Produtos", link: SGC_ROUTES.CADASTROS.PRODUTO },
           {
-            label: 'Cadastro',
+            label: "Cadastro",
             link: SGC_ROUTES.CADASTROS.CADASTRO_PRODUTO,
           },
         ]}
@@ -158,7 +158,7 @@ export function CadastroProduto() {
               <Input
                 disabled={user.is_vendedor}
                 value={produto.nome}
-                onChange={(e) => handleFieldChange(e, 'nome')}
+                onChange={(e) => handleFieldChange(e, "nome")}
                 type="text"
                 className="w-full"
                 label="Nome"
@@ -168,7 +168,7 @@ export function CadastroProduto() {
               <Input
                 disabled={user.is_vendedor}
                 value={produto.descricao}
-                onChange={(e) => handleFieldChange(e, 'descricao')}
+                onChange={(e) => handleFieldChange(e, "descricao")}
                 type="text"
                 className="w-full"
                 label="Descrição"
@@ -178,7 +178,7 @@ export function CadastroProduto() {
               <InputNum
                 disabled={true}
                 value={produto.preco_compra}
-                onChange={(e) => handleFieldChange(e, 'preco_compra')}
+                onChange={(e) => handleFieldChange(e, "preco_compra")}
                 className="w-full"
                 maxFractionDigits={2}
                 label="Preço de Compra"
@@ -189,7 +189,7 @@ export function CadastroProduto() {
             <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
               <InputNum
                 value={produto.percentual}
-                onChange={(e) => handleFieldChange(e, 'percentual')}
+                onChange={(e) => handleFieldChange(e, "percentual")}
                 className="w-full"
                 locale="de-DE"
                 suffix="%"
@@ -211,7 +211,7 @@ export function CadastroProduto() {
                 min={0}
               />
             </div>
-            {userHavePermission('PRODUTO_alterar_imagem_produto') && (
+            {userHavePermission("PRODUTO_alterar_imagem_produto") && (
               <div className="p-inputtext-sm my-6 flex flex-grow-0 ">
                 <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
                   <div className="mr-1w-full md:w-3/6 lg:w-1/4 xl:w-1/5">
@@ -225,7 +225,7 @@ export function CadastroProduto() {
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
-                      style={{ display: 'none' }}
+                      style={{ display: "none" }}
                       onChange={handleFileSelected}
                     />
                   </div>
@@ -260,5 +260,5 @@ export function CadastroProduto() {
         </div>
       </Screen>
     </div>
-  )
+  );
 }
