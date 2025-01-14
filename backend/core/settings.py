@@ -160,7 +160,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-MEDIA_URL = '/api/media/'
+# MEDIA_URL = '/api/media/'
+MEDIA_URL = 'https://mundodalua.store/api/media/'
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 MEDIA_ROOT = BASE_DIR / 'media'
 
 LANGUAGE_CODE = 'en-us'
