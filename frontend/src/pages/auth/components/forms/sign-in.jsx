@@ -54,7 +54,7 @@ export function SignInForm() {
         <Button
           label="Acessar"
           type="submit"
-          className="mx-auto block w-full rounded-none border-none bg-sgc-blue-background-light outline-0"
+          className="mx-auto block w-full rounded-none border-none bg-sgc-blue-primary outline-0"
         />
 
         {/* <div className="my-4 h-[1px] w-full bg-sgc-gray-label"></div>

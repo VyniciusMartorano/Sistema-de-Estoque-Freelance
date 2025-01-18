@@ -1,20 +1,20 @@
-import { Card } from 'primereact/card'
-import { useContext } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Card } from "primereact/card";
+import { useContext } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 
-import logomarca from '@/assets/logo.png'
-import { AuthContext } from '@/context/AuthContext'
+import logomarca from "@/assets/logo.png";
+import { AuthContext } from "@/context/AuthContext";
 
 export function AuthLayout() {
-  const { isAuthenticated } = useContext(AuthContext)
-  const { pathname } = useLocation()
+  const { isAuthenticated } = useContext(AuthContext);
+  const { pathname } = useLocation();
 
   if (isAuthenticated) {
-    return <Navigate to="/homepage" />
+    return <Navigate to="/homepage" />;
   }
 
-  if (!isAuthenticated && pathname === '/') {
-    return <Navigate to="/login" />
+  if (!isAuthenticated && pathname === "/") {
+    return <Navigate to="/login" />;
   }
 
   return (
@@ -23,7 +23,7 @@ export function AuthLayout() {
         <Card
           className="border-1 w-[80%] rounded-lg bg-white p-0 shadow-xl lg:w-3/6 xl:w-2/6"
           header={
-            <div className="rounded-t-lg bg-sgc-blue-background-light p-4">
+            <div className="rounded-t-lg bg-sgc-blue-primary p-4">
               <img src={logomarca} className="m-auto block w-36" alt="Logo" />
             </div>
           }
@@ -32,5 +32,5 @@ export function AuthLayout() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

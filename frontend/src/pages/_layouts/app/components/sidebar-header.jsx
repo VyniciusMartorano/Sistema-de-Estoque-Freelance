@@ -1,4 +1,4 @@
-import logomarca from '@/assets/logo.png'
+import logomarca from "@/assets/logo.png";
 
 export function HeaderSidebar() {
   return (
@@ -10,5 +10,5 @@ export function HeaderSidebar() {
         </p>
       )} */}
     </div>
-  )
+  );
 }
