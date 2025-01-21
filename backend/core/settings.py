@@ -33,7 +33,10 @@ DEBUG = config('DEBUG')
 ALLOWED_HOSTS = ('*',)
 # CORS_ALLOWED_ORIGINS = ('*',)
 CORS_ALLOW_ALL_ORIGINS = True
-
+CSRF_TRUSTED_ORIGINS = [
+    'https://mundodalua.store',
+    'https://www.mundodalua.store',
+]
 
 
 
