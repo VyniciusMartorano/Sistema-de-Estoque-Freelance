@@ -1,6 +1,4 @@
 
-Segue a versão revisada do texto:
-
 Sistema de Controle de Estoque
 Este sistema foi desenvolvido para atender às necessidades de um cliente que busca um controle de estoque completo para o seu negócio.
 
