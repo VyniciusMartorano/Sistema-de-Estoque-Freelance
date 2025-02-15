@@ -87,13 +87,12 @@ export function CadastroUsuario() {
     if (!userId) return;
 
     service.getUserById(userId).then(
-      ({ data }) => {
+      async ({ data }) => {
         setUser({
           ...data,
           tipo: data.is_gerente ? tipoEnum.GESTOR : tipoEnum.VENDEDOR,
         });
-        getPermissionsAvailable();
-        getPermissionsUser(data.id);
+        await getPermissionsUser(data.id);
       },
       () => {
         toast.error("Ocorreu um erro ao buscar o user selecionado!");
@@ -101,20 +100,27 @@ export function CadastroUsuario() {
     );
   }, []);
 
-  const getPermissionsAvailable = () => {
+  const getPermissionsAvailable = (perms) => {
+    const permissoesId = perms.map((i) => i.id);
     service.getPermissionsAvailable().then(
-      ({ data }) => setPermissonsDisponiveis(data),
+      ({ data }) =>
+        setPermissonsDisponiveis(
+          data.filter((p) => !permissoesId.includes(p.id)),
+        ),
       () => {
         toast.error("Ocorreu um erro ao buscar as permissões disponiveis!");
       },
     );
   };
-  const getPermissionsUser = (usuarioId) => {
+  const getPermissionsUser = async (usuarioId) => {
     setInPromisePermissions(true);
-    service
+    await service
       .getPermissionsUser(usuarioId)
       .then(
-        ({ data }) => setPermissonsUser(data),
+        ({ data }) => {
+          setPermissonsUser(data);
+          getPermissionsAvailable(data);
+        },
         () => {
           toast.error("Ocorreu um erro ao buscar as permissões do usuario!");
         },
@@ -155,6 +161,21 @@ export function CadastroUsuario() {
     setPermissonsUser(permissonsUser.filter((p) => p.id !== permissionId));
   };
 
+  const savePermissions = async () => {
+    service
+      .savePermissions(
+        permissonsUser.map((i) => i.id),
+        user.id,
+      )
+      .then(
+        () => {},
+        (error) =>
+          toast.error(
+            error.response?.data || "Ocorreu um erro ao salvar as permissões.",
+          ),
+      );
+  };
+
   const saveOrUpdate = () => {
     if (!payloadIsValid(user)) return;
 
@@ -162,7 +183,8 @@ export function CadastroUsuario() {
     service
       .saveOrUpdate(user, user.id)
       .then(
-        () => {
+        async () => {
+          await savePermissions();
           toast.success("O usuario foi salvo com sucesso!");
           navigate(SGC_ROUTES.CADASTROS.USUARIO);
         },
@@ -174,8 +196,21 @@ export function CadastroUsuario() {
       .finally(() => setInPromiseSave(false));
   };
   const addPermissao = () => {
-    
-  }
+    if (!permissaoSelecionada) {
+      toast.warning("Selecione a permissão!");
+      return;
+    }
+
+    const perm = permissionsDisponiveis.find(
+      (p) => p.id == permissaoSelecionada,
+    );
+    setPermissonsUser([perm, ...permissonsUser]);
+
+    setPermissonsDisponiveis((prevState) =>
+      prevState.filter((p) => p.id !== permissaoSelecionada),
+    );
+    setPermissaoSelecionada(null);
+  };
 
   const headerTable = (
     <div className="grid">
@@ -198,6 +233,7 @@ export function CadastroUsuario() {
           className="md:w-1/24 flex w-full items-center justify-center gap-2 rounded-md border-none bg-sgc-green-primary p-2 py-1 sm:w-full lg:w-1/6 xl:w-1/6 2xl:w-1/6"
           onClick={() => addPermissao()}
         >
+          Adicionar
           <i className="pi pi-plus"></i>
         </Button>
       </div>
@@ -328,24 +364,28 @@ export function CadastroUsuario() {
             ]}
           ></Table>
 
-          <div className="mt-5 flex w-full flex-row justify-start gap-2">
-            <ButtonSGC
-              label="Voltar"
-              bgColor="sgc-blue-primary"
-              icon="pi pi-arrow-left"
-              type="button"
-              className="h-7"
-              onClick={() => navigate(SGC_ROUTES.CADASTROS.USUARIO)}
-            />
-            <ButtonSGC
-              disabled={inPromiseSave}
-              label="Salvar"
-              className="h-7"
-              icon="pi pi-check"
-              onClick={saveOrUpdate}
-              bgColor="sgc-green-primary"
-              type="submit"
-            />
+          <div className="mt-5 flex w-full flex-row flex-wrap justify-start gap-2">
+            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
+              <ButtonSGC
+                label="Voltar"
+                bgColor="sgc-blue-primary"
+                icon="pi pi-arrow-left"
+                type="button"
+                className="h-7 w-full"
+                onClick={() => navigate(SGC_ROUTES.CADASTROS.USUARIO)}
+              />
+            </div>
+            <div className="mr-1 w-full md:w-3/6 lg:w-1/4 xl:w-1/5 ">
+              <ButtonSGC
+                disabled={inPromiseSave}
+                label="Salvar"
+                className="h-7 w-full"
+                icon="pi pi-check"
+                onClick={saveOrUpdate}
+                bgColor="sgc-green-primary"
+                type="submit"
+              />
+            </div>
           </div>
         </div>
       </Screen>

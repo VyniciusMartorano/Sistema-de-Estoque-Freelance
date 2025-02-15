@@ -17,6 +17,12 @@ class Service {
         : payload,
     );
   }
+  savePermissions(payload, userId) {
+    return apiBase.axios.post(`/permissions/save_permissions/`, {
+      permissions: payload,
+      userId,
+    });
+  }
 
   inativeUser(usuario) {
     return apiBase.axios.patch(`/user/${usuario.id}/`, {
@@ -31,8 +37,8 @@ class Service {
   getPermissionsAvailable() {
     return apiBase.axios.get(`/permissions/get_all_permissions_available/`);
   }
-  getPermissionsUser(userId) {
-    return apiBase.axios.get(
+  async getPermissionsUser(userId) {
+    return await apiBase.axios.get(
       `/permissions/get_all_permissions_user/?user_id=${userId}`,
     );
   }

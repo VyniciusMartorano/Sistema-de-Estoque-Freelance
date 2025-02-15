@@ -127,6 +127,33 @@ class PermissionViewSet(viewsets.ViewSet):
     def list(self, request):
         return Response(request.user.get_all_permissions())
     
+
+    @action(detail=False, methods=['post'])
+    def save_permissions(self, *args, **kwargs):
+        req = self.request.data
+        userId = req['userId'] if 'userId' in req else None
+        permissions = req['permissions'] if 'permissions' in req else None
+
+        if not userId or not permissions:
+            return Response(data='Não enviado, userId ou permissions no body', status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = m.User.objects.get(id=userId)
+
+            # Remover todas as permissões do usuário
+            user.user_permissions.clear()
+
+            # Buscar e adicionar as novas permissões ao usuário
+            perms = Permission.objects.filter(id__in=permissions)
+            user.user_permissions.set(perms)
+
+            return Response(data={'message': 'Permissões atualizadas com sucesso!'}, status=status.HTTP_200_OK)
+
+        except m.User.DoesNotExist:
+            return Response(data={'error': 'Usuário não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response(data={'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     @action(detail=False, methods=['get'])
     def get_all_permissions_available(self, *args, **kwargs):
         codenames = map(lambda i: i.split('.')[1] ,self.request.user.get_all_permissions())
