@@ -10,6 +10,6 @@ urlpatterns = [
     path('api/admin/', admin.site.urls),
     path('api/core/', include('api.urls')),
     path('api/core/token/', TokenObtainPairView.as_view()),
-    path('/api/core/token/refresh/', TokenRefreshView.as_view()),
-    path('/api/core/token/verify/', TokenVerifyView.as_view())
+    path('api/core/token/refresh/', TokenRefreshView.as_view()),
+    path('api/core/token/verify/', TokenVerifyView.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

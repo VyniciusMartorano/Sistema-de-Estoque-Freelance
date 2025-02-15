@@ -49,6 +49,9 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = m.User.objects.all().filter(
              ~Q(is_staff=1)
         )
+        if self.request.user.is_gerente:
+            vendedores = m.GestoresVendedores.objects.filter(gestor_id=self.request.user.pk).values_list('vendedor_id', flat=True)
+            queryset = queryset.filter(pk__in=vendedores)
 
         if nome:
             queryset = queryset.filter(first_name__icontains=nome)
@@ -123,7 +126,59 @@ class UserViewSet(viewsets.ModelViewSet):
 class PermissionViewSet(viewsets.ViewSet):
     def list(self, request):
         return Response(request.user.get_all_permissions())
+    
+    @action(detail=False, methods=['get'])
+    def get_all_permissions_available(self, *args, **kwargs):
+        codenames = map(lambda i: i.split('.')[1] ,self.request.user.get_all_permissions())
 
+        qs = Permission.objects.filter(codename__in=codenames, content_type_id__in=[8, 10])
+
+        results = []
+        for perm in qs:
+            results.append({
+                "id": perm.pk,
+                "name": perm.name,
+                "tipo": 'Função' if perm.content_type_id == 8 else 'Menu',
+                "codename": perm.codename,
+            })
+
+        return Response(data=results, status=status.HTTP_200_OK) 
+
+    @action(detail=False, methods=['get'])
+    def get_all_permissions_user(self, *args, **kwargs):
+        user_id = self.request.query_params.get('user_id')
+
+        if not user_id:
+            return Response(
+                {"detail": "O parâmetro 'user_id' é obrigatório."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            user = m.User.objects.get(pk=user_id)
+        except m.User.DoesNotExist:
+            return Response(
+                {"detail": "Usuário não encontrado."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Obter os codenames das permissões do usuário especificado
+        codenames = map(lambda i: i.split('.')[1], user.get_all_permissions())
+
+        # Filtrar as permissões com base nos codenames e content_type_ids
+        qs = Permission.objects.filter(codename__in=codenames, content_type_id__in=[8, 10])
+
+        # Construir a resposta
+        results = []
+        for perm in qs:
+            results.append({
+                "id": perm.pk,
+                "name": perm.name,
+                "tipo": 'Função' if perm.content_type_id == 8 else 'Menu',
+                "codename": perm.codename,
+            })
+
+        return Response(data=results, status=status.HTTP_200_OK)
 
 
 class MenuItemViewSet(viewsets.ViewSet):
